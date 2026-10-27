@@ -4,19 +4,22 @@ import {
   eventsForEntity,
   pathToGroup,
 } from "../lib/bankGraph";
+import { downloadSvgAsPng, downloadText, familyPathSvg } from "../lib/pathExport";
 import type { BankDataset, Entity, SourceRecord } from "../lib/types";
+import type { StoryLink } from "./Explorer";
 import { useLocale } from "./LocaleContext";
 
 interface Props {
   dataset: BankDataset;
   sources: SourceRecord[];
+  stories: StoryLink[];
   entity: Entity | null;
   year: number;
   onClose: () => void;
   onSelect: (id: string) => void;
 }
 
-export function BankDetails({ dataset, sources, entity, year, onClose, onSelect }: Props) {
+export function BankDetails({ dataset, sources, stories, entity, year, onClose, onSelect }: Props) {
   const { t, locale } = useLocale();
   if (!entity) return null;
 
@@ -59,6 +62,7 @@ export function BankDetails({ dataset, sources, entity, year, onClose, onSelect 
             {entity.status === "absorbed" && t.statusAbsorbed}
             {entity.status === "rebranded" && t.statusRebranded}
             {entity.status === "resolved" && t.statusResolved}
+            {entity.status === "historical_nonbank" && t.statusHistorical}
           </dd>
         </div>
         <div>
@@ -69,10 +73,19 @@ export function BankDetails({ dataset, sources, entity, year, onClose, onSelect 
           <dt className="font-mono text-[10px] text-muted uppercase">{t.currentGroup}</dt>
           <dd>{group ? label(group.id) : groupId}</dd>
         </div>
+        <div>
+          <dt className="font-mono text-[10px] text-muted uppercase">{t.bankingBusiness}</dt>
+          <dd>
+            {entity.banking_business_status === "transferred" ? t.businessTransferred : t.businessActive}
+          </dd>
+        </div>
       </dl>
 
       {entity.group_role === "foreign_shareholder" && (
         <p className="mt-3 font-mono text-[11px] text-accent">{t.foreign}</p>
+      )}
+      {entity.group_role === "independent_caja" && (
+        <p className="mt-3 font-mono text-[11px] text-accent">{t.independentCaja}</p>
       )}
 
       <div className="mt-5">
@@ -140,6 +153,55 @@ export function BankDetails({ dataset, sources, entity, year, onClose, onSelect 
           )}
         </div>
       )}
+
+      {stories
+        .filter(
+          (story) =>
+            story.locale === locale &&
+            (story.entityId === entity.id || story.groupId === entity.id || path.includes(story.entityId)),
+        )
+        .sort((a, b) => {
+          const score = (story: StoryLink) =>
+            story.entityId === entity.id ? 0 : story.groupId === entity.id ? 1 : 2;
+          return score(a) - score(b);
+        })
+        .slice(0, 1)
+        .map((story) => (
+          <a
+            key={story.slug}
+            href={`/stories/${story.slug}`}
+            className="mt-5 block text-sm text-accent"
+          >
+            {t.storyLink}: {story.title}
+          </a>
+        ))}
+
+      <div className="mt-5 flex gap-3">
+        <button
+          type="button"
+          className="font-mono text-[11px] text-muted hover:text-accent"
+          onClick={() => {
+            const labels = Object.fromEntries(
+              dataset.entities.map((item) => [item.id, locale === "es" && item.name_es ? item.name_es : item.name]),
+            );
+            downloadText(`${entity.id}-path.svg`, familyPathSvg(dataset, entity.id, year, labels), "image/svg+xml");
+          }}
+        >
+          {t.exportSvg}
+        </button>
+        <button
+          type="button"
+          className="font-mono text-[11px] text-muted hover:text-accent"
+          onClick={() => {
+            const labels = Object.fromEntries(
+              dataset.entities.map((item) => [item.id, locale === "es" && item.name_es ? item.name_es : item.name]),
+            );
+            void downloadSvgAsPng(`${entity.id}-path.png`, familyPathSvg(dataset, entity.id, year, labels));
+          }}
+        >
+          {t.exportPng}
+        </button>
+      </div>
     </aside>
   );
 }

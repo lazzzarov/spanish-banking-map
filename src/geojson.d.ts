@@ -4,7 +4,9 @@ declare module "*.geojson" {
     features: {
       type: "Feature";
       properties: { id: string; name: string; name_es: string };
-      geometry: GeoJSON.Polygon;
+      geometry:
+        | { type: "Polygon"; coordinates: number[][][] }
+        | { type: "MultiPolygon"; coordinates: number[][][][] };
     }[];
   };
   export default value;

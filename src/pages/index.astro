@@ -1,13 +1,28 @@
 ---
+import { getCollection } from "astro:content";
 import Explorer from "../components/Explorer";
 import Base from "../layouts/Base.astro";
 import banks from "../../data/banks.json";
 import sources from "../../data/sources.json";
 import regions from "../../data/regions.json";
+import contextEvents from "../../data/historical_context.json";
+
+const stories = (await getCollection("stories")).map((story) => ({
+  slug: story.id,
+  ...story.data,
+}));
 ---
 <Base
   title="Spain Banking Map"
   description="Interactive genealogy of Spanish banking consolidation, 2010–2026."
 >
-  <Explorer client:load dataset={banks} sources={sources} regions={regions} />
+  <Explorer
+    client:load
+    dataset={banks}
+    sources={sources}
+    regions={regions}
+    stories={stories}
+    contextEvents={contextEvents}
+    initialSearch={new URL(Astro.request.url).search}
+  />
 </Base>

@@ -19,6 +19,8 @@ const LocaleContext = createContext<LocaleState | null>(null);
 
 function detectLocale(): Locale {
   if (typeof window === "undefined") return "en";
+  const lang = new URLSearchParams(window.location.search).get("lang");
+  if (lang === "en" || lang === "es") return lang;
   const stored = window.localStorage.getItem("locale");
   if (stored === "en" || stored === "es") return stored;
   return navigator.language.toLowerCase().startsWith("es") ? "es" : "en";

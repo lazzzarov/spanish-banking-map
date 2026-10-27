@@ -1,9 +1,11 @@
 import { useLocale } from "./LocaleContext";
 
-export function SiteHeader({ current }: { current: "explore" | "sources" | "about" }) {
+export function SiteHeader({ current }: { current: "explore" | "sources" | "about" | "stories" | "stats" }) {
   const { locale, setLocale, t } = useLocale();
   const links = [
     { href: "/", id: "explore" as const, label: t.navExplore },
+    { href: "/stories", id: "stories" as const, label: t.navStories },
+    { href: "/stats", id: "stats" as const, label: t.navStats },
     { href: "/sources", id: "sources" as const, label: t.navSources },
     { href: "/about", id: "about" as const, label: t.navAbout },
   ];

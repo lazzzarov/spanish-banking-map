@@ -1,5 +1,6 @@
 import { MAX_YEAR, MIN_YEAR } from "../lib/bankGraph";
 import { YEAR_MARKS } from "../lib/timelineUtils";
+import { ERAS, type ContextEvent } from "../lib/types";
 import { useLocale } from "./LocaleContext";
 
 interface Props {
@@ -8,10 +9,13 @@ interface Props {
   onYear: (year: number) => void;
   onToggle: () => void;
   onReset: () => void;
+  context?: ContextEvent[];
+  onContext?: (event: ContextEvent) => void;
 }
 
-export function Timeline({ year, playing, onYear, onToggle, onReset }: Props) {
-  const { t } = useLocale();
+export function Timeline({ year, playing, onYear, onToggle, onReset, context = [], onContext }: Props) {
+  const { t, locale } = useLocale();
+  const nearby = context.filter((item) => Math.abs(item.year - year) <= 2);
 
   return (
     <section className="rounded-xl border border-line bg-panel px-5 py-4">
@@ -37,6 +41,21 @@ export function Timeline({ year, playing, onYear, onToggle, onReset }: Props) {
           </button>
         </div>
       </div>
+      <p className="mb-2 font-mono text-[10px] tracking-[0.16em] text-muted uppercase">{t.eraLabel}</p>
+      <div className="mb-3 flex flex-wrap gap-1.5">
+        {ERAS.map((era) => (
+          <button
+            key={era.id}
+            type="button"
+            onClick={() => onYear(era.to)}
+            className={`rounded-full border px-2 py-0.5 font-mono text-[10px] ${
+              year >= era.from && year <= era.to ? "border-accent text-accent" : "border-line text-muted"
+            }`}
+          >
+            {era.label}
+          </button>
+        ))}
+      </div>
       <input
         type="range"
         min={MIN_YEAR}
@@ -52,6 +71,27 @@ export function Timeline({ year, playing, onYear, onToggle, onReset }: Props) {
           </button>
         ))}
       </div>
+      {nearby.length > 0 && (
+        <div className="mt-4">
+          <p className="mb-2 font-mono text-[10px] tracking-[0.16em] text-muted uppercase">{t.contextTitle}</p>
+          <ul className="space-y-1.5">
+            {nearby.map((item) => (
+              <li key={item.id}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onYear(item.year);
+                    onContext?.(item);
+                  }}
+                  className="text-left text-xs text-accent hover:underline"
+                >
+                  {item.year} · {locale === "es" ? item.name_es : item.name}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </section>
   );
 }

@@ -1,6 +1,6 @@
 import { MAX_YEAR, MIN_YEAR } from "./bankGraph";
 
-export const YEAR_MARKS = [2009, 2012, 2017, 2021, 2026] as const;
+export const YEAR_MARKS = [1921, 1988, 2010, 2017, 2021, 2026] as const;
 
 export function clampYear(year: number): number {
   return Math.min(MAX_YEAR, Math.max(MIN_YEAR, Math.round(year)));
