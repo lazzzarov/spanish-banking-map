@@ -9,11 +9,21 @@ interface Props {
 const { title, description } = Astro.props;
 ---
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
+    <script is:inline>
+      (function () {
+        try {
+          var theme = localStorage.getItem("theme");
+          document.documentElement.setAttribute("data-theme", theme === "dark" ? "dark" : "light");
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

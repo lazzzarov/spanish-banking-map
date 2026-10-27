@@ -1,16 +1,3 @@
 ---
-import { getCollection } from "astro:content";
-import StoriesPage from "../../components/StoriesPage";
-import Base from "../../layouts/Base.astro";
-
-const stories = (await getCollection("stories")).map((story) => ({
-  slug: story.id,
-  ...story.data,
-}));
+return Astro.redirect("/?guides=1");
 ---
-<Base
-  title="Stories · Spain Banking Map"
-  description="Guided stories of Spanish banking consolidation families."
->
-  <StoriesPage client:load stories={stories} />
-</Base>

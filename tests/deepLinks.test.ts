@@ -9,14 +9,28 @@ describe("deep links", () => {
       entity: "caja-madrid",
       year: 2012,
       lang: "es",
+      guide: null,
+      guides: false,
     });
   });
 
   it("ignores invalid ids and years", () => {
     expect(parseExplorerQuery("?entity=nope&year=1900&lang=fr", ids)).toEqual({
       entity: null,
-      year: 2026,
+      year: null,
       lang: null,
+      guide: null,
+      guides: false,
+    });
+  });
+
+  it("parses a guide", () => {
+    expect(parseExplorerQuery("?guide=bankia-seven-cajas&guides=1", ids)).toEqual({
+      entity: null,
+      year: null,
+      lang: null,
+      guide: "bankia-seven-cajas",
+      guides: true,
     });
   });
 

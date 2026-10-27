@@ -3,7 +3,7 @@
     "dataset": "spanish-bank-consolidation",
     "version": "0.3",
     "as_of": "2026-10-27",
-    "scope": "curated historical genealogy of the eight featured groups, 1920–2026"
+    "scope": "curated historical genealogy of the eight featured groups plus selected surviving independents and cooperatives, 1920–2026"
   },
   "entities": [
     { "id": "caja-madrid", "name": "Caja Madrid", "aliases": ["Caja de Ahorros y Monte de Piedad de Madrid"], "type": "caja", "founded": 1702, "founded_precision": "year", "status": "historical_nonbank", "legal_status": "historical_nonbank", "banking_business_status": "transferred", "region": "MD", "hq": [-3.7, 40.42], "src": "bde2021" },
@@ -106,7 +106,13 @@
     { "id": "caixa-ontinyent", "name": "Caixa Ontinyent", "type": "caja", "founded": 1884, "status": "active", "banking_business_status": "active", "region": "VC", "hq": [-0.61, 38.82], "src": "bde-cajas", "group_role": "independent_caja" },
     { "id": "colonya-pollenca", "name": "Colonya–Caixa Pollença", "aliases": ["Colonya", "Caixa Pollença"], "type": "caja", "founded": 1880, "status": "active", "banking_business_status": "active", "region": "IB", "hq": [3.02, 39.88], "src": "bde-cajas", "group_role": "independent_caja" },
     { "id": "sareb", "name": "SAREB", "type": "bank", "founded": 2012, "status": "active", "region": "MD", "hq": [-3.7, 40.42], "src": "frob", "group_role": "asset_vehicle" },
-    { "id": "bpce", "name": "BPCE", "type": "bank", "founded": null, "status": "active", "region": null, "hq": null, "src": "cnmv-bpce-2026", "group_role": "foreign_shareholder" }
+    { "id": "bpce", "name": "BPCE", "type": "bank", "founded": null, "status": "active", "region": null, "hq": null, "src": "cnmv-bpce-2026", "group_role": "foreign_shareholder" },
+    { "id": "cajamar", "name": "Cajamar", "aliases": ["Grupo Cooperativo Cajamar", "Cajamar Caja Rural"], "type": "bank", "founded": 1963, "founded_precision": "year", "status": "active", "banking_business_status": "active", "region": "AN", "hq": [-2.46, 36.84], "src": "cajamar-corp", "group_role": "cooperative_head" },
+    { "id": "banca-march", "name": "Banca March", "type": "bank", "founded": 1926, "founded_precision": "year", "status": "active", "banking_business_status": "active", "region": "IB", "hq": [2.65, 39.57], "src": "banca-march", "group_role": "independent_bank" },
+    { "id": "grupo-caja-rural", "name": "Grupo Caja Rural", "aliases": ["Asociación Española de Cajas Rurales"], "type": "bank", "founded": null, "status": "active", "banking_business_status": "active", "region": "MD", "hq": [-3.69, 40.44], "src": "grupo-caja-rural", "group_role": "cooperative_head" },
+    { "id": "caja-almendralejo", "name": "Caja Rural de Almendralejo", "aliases": ["Caja Almendralejo"], "type": "bank", "founded": null, "status": "active", "banking_business_status": "active", "region": "EX", "hq": [-6.34, 38.68], "src": "caja-almendralejo", "group_role": "cooperative_head" },
+    { "id": "banca-pueyo", "name": "Banca Pueyo", "type": "bank", "founded": 1965, "founded_precision": "year", "status": "active", "banking_business_status": "active", "region": "EX", "hq": [-5.8, 38.97], "src": "banca-pueyo", "group_role": "independent_bank" },
+    { "id": "arquia", "name": "Arquia Banca", "aliases": ["Arquia Bank", "Caja de Arquitectos"], "type": "bank", "founded": 1983, "founded_precision": "year", "status": "active", "banking_business_status": "active", "region": "CT", "hq": [2.17, 41.39], "src": "arquia", "group_role": "cooperative_head" }
   ],
   "events": [
     { "id": "event-caja-madrid-bfa-2010", "from": "caja-madrid", "to": "bfa", "year": 2010, "mechanism": "sip_formation", "outcome": "completed", "lineage": true, "effective_date": "2010-06-29", "date_precision": "day", "src": "bde2010" },

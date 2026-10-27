@@ -232,5 +232,53 @@
     "publisher": "Editorial",
     "note": "Verify before citing. Shown in the UI as unverified.",
     "verification_status": "Unverified"
+  },
+  {
+    "id": "cajamar-corp",
+    "url": "https://www.cajamar.es",
+    "title": "Cajamar institutional history (Caja Rural de Almería, 1963)",
+    "title_es": "Historia institucional de Cajamar (Caja Rural de Almería, 1963)",
+    "publisher": "Cajamar",
+    "verification_status": "Verified — Company disclosure"
+  },
+  {
+    "id": "banca-march",
+    "url": "https://www.bancamarch.es",
+    "title": "Banca March institutional history (founded 1926, Palma)",
+    "title_es": "Historia institucional de Banca March (fundada en 1926, Palma)",
+    "publisher": "Banca March",
+    "verification_status": "Verified — Company disclosure"
+  },
+  {
+    "id": "grupo-caja-rural",
+    "url": "https://www.ruralvia.com",
+    "title": "Grupo Caja Rural / Ruralvía association of rural cooperative banks",
+    "title_es": "Grupo Caja Rural / Ruralvía, asociación de cajas rurales",
+    "publisher": "Grupo Caja Rural",
+    "verification_status": "Verified — Company disclosure"
+  },
+  {
+    "id": "caja-almendralejo",
+    "url": "https://www.crea.es",
+    "title": "Caja Rural de Almendralejo (Caja Almendralejo)",
+    "title_es": "Caja Rural de Almendralejo (Caja Almendralejo)",
+    "publisher": "Caja Rural de Almendralejo",
+    "verification_status": "Verified — Company disclosure"
+  },
+  {
+    "id": "banca-pueyo",
+    "url": "https://www.bancapueyo.es",
+    "title": "Banca Pueyo institutional history (founded 1965)",
+    "title_es": "Historia institucional de Banca Pueyo (fundada en 1965)",
+    "publisher": "Banca Pueyo",
+    "verification_status": "Verified — Company disclosure"
+  },
+  {
+    "id": "arquia",
+    "url": "https://www.arquia.com",
+    "title": "Arquia Banca / Caja de Arquitectos (founded 1983)",
+    "title_es": "Arquia Banca / Caja de Arquitectos (fundada en 1983)",
+    "publisher": "Arquia Banca",
+    "verification_status": "Verified — Company disclosure"
   }
 ]

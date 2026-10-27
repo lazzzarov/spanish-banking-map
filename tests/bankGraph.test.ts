@@ -70,6 +70,12 @@ describe("lineage rollup", () => {
     expect(pathToGroup(dataset, "caja-espana", 2014)).toEqual(["caja-espana", "caja-espana-duero", "ceiss"]);
     expect(currentGroupOf(dataset, "ceiss", 2018)).toBe("unicaja");
   });
+
+  it("keeps named surviving heads independent", () => {
+    expect(currentGroupOf(dataset, "cajamar")).toBe("cajamar");
+    expect(currentGroupOf(dataset, "banca-march")).toBe("banca-march");
+    expect(currentGroupOf(dataset, "caixa-ontinyent")).toBe("caixa-ontinyent");
+  });
 });
 
 describe("genealogy stats", () => {

@@ -1,7 +1,7 @@
-import { FEATURED_GROUPS, GROUP_COLORS, type FeaturedGroup, type GraphLayer } from "../lib/types";
+import { FEATURED_GROUPS, OTHER_SURVIVORS, type GraphLayer } from "../lib/types";
 import { useLocale } from "./LocaleContext";
 
-const LABELS: Record<FeaturedGroup, string> = {
+const GROUP_LABELS: Record<string, string> = {
   caixabank: "CaixaBank",
   santander: "Santander",
   bbva: "BBVA",
@@ -10,20 +10,26 @@ const LABELS: Record<FeaturedGroup, string> = {
   ibercaja: "Ibercaja",
   kutxabank: "Kutxabank",
   abanca: "Abanca",
+  cajamar: "Cajamar",
+  "banca-march": "Banca March",
+  "grupo-caja-rural": "Grupo Caja Rural",
+  "caja-almendralejo": "Caja Almendralejo",
+  "banca-pueyo": "Banca Pueyo",
+  arquia: "Arquia Banca",
 };
 
+export type GroupFilter = string | "surviving" | null;
+
 interface Props {
-  selected: FeaturedGroup | null;
-  onChange: (group: FeaturedGroup | null) => void;
-  survivingOnly: boolean;
-  onSurviving: (value: boolean) => void;
+  selected: GroupFilter;
+  onChange: (group: GroupFilter) => void;
   layer: GraphLayer;
   onLayer: (layer: GraphLayer) => void;
 }
 
 const LAYERS: GraphLayer[] = ["business", "ownership", "asset", "context"];
 
-export function FilterControls({ selected, onChange, survivingOnly, onSurviving, layer, onLayer }: Props) {
+export function FilterControls({ selected, onChange, layer, onLayer }: Props) {
   const { t } = useLocale();
   const layerLabel: Record<GraphLayer, string> = {
     business: t.layerBusiness,
@@ -31,65 +37,55 @@ export function FilterControls({ selected, onChange, survivingOnly, onSurviving,
     asset: t.layerAsset,
     context: t.layerContext,
   };
+
   return (
-    <div className="space-y-3">
-      <div className="flex flex-wrap gap-2">
-        <button
-          type="button"
-          onClick={() => onChange(null)}
-          className={`rounded-full border px-3 py-1 font-mono text-[11px] ${
-            selected === null && !survivingOnly ? "border-accent text-accent" : "border-line text-muted"
-          }`}
-        >
-          {t.filterAll}
-        </button>
-        {FEATURED_GROUPS.map((group) => (
-          <button
-            key={group}
-            type="button"
-            onClick={() => {
-              onSurviving(false);
-              onChange(selected === group ? null : group);
-            }}
-            className={`rounded-full border px-3 py-1 font-mono text-[11px] ${
-              selected === group ? "border-current text-fog" : "border-line text-muted"
-            }`}
-            style={{ color: selected === group ? GROUP_COLORS[group] : undefined }}
-          >
-            <span
-              className="mr-1.5 inline-block h-1.5 w-1.5 rounded-full"
-              style={{ background: GROUP_COLORS[group] }}
-            />
-            {LABELS[group]}
-          </button>
-        ))}
-        <button
-          type="button"
-          onClick={() => {
-            onChange(null);
-            onSurviving(!survivingOnly);
+    <div className="flex flex-col gap-3 md:flex-row">
+      <label className="flex-1">
+        <span className="mb-1 block font-mono text-[10px] tracking-[0.16em] text-muted uppercase">
+          {t.groupsTitle}
+        </span>
+        <select
+          value={selected ?? ""}
+          onChange={(event) => {
+            const value = event.target.value;
+            if (value === "") onChange(null);
+            else if (value === "surviving") onChange("surviving");
+            else onChange(value);
           }}
-          className={`rounded-full border px-3 py-1 font-mono text-[11px] ${
-            survivingOnly ? "border-accent text-accent" : "border-line text-muted"
-          }`}
+          className="w-full rounded-lg border border-line bg-panel px-3 py-2 text-sm text-fog outline-none focus:border-accent"
         >
-          {t.filterSurviving}
-        </button>
-      </div>
-      <div className="flex flex-wrap gap-2">
-        {LAYERS.map((item) => (
-          <button
-            key={item}
-            type="button"
-            onClick={() => onLayer(item)}
-            className={`rounded border px-2 py-1 font-mono text-[10px] ${
-              layer === item ? "border-accent text-accent" : "border-line text-muted"
-            }`}
-          >
-            {layerLabel[item]}
-          </button>
-        ))}
-      </div>
+          <option value="">{t.filterAll}</option>
+          {FEATURED_GROUPS.map((group) => (
+            <option key={group} value={group}>
+              {GROUP_LABELS[group]}
+            </option>
+          ))}
+          <option value="surviving">{t.filterSurviving}</option>
+          <optgroup label={t.filterOther}>
+            {OTHER_SURVIVORS.map((group) => (
+              <option key={group} value={group}>
+                {GROUP_LABELS[group]}
+              </option>
+            ))}
+          </optgroup>
+        </select>
+      </label>
+      <label className="flex-1">
+        <span className="mb-1 block font-mono text-[10px] tracking-[0.16em] text-muted uppercase">
+          {t.layerTitle}
+        </span>
+        <select
+          value={layer}
+          onChange={(event) => onLayer(event.target.value as GraphLayer)}
+          className="w-full rounded-lg border border-line bg-panel px-3 py-2 text-sm text-fog outline-none focus:border-accent"
+        >
+          {LAYERS.map((item) => (
+            <option key={item} value={item}>
+              {layerLabel[item]}
+            </option>
+          ))}
+        </select>
+      </label>
     </div>
   );
 }

@@ -50,7 +50,13 @@ export interface Entity {
   region: string | null;
   hq: [number, number] | null;
   src: string;
-  group_role?: "featured_head" | "foreign_shareholder" | "independent_caja" | "asset_vehicle";
+  group_role?:
+    | "featured_head"
+    | "foreign_shareholder"
+    | "independent_caja"
+    | "independent_bank"
+    | "cooperative_head"
+    | "asset_vehicle";
   publication_ready?: boolean;
 }
 
@@ -136,15 +142,32 @@ export const FEATURED_GROUPS = [
 
 export type FeaturedGroup = (typeof FEATURED_GROUPS)[number];
 
-export const GROUP_COLORS: Record<FeaturedGroup, string> = {
-  caixabank: "#7dd3fc",
-  santander: "#fb7185",
-  bbva: "#c4b5fd",
-  sabadell: "#34d399",
-  unicaja: "#fbbf24",
-  ibercaja: "#f9a8d4",
-  kutxabank: "#38bdf8",
-  abanca: "#d8b4fe",
+export const OTHER_SURVIVORS = [
+  "cajamar",
+  "banca-march",
+  "grupo-caja-rural",
+  "caja-almendralejo",
+  "banca-pueyo",
+  "arquia",
+] as const;
+
+export type OtherSurvivor = (typeof OTHER_SURVIVORS)[number];
+
+export const GROUP_COLORS: Record<string, string> = {
+  caixabank: "#1f6feb",
+  santander: "#e11d48",
+  bbva: "#6d28d9",
+  sabadell: "#059669",
+  unicaja: "#d97706",
+  ibercaja: "#db2777",
+  kutxabank: "#0284c7",
+  abanca: "#7c3aed",
+  cajamar: "#0f766e",
+  "banca-march": "#1e3a5f",
+  "grupo-caja-rural": "#3f6212",
+  "caja-almendralejo": "#9a3412",
+  "banca-pueyo": "#0369a1",
+  arquia: "#4c1d95",
 };
 
 export const MECHANISM_LINEAGE: Record<Mechanism, boolean> = {

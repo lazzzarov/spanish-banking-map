@@ -9,10 +9,14 @@ import {
 import { messages, type Messages } from "../i18n";
 import type { Locale } from "../lib/types";
 
+export type Theme = "light" | "dark";
+
 interface LocaleState {
   locale: Locale;
   t: Messages;
   setLocale: (locale: Locale) => void;
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
 }
 
 const LocaleContext = createContext<LocaleState | null>(null);
@@ -26,25 +30,41 @@ function detectLocale(): Locale {
   return navigator.language.toLowerCase().startsWith("es") ? "es" : "en";
 }
 
+function detectTheme(): Theme {
+  if (typeof window === "undefined") return "light";
+  return window.localStorage.getItem("theme") === "dark" ? "dark" : "light";
+}
+
 export function LocaleProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>("en");
+  const [theme, setThemeState] = useState<Theme>("light");
 
   useEffect(() => {
     setLocaleState(detectLocale());
+    setThemeState(detectTheme());
   }, []);
 
   useEffect(() => {
     document.documentElement.lang = locale;
   }, [locale]);
 
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
+
   const setLocale = (next: Locale) => {
     setLocaleState(next);
     window.localStorage.setItem("locale", next);
   };
 
+  const setTheme = (next: Theme) => {
+    setThemeState(next);
+    window.localStorage.setItem("theme", next);
+  };
+
   const value = useMemo(
-    () => ({ locale, t: messages[locale], setLocale }),
-    [locale],
+    () => ({ locale, t: messages[locale], setLocale, theme, setTheme }),
+    [locale, theme],
   );
 
   return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>;

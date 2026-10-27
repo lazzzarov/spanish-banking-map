@@ -2,7 +2,7 @@ import { geoMercator, geoPath } from "d3";
 import { useMemo } from "react";
 import { currentGroupOf, groupColor } from "../lib/bankGraph";
 import { projectHq, shiftCanaries, type RegionCollection } from "../lib/geo";
-import type { BankDataset, Entity } from "../lib/types";
+import { dashFor, type BankDataset, type Entity, type Event, type GraphLayer } from "../lib/types";
 import { useLocale } from "./LocaleContext";
 
 interface Props {
@@ -13,6 +13,9 @@ interface Props {
   highlight: string[];
   groupFilter: string | null;
   survivingOnly?: boolean;
+  yearEvents: Event[];
+  layer: GraphLayer;
+  emptyMessage?: string;
   onSelect: (id: string) => void;
 }
 
@@ -24,9 +27,13 @@ export function SpainMap({
   highlight,
   groupFilter,
   survivingOnly = false,
+  yearEvents,
+  layer,
+  emptyMessage,
   onSelect,
 }: Props) {
   const { t, locale } = useLocale();
+  const byId = useMemo(() => new Map(dataset.entities.map((entity) => [entity.id, entity])), [dataset.entities]);
 
   const prepared = useMemo(
     () => ({
@@ -81,9 +88,17 @@ export function SpainMap({
     return true;
   });
 
+  const activeIds = new Set(yearEvents.flatMap((event) => [event.from, event.to]));
+
   const regionById = (regionId: string) => {
     const match = dataset.entities.find((entity) => entity.region === regionId);
     return match?.id;
+  };
+
+  const pointOf = (id: string) => {
+    const entity = byId.get(id);
+    if (!entity?.hq) return null;
+    return projection(projectHq(entity.hq, entity.region));
   };
 
   return (
@@ -101,9 +116,9 @@ export function SpainMap({
             <path
               key={feature.properties.id}
               d={path(feature as GeoJSON.Feature) ?? ""}
-              fill={empty ? "#1a2030" : groupColor(group)}
-              fillOpacity={faded ? 0.07 : empty ? 0.55 : 0.22}
-              stroke="#3a4558"
+              fill={empty ? "var(--map-empty)" : groupColor(group)}
+              fillOpacity={faded ? 0.07 : empty ? 0.7 : 0.2}
+              stroke="var(--map-stroke)"
               strokeWidth={0.8}
               className="cursor-pointer"
               onClick={() => {
@@ -111,38 +126,57 @@ export function SpainMap({
                 if (first) onSelect(first);
               }}
             >
-              <title>
-                {locale === "es" ? feature.properties.name_es : feature.properties.name}
-              </title>
+              <title>{locale === "es" ? feature.properties.name_es : feature.properties.name}</title>
             </path>
           );
         })}
+        {layer !== "context" &&
+          yearEvents.map((event) => {
+            const from = pointOf(event.from);
+            const to = pointOf(event.to);
+            if (!from || !to) return null;
+            return (
+              <line
+                key={event.id}
+                x1={from[0]}
+                y1={from[1]}
+                x2={to[0]}
+                y2={to[1]}
+                stroke="var(--accent)"
+                strokeWidth="1.6"
+                strokeDasharray={dashFor(event.mechanism)}
+                opacity="0.85"
+              />
+            );
+          })}
         {markers.map((entity) => {
           const point = projection(projectHq(entity.hq, entity.region));
           if (!point) return null;
           const group = currentGroupOf(dataset, entity.id, year);
           const onPath = highlight.includes(entity.id);
           const selected = selectedId === entity.id;
+          const active = activeIds.has(entity.id);
           return (
-            <circle
-              key={entity.id}
-              cx={point[0]}
-              cy={point[1]}
-              r={selected ? 6 : onPath ? 5 : 3.2}
-              fill={groupColor(group)}
-              stroke={selected || onPath ? "#f8fafc" : "#07080b"}
-              strokeWidth={selected ? 2 : 1}
-              className="cursor-pointer"
-              onClick={() => onSelect(entity.id)}
-            >
-              <title>{locale === "es" && entity.name_es ? entity.name_es : entity.name}</title>
-            </circle>
+            <g key={entity.id} transform={`translate(${point[0]}, ${point[1]})`}>
+              {active && <circle r="8" fill="var(--accent)" className="hq-pulse" />}
+              <circle
+                r={selected ? 6 : onPath || active ? 5 : 3.2}
+                fill={groupColor(group)}
+                stroke={selected || onPath ? "var(--heading)" : "var(--dot-stroke)"}
+                strokeWidth={selected ? 2 : 1}
+                className="cursor-pointer"
+                onClick={() => onSelect(entity.id)}
+              >
+                <title>{locale === "es" && entity.name_es ? entity.name_es : entity.name}</title>
+              </circle>
+            </g>
           );
         })}
-        <text x="78" y="456" fill="#8b93a7" fontSize="10" fontFamily="IBM Plex Mono, monospace">
+        <text x="78" y="456" fill="var(--muted)" fontSize="10" fontFamily="IBM Plex Mono, monospace">
           CN
         </text>
       </svg>
+      {emptyMessage && <p className="mt-2 text-sm text-muted">{emptyMessage}</p>}
       <p className="mt-auto pt-2 font-mono text-[10px] text-muted">{t.noRegion}: BPCE</p>
     </div>
   );

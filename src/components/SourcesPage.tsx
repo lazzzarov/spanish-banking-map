@@ -9,7 +9,7 @@ function Inner({ sources }: { sources: SourceRecord[] }) {
       <SiteHeader current="sources" />
       <main className="mx-auto max-w-3xl px-5 py-10 md:px-8">
         <p className="font-mono text-[11px] tracking-[0.22em] text-accent uppercase">{t.navSources}</p>
-        <h1 className="mt-3 text-3xl text-white md:text-4xl">{t.sourcesTitle}</h1>
+        <h1 className="mt-3 text-3xl text-heading md:text-4xl">{t.sourcesTitle}</h1>
         <p className="mt-4 text-sm text-muted">{t.scopeCaveat}</p>
         <ul className="mt-8 space-y-4">
           {sources.map((source) => (

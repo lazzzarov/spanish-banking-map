@@ -1,11 +1,13 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { interpolate } from "../i18n";
-import { currentGroupOf, entityMap, MAX_YEAR, MIN_YEAR, pathToGroup } from "../lib/bankGraph";
-import { explorerHref, parseExplorerQuery, writeExplorerQuery } from "../lib/deepLinks";
+import { currentGroupOf, entityMap, eventsInYear, MAX_YEAR, MIN_YEAR, pathToGroup, storyBeats } from "../lib/bankGraph";
+import { explorerHref, guideKey, parseExplorerQuery, writeExplorerQuery } from "../lib/deepLinks";
 import type { RegionCollection } from "../lib/geo";
-import { nextYear } from "../lib/timelineUtils";
+import { nextPlayableYear } from "../lib/timelineUtils";
 import {
+  ERAS,
   FEATURED_GROUPS,
+  OTHER_SURVIVORS,
   type BankDataset,
   type ContextEvent,
   type FeaturedGroup,
@@ -14,11 +16,10 @@ import {
   type SourceRecord,
 } from "../lib/types";
 import { BankDetails } from "./BankDetails";
-import { BankingTree } from "./BankingTree";
-import { FilterControls } from "./FilterControls";
+import { FilterControls, type GroupFilter } from "./FilterControls";
 import { GenealogyStats } from "./GenealogyStats";
+import { GuideModal } from "./GuideModal";
 import { LocaleProvider, useLocale } from "./LocaleContext";
-import { MechanismLegend } from "./MechanismLegend";
 import { SearchBar } from "./SearchBar";
 import { SiteHeader } from "./SiteHeader";
 import { SpainMap } from "./SpainMap";
@@ -32,6 +33,7 @@ export interface StoryLink {
   year: number;
   locale: Locale;
   title: string;
+  body: string;
 }
 
 interface Props {
@@ -56,22 +58,39 @@ function readQuery(dataset: BankDataset, search: string) {
 function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [], initialSearch = "" }: Props) {
   const { t, locale, setLocale } = useLocale();
   const initial = useMemo(() => readQuery(dataset, initialSearch), [dataset, initialSearch]);
-  const [year, setYear] = useState(initial.query.year);
-  const [playing, setPlaying] = useState(false);
+  const linked = Boolean(
+    initial.query.entity || initial.query.year != null || initial.query.guide || initial.query.guides,
+  );
+  const [year, setYear] = useState(initial.query.year ?? (linked ? MAX_YEAR : MIN_YEAR));
+  const [playing, setPlaying] = useState(!linked);
   const [selectedId, setSelectedId] = useState<string | null>(initial.query.entity);
-  const [groupFilter, setGroupFilter] = useState<FeaturedGroup | null>(initial.groupFilter);
-  const [survivingOnly, setSurvivingOnly] = useState(false);
+  const [groupFilter, setGroupFilter] = useState<GroupFilter>(initial.groupFilter);
   const [layer, setLayer] = useState<GraphLayer>("business");
   const [contextNote, setContextNote] = useState<ContextEvent | null>(null);
-  const [mobileTab, setMobileTab] = useState<"map" | "tree">("map");
   const [copied, setCopied] = useState(false);
   const [ready, setReady] = useState(false);
+  const [guide, setGuide] = useState<string | null>(initial.query.guide);
+  const [guidesOpen, setGuidesOpen] = useState(initial.query.guides && !initial.query.guide);
+  const [guideStep, setGuideStep] = useState(0);
+
+  const pausePlay = () => setPlaying(false);
+
+  const setYearFromUser = (next: number) => {
+    pausePlay();
+    setYear(next);
+  };
 
   useLayoutEffect(() => {
     const fromWindow = readQuery(dataset, window.location.search || initialSearch);
+    const windowLinked = Boolean(
+      fromWindow.query.entity || fromWindow.query.year != null || fromWindow.query.guide || fromWindow.query.guides,
+    );
     setSelectedId(fromWindow.query.entity);
     setGroupFilter(fromWindow.groupFilter);
-    setYear(fromWindow.query.year);
+    setYear(fromWindow.query.year ?? (windowLinked ? MAX_YEAR : MIN_YEAR));
+    setPlaying(!windowLinked);
+    setGuide(fromWindow.query.guide);
+    setGuidesOpen(fromWindow.query.guides && !fromWindow.query.guide);
     if (fromWindow.query.lang) setLocale(fromWindow.query.lang);
     else if (initial.query.lang) setLocale(initial.query.lang);
     setReady(true);
@@ -79,40 +98,82 @@ function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [],
 
   useEffect(() => {
     if (!ready) return;
-    writeExplorerQuery({ entity: selectedId, year, lang: locale });
-  }, [ready, selectedId, year, locale]);
+    writeExplorerQuery({
+      entity: selectedId,
+      year,
+      lang: locale,
+      guide,
+      guides: guidesOpen && !guide,
+    });
+  }, [ready, selectedId, year, locale, guide, guidesOpen]);
 
   useEffect(() => {
     if (!playing) return;
     const timer = window.setInterval(() => {
       setYear((current) => {
-        const next = nextYear(current);
+        const next = nextPlayableYear(dataset.events, contextEvents, current, layer);
         if (next >= MAX_YEAR) setPlaying(false);
         return next;
       });
     }, 700);
     return () => window.clearInterval(timer);
-  }, [playing]);
+  }, [playing, dataset.events, contextEvents, layer]);
+
+  const currentGuide = stories.find((story) => story.locale === locale && guideKey(story.slug) === guide);
+  const beats = currentGuide
+    ? storyBeats(currentGuide.body, { entityId: currentGuide.entityId, year: currentGuide.year })
+    : [];
+
+  useEffect(() => {
+    const beat = beats[guideStep];
+    if (!beat) return;
+    setSelectedId(beat.entityId);
+    setYear(beat.year);
+    setPlaying(false);
+  }, [guide, guideStep, currentGuide?.slug]);
 
   const highlight = useMemo(
     () => (selectedId ? pathToGroup(dataset, selectedId, year) : []),
     [dataset, selectedId, year],
   );
   const selected = selectedId ? entityMap(dataset).get(selectedId) ?? null : null;
+  const yearEvents = useMemo(() => eventsInYear(dataset.events, year, layer), [dataset.events, year, layer]);
+  const era = ERAS.find((item) => year >= item.from && year <= item.to);
+  const caption =
+    yearEvents.length > 0
+      ? yearEvents
+          .slice(0, 3)
+          .map((event) => {
+            const from = entityMap(dataset).get(event.from);
+            const to = entityMap(dataset).get(event.to);
+            return `${from?.name ?? event.from} → ${to?.name ?? event.to}`;
+          })
+          .join(" · ")
+      : interpolate(t.yearEventsEmpty, { year });
+
   const select = (id: string) => {
+    pausePlay();
     setSelectedId(id);
     const group = currentGroupOf(dataset, id);
-    if (FEATURED_GROUPS.includes(group as FeaturedGroup)) {
-      setGroupFilter(group as FeaturedGroup);
+    if (FEATURED_GROUPS.includes(group as FeaturedGroup) || OTHER_SURVIVORS.includes(group as (typeof OTHER_SURVIVORS)[number])) {
+      setGroupFilter(group);
     }
   };
-  const selectFromSearch = (id: string) => {
-    select(id);
-    setMobileTab("tree");
+
+  const openGuide = (key: string) => {
+    setGuide(key);
+    setGuideStep(0);
+    setGuidesOpen(false);
+    setPlaying(false);
   };
 
   const copyLink = async () => {
-    const href = `${window.location.origin}${explorerHref({ entity: selectedId, year, lang: locale })}`;
+    const href = `${window.location.origin}${explorerHref({
+      entity: selectedId,
+      year,
+      lang: locale,
+      guide,
+    })}`;
     try {
       await navigator.clipboard.writeText(href);
       setCopied(true);
@@ -124,107 +185,28 @@ function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [],
 
   return (
     <div className="min-h-screen">
-      <SiteHeader current="explore" />
-      <main className="mx-auto max-w-6xl px-5 py-8 md:px-8">
+      <SiteHeader current={guide || guidesOpen ? "stories" : "explore"} />
+      <main className="mx-auto max-w-6xl px-5 py-6 md:px-8">
         <div className="flex items-start justify-between gap-4">
           <p className="font-mono text-[11px] tracking-[0.22em] text-accent uppercase">{t.heroKicker}</p>
-          <button
-            type="button"
-            onClick={copyLink}
-            className="font-mono text-[11px] text-muted hover:text-accent"
-          >
+          <button type="button" onClick={copyLink} className="font-mono text-[11px] text-muted hover:text-accent">
             {copied ? t.copied : t.copyLink}
           </button>
         </div>
-        <h1 className="mt-3 text-3xl leading-none tracking-tight text-white md:whitespace-nowrap md:text-4xl lg:text-5xl">
+        <h1 className="mt-3 text-3xl leading-none tracking-tight text-heading md:text-4xl lg:text-5xl">
           {t.heroTitle}
         </h1>
-        <p className="mt-4 max-w-2xl text-sm text-muted md:text-base">
+        <p className="mt-3 max-w-2xl text-sm text-muted md:text-base">
           {interpolate(t.heroLead, { count: dataset.entities.length })}
         </p>
-        <p className="mt-3 max-w-2xl text-xs text-muted">{t.scopeCaveat}</p>
-
-        <div className="mt-8">
-          <StillHappening sources={sources} />
-        </div>
-
-        <div className="mt-8">
-          <SearchBar entities={dataset.entities} onSelect={selectFromSearch} />
-        </div>
+        <p className="mt-2 max-w-2xl text-xs text-muted">{t.scopeCaveat}</p>
 
         <div className="mt-6">
-          <FilterControls
-            selected={groupFilter}
-            onChange={(group) => {
-              setSurvivingOnly(false);
-              setGroupFilter(group);
-            }}
-            survivingOnly={survivingOnly}
-            onSurviving={setSurvivingOnly}
-            layer={layer}
-            onLayer={(next) => {
-              setLayer(next);
-              if (next !== "context") setContextNote(null);
-            }}
-          />
-        </div>
-
-        <div className="mt-4 flex gap-2 md:hidden">
-          <button
-            type="button"
-            onClick={() => setMobileTab("map")}
-            className={`flex-1 rounded-lg border px-3 py-2 font-mono text-[11px] ${
-              mobileTab === "map" ? "border-accent text-accent" : "border-line text-muted"
-            }`}
-          >
-            {t.tabMap}
-          </button>
-          <button
-            type="button"
-            onClick={() => setMobileTab("tree")}
-            className={`flex-1 rounded-lg border px-3 py-2 font-mono text-[11px] ${
-              mobileTab === "tree" ? "border-accent text-accent" : "border-line text-muted"
-            }`}
-          >
-            {t.tabTree}
-          </button>
-        </div>
-
-        <section className="mt-4 grid gap-4 md:grid-cols-2">
-          <div className={`rounded-xl border border-line bg-panel p-4 ${mobileTab === "map" ? "block" : "hidden"} md:block`}>
-            <SpainMap
-              dataset={dataset}
-              regions={regions}
-              year={year}
-              selectedId={selectedId}
-              highlight={highlight}
-              groupFilter={groupFilter}
-              survivingOnly={survivingOnly}
-              onSelect={select}
-            />
-          </div>
-          <div className={`rounded-xl border border-line bg-panel p-4 ${mobileTab === "tree" ? "block" : "hidden"} md:block`}>
-            <BankingTree
-              dataset={dataset}
-              year={year}
-              selectedId={selectedId}
-              highlight={highlight}
-              groupFilter={groupFilter}
-              onSelect={select}
-              onSelectGroup={setGroupFilter}
-            />
-          </div>
-        </section>
-
-        <div className="mt-4">
-          <GenealogyStats dataset={dataset} year={year} />
-        </div>
-
-        <div className="mt-4">
           <Timeline
             year={year}
             playing={playing}
-            onYear={setYear}
+            caption={era ? `${era.label}. ${caption}` : caption}
+            onYear={setYearFromUser}
             onToggle={() => {
               if (!playing && year >= MAX_YEAR) setYear(MIN_YEAR);
               setPlaying((value) => !value);
@@ -237,32 +219,89 @@ function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [],
             onContext={(item) => {
               setLayer("context");
               setContextNote(item);
+              setYearFromUser(item.year);
             }}
           />
-        {contextNote && (
-          <div className="mt-3 rounded-xl border border-line bg-panel px-5 py-4">
-            <p className="font-mono text-[10px] tracking-[0.16em] text-accent uppercase">{contextNote.year}</p>
-            <h3 className="mt-1 text-lg text-white">{locale === "es" ? contextNote.name_es : contextNote.name}</h3>
-            <p className="mt-2 text-sm text-fog/90">
-              {locale === "es" ? contextNote.description_es : contextNote.description}
-            </p>
+        </div>
+
+        <div className="mt-5 grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+          <SearchBar entities={dataset.entities} onSelect={select} />
+          <FilterControls
+            selected={groupFilter}
+            onChange={(group) => setGroupFilter(group)}
+            layer={layer}
+            onLayer={(next) => {
+              setLayer(next);
+              if (next !== "context") setContextNote(null);
+            }}
+          />
+        </div>
+
+        <section className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.9fr)]">
+          <div className="rounded-xl border border-line bg-panel p-4">
+            <SpainMap
+              dataset={dataset}
+              regions={regions}
+              year={year}
+              selectedId={selectedId}
+              highlight={highlight}
+              groupFilter={groupFilter === "surviving" ? null : groupFilter}
+              survivingOnly={groupFilter === "surviving"}
+              yearEvents={yearEvents}
+              layer={layer}
+              emptyMessage={yearEvents.length === 0 && layer !== "context" ? t.layerEmpty : undefined}
+              onSelect={select}
+            />
+            {contextNote && layer === "context" && (
+              <div className="mt-3 rounded-xl border border-line bg-panel-2 px-4 py-3">
+                <p className="font-mono text-[10px] tracking-[0.16em] text-accent uppercase">{contextNote.year}</p>
+                <h3 className="mt-1 text-lg text-heading">
+                  {locale === "es" ? contextNote.name_es : contextNote.name}
+                </h3>
+                <p className="mt-2 text-sm text-fog">
+                  {locale === "es" ? contextNote.description_es : contextNote.description}
+                </p>
+              </div>
+            )}
+          </div>
+          <BankDetails
+            dataset={dataset}
+            sources={sources}
+            stories={stories}
+            entity={selected}
+            year={year}
+            yearEvents={yearEvents}
+            layer={layer}
+            groupFilter={groupFilter}
+            highlight={highlight}
+            onSelect={select}
+            onGuide={openGuide}
+          />
+        </section>
+
+        <div className="mt-4">
+          <GenealogyStats dataset={dataset} year={year} />
+        </div>
+
+        {year >= 2025 && (
+          <div className="mt-4">
+            <StillHappening sources={sources} />
           </div>
         )}
-        </div>
-
-        <div className="mt-6 rounded-xl border border-line bg-panel px-5 py-4">
-          <MechanismLegend />
-        </div>
       </main>
 
-      <BankDetails
-        dataset={dataset}
-        sources={sources}
+      <GuideModal
         stories={stories}
-        entity={selected}
-        year={year}
-        onClose={() => setSelectedId(null)}
-        onSelect={select}
+        guide={guide}
+        pickerOpen={guidesOpen}
+        step={guideStep}
+        onPick={openGuide}
+        onClose={() => {
+          setGuide(null);
+          setGuidesOpen(false);
+          setGuideStep(0);
+        }}
+        onStep={setGuideStep}
       />
     </div>
   );

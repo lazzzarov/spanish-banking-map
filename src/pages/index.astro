@@ -10,6 +10,7 @@ import contextEvents from "../../data/historical_context.json";
 const stories = (await getCollection("stories")).map((story) => ({
   slug: story.id,
   ...story.data,
+  body: story.body,
 }));
 ---
 <Base

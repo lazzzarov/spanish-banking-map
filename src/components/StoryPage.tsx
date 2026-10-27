@@ -23,7 +23,7 @@ function Inner({ title, year, entityId, html, locale: storyLocale }: Props) {
       <SiteHeader current="stories" />
       <main className="mx-auto max-w-3xl px-5 py-10 md:px-8">
         <p className="font-mono text-[11px] tracking-[0.22em] text-accent uppercase">{year}</p>
-        <h1 className="mt-3 text-3xl text-white md:text-4xl">{title}</h1>
+        <h1 className="mt-3 text-3xl text-heading md:text-4xl">{title}</h1>
         <div
           className="mt-8 space-y-4 text-sm leading-7 text-fog/90"
           dangerouslySetInnerHTML={{ __html: html }}

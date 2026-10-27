@@ -30,6 +30,12 @@ const madridPath = pathToGroup(dataset, "caja-madrid").join(" → ");
 if (pathToGroup(dataset, "caja-madrid").join(",") !== "caja-madrid,bfa,bankia,caixabank") {
   errors.push(`Caja Madrid path should be caja-madrid → bfa → bankia → caixabank (got ${madridPath})`);
 }
+if (currentGroupOf(dataset, "cajamar") !== "cajamar") {
+  errors.push("Cajamar must remain its own surviving head");
+}
+if (currentGroupOf(dataset, "banca-march") !== "banca-march") {
+  errors.push("Banca March must remain independent");
+}
 
 console.log(`counts entities=${entityCount} events=${eventCount}`);
 

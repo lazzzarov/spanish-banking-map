@@ -1,10 +1,13 @@
 import {
   FEATURED_GROUPS,
+  GROUP_COLORS,
   type BankDataset,
   type Entity,
   type Event,
   type FeaturedGroup,
+  type GraphLayer,
 } from "./types";
+import { isOverlayMechanism } from "./types";
 
 export const MIN_YEAR = 1920;
 export const MAX_YEAR = 2026;
@@ -92,6 +95,30 @@ export function eventsForEntity(events: Event[], entityId: string): Event[] {
     .sort((a, b) => a.year - b.year);
 }
 
+export function eventsInYear(events: Event[], year: number, layer: GraphLayer): Event[] {
+  if (layer === "context") return [];
+  return events.filter((event) => event.year === year && isOverlayMechanism(event.mechanism, layer));
+}
+
+export function storyBeats(
+  body: string,
+  fallback: { entityId: string; year: number },
+): { text: string; entityId: string; year: number }[] {
+  const paragraphs = body
+    .trim()
+    .replaceAll("\r\n", "\n")
+    .split(/\n\n+/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean)
+    .slice(0, 4);
+  return paragraphs.map((text) => {
+    const years = [...text.matchAll(/\b(?:19|20)\d{2}\b/g)]
+      .map((match) => Number(match[0]))
+      .filter((year) => year >= MIN_YEAR && year <= MAX_YEAR);
+    return { text, entityId: fallback.entityId, year: years[0] ?? fallback.year };
+  });
+}
+
 export function childrenByParent(events: Event[]): Map<string, string[]> {
   const children = new Map<string, string[]>();
   for (const event of lineageEvents(events)) {
@@ -158,17 +185,7 @@ export function searchEntities(entities: Entity[], query: string): Entity[] {
 }
 
 export function groupColor(groupId: string | undefined): string {
-  const colors: Record<string, string> = {
-    caixabank: "#7dd3fc",
-    santander: "#fb7185",
-    bbva: "#c4b5fd",
-    sabadell: "#34d399",
-    unicaja: "#fbbf24",
-    ibercaja: "#f9a8d4",
-    kutxabank: "#38bdf8",
-    abanca: "#d8b4fe",
-  };
-  return colors[groupId ?? ""] ?? "#64748b";
+  return GROUP_COLORS[groupId ?? ""] ?? "#64748b";
 }
 
 export interface GenealogyStats {

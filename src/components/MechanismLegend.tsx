@@ -9,7 +9,6 @@ const ITEMS: Mechanism[] = [
   "banking_business_transfer",
   "acquisition",
   "resolution_sale",
-  "intervention",
   "rebrand",
   "minority_equity_investment",
   "failed_acquisition_attempt",
@@ -17,31 +16,26 @@ const ITEMS: Mechanism[] = [
   "divestment",
 ];
 
-export function MechanismLegend() {
+export function MechanismLegend({ compact = false }: { compact?: boolean }) {
   const { t } = useLocale();
   return (
     <div>
-      <p className="mb-3 font-mono text-[11px] tracking-[0.18em] text-muted uppercase">
-        {t.legendTitle}
-      </p>
-      <div className="flex flex-wrap gap-x-5 gap-y-2">
+      {!compact && (
+        <p className="mb-2 font-mono text-[11px] tracking-[0.18em] text-muted uppercase">
+          {t.legendTitle}
+        </p>
+      )}
+      <div className={`flex flex-wrap ${compact ? "gap-x-3 gap-y-1" : "gap-x-5 gap-y-2"}`}>
         {ITEMS.map((id) => (
-          <span key={id} className="flex items-center gap-2 text-xs text-fog/80">
-            <svg width="28" height="8" aria-hidden="true">
+          <span key={id} className="flex items-center gap-1.5 text-[11px] text-fog">
+            <svg width="22" height="8" aria-hidden="true">
               <line
                 x1="0"
                 y1="4"
-                x2="28"
+                x2="22"
                 y2="4"
-                stroke={
-                  id === "failed_acquisition_attempt" ||
-                  id === "minority_equity_investment" ||
-                  id === "asset_transfer" ||
-                  id === "divestment"
-                    ? "#94a3b8"
-                    : "#7dd3fc"
-                }
-                strokeWidth="1.4"
+                stroke="var(--accent)"
+                strokeWidth="1.6"
                 strokeDasharray={dashFor(id)}
               />
             </svg>

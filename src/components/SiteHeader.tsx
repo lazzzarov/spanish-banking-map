@@ -1,10 +1,11 @@
+import { explorerHref } from "../lib/deepLinks";
 import { useLocale } from "./LocaleContext";
 
 export function SiteHeader({ current }: { current: "explore" | "sources" | "about" | "stories" | "stats" }) {
-  const { locale, setLocale, t } = useLocale();
+  const { locale, setLocale, t, theme, setTheme } = useLocale();
   const links = [
     { href: "/", id: "explore" as const, label: t.navExplore },
-    { href: "/stories", id: "stories" as const, label: t.navStories },
+    { href: explorerHref({ guides: true, lang: locale }), id: "stories" as const, label: t.navStories },
     { href: "/stats", id: "stats" as const, label: t.navStats },
     { href: "/sources", id: "sources" as const, label: t.navSources },
     { href: "/about", id: "about" as const, label: t.navAbout },
@@ -15,7 +16,7 @@ export function SiteHeader({ current }: { current: "explore" | "sources" | "abou
       <a href="/" className="font-mono text-[11px] tracking-[0.22em] text-accent uppercase">
         {t.brand}
       </a>
-      <nav className="flex items-center gap-5 text-sm text-muted">
+      <nav className="flex flex-wrap items-center justify-end gap-4 text-sm text-muted">
         {links.map((link) => (
           <a
             key={link.id}
@@ -25,7 +26,7 @@ export function SiteHeader({ current }: { current: "explore" | "sources" | "abou
             {link.label}
           </a>
         ))}
-        <div className="ml-2 flex overflow-hidden rounded border border-line font-mono text-[11px]">
+        <div className="flex overflow-hidden rounded border border-line font-mono text-[11px]">
           <button
             type="button"
             className={`px-2 py-1 ${locale === "en" ? "bg-panel-2 text-accent" : "text-muted"}`}
@@ -39,6 +40,22 @@ export function SiteHeader({ current }: { current: "explore" | "sources" | "abou
             onClick={() => setLocale("es")}
           >
             {t.langEs}
+          </button>
+        </div>
+        <div className="flex overflow-hidden rounded border border-line font-mono text-[11px]">
+          <button
+            type="button"
+            className={`px-2 py-1 ${theme === "light" ? "bg-panel-2 text-accent" : "text-muted"}`}
+            onClick={() => setTheme("light")}
+          >
+            {t.themeLight}
+          </button>
+          <button
+            type="button"
+            className={`px-2 py-1 ${theme === "dark" ? "bg-panel-2 text-accent" : "text-muted"}`}
+            onClick={() => setTheme("dark")}
+          >
+            {t.themeDark}
           </button>
         </div>
       </nav>
