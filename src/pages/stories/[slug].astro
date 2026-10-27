@@ -1,0 +1,31 @@
+---
+import { getCollection } from "astro:content";
+import StoryPage from "../../components/StoryPage";
+import Base from "../../layouts/Base.astro";
+
+export async function getStaticPaths() {
+  const stories = await getCollection("stories");
+  return stories.map((story) => ({
+    params: { slug: story.id },
+    props: { story },
+  }));
+}
+
+const { story } = Astro.props;
+const html = story.body
+  .trim()
+  .replaceAll("\r\n", "\n")
+  .split(/\n\n+/)
+  .map((paragraph) => `<p>${paragraph.replaceAll("<", "&lt;").replaceAll(">", "&gt;")}</p>`)
+  .join("");
+---
+<Base title={`${story.data.title} · Spain Banking Map`} description={story.data.title}>
+  <StoryPage
+    client:load
+    title={story.data.title}
+    year={story.data.year}
+    entityId={story.data.entityId}
+    html={html}
+    locale={story.data.locale}
+  />
+</Base>
