@@ -4,21 +4,40 @@
     "url": "https://www.bde.es/f/webbde/GAP/Secciones/SalaPrensa/InformacionInteres/ReestructuracionSectorFinanciero/Arc/mapa-sector2021.pdf",
     "title": "Map of the restructuring of the Spanish banking sector, 2009–2021",
     "title_es": "Mapa de la reestructuración del sector bancario español, 2009–2021",
-    "publisher": "Banco de España"
+    "publisher": "Banco de España",
+    "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "bde2010",
+    "url": "https://www.bde.es",
+    "title": "Banco de España 2010 integration and SIP approvals",
+    "title_es": "Aprobaciones de integraciones y SIP del Banco de España, 2010",
+    "publisher": "Banco de España",
+    "verification_status": "Verified — Primary Source"
   },
   {
     "id": "rtve2011",
     "url": "https://www.rtve.es/noticias/20110924/cuadro-fusiones-cajas-espana/332614.shtml",
     "title": "Chart of savings-bank mergers in Spain",
     "title_es": "Cuadro de fusiones de cajas en España",
-    "publisher": "RTVE"
+    "publisher": "RTVE",
+    "verification_status": "Secondary"
   },
   {
     "id": "bbva2025",
     "url": "https://www.bbva.com/en/bbva-offer-sabadell/bbva-to-accelerate-shareholder-remuneration-following-the-lapse-of-its-offer-for-banco-sabadell",
     "title": "BBVA offer for Banco Sabadell lapses (16 Oct 2025)",
     "title_es": "La OPA de BBVA sobre Banco Sabadell caduca (16 oct 2025)",
-    "publisher": "BBVA"
+    "publisher": "BBVA",
+    "verification_status": "Verified — Company disclosure"
+  },
+  {
+    "id": "cnmv-bpce-2026",
+    "url": "https://www.cnmv.es",
+    "title": "CNMV significant shareholders: BPCE 7.000% of Sabadell (15 Oct 2026)",
+    "title_es": "CNMV participaciones significativas: BPCE 7,000% de Sabadell (15 oct 2026)",
+    "publisher": "CNMV",
+    "verification_status": "Verified — Primary Source"
   },
   {
     "id": "reuters2026",
@@ -26,42 +45,184 @@
     "title": "BPCE takes about 7% of Sabadell",
     "title_es": "BPCE toma alrededor del 7% de Sabadell",
     "publisher": "Reuters / Euronext",
-    "note": "Secondary report of the October 2026 stake."
+    "note": "Secondary report of the October 2026 stake.",
+    "verification_status": "Secondary"
   },
   {
     "id": "cnmc2021",
     "url": "https://www.cnmc.es/prensa/fusion-bankia-caixabank-20210323",
     "title": "CNMC authorises the absorption of Bankia by CaixaBank",
     "title_es": "La CNMC autoriza la fusión por absorción de Bankia por CaixaBank",
-    "publisher": "CNMC"
+    "publisher": "CNMC",
+    "verification_status": "Verified — Primary Source"
   },
   {
     "id": "cnmv2018",
     "url": "https://www.cnmv.es/portal/hr/resultadobusquedahr?lang=es&nif=A86104189",
     "title": "CNMV relevant facts: BMN absorbed by Bankia (deed registered 8 Jan 2018)",
     "title_es": "Hechos relevantes CNMV: BMN absorbido por Bankia (escritura inscrita el 8 ene 2018)",
-    "publisher": "CNMV"
+    "publisher": "CNMV",
+    "verification_status": "Verified — Primary Source"
   },
   {
     "id": "unicaja2021",
     "url": "https://www.unicajabanco.com/en/sala-de-comunicacion/buscador-noticias/2021/07/unicaja-banco-culmina-la-integracion-legal-de-liberbank-que-conv",
     "title": "Unicaja completes the legal integration of Liberbank (30 Jul 2021)",
     "title_es": "Unicaja culmina la integración legal de Liberbank (30 jul 2021)",
-    "publisher": "Unicaja Banco"
+    "publisher": "Unicaja Banco",
+    "verification_status": "Verified — Company disclosure"
+  },
+  {
+    "id": "unicaja-history",
+    "url": "https://www.unicajabanco.com",
+    "title": "Unicaja institutional history (CEISS absorption, September 2018)",
+    "title_es": "Historia institucional de Unicaja (absorción de CEISS, septiembre de 2018)",
+    "publisher": "Unicaja Banco",
+    "verification_status": "Verified — Company disclosure"
   },
   {
     "id": "santander2013",
     "url": "https://www.santander.com/es/accionistas-e-inversores/informacion-general/historico-operaciones-corporativas/fusiones",
-    "title": "Santander corporate-merger archive (Banesto, January 2013)",
-    "title_es": "Archivo de fusiones de Santander (Banesto, enero 2013)",
-    "publisher": "Banco Santander"
+    "title": "Santander corporate-merger archive (Banesto, January 2013; Popular, September 2018)",
+    "title_es": "Archivo de fusiones de Santander (Banesto, enero 2013; Popular, septiembre 2018)",
+    "publisher": "Banco Santander",
+    "verification_status": "Verified — Company disclosure"
+  },
+  {
+    "id": "santander-history",
+    "url": "https://www.santander.com",
+    "title": "Santander historical archive (Banesto 1994; BCH 1999)",
+    "title_es": "Archivo histórico de Santander (Banesto 1994; BCH 1999)",
+    "publisher": "Banco Santander",
+    "verification_status": "Verified — Company disclosure"
   },
   {
     "id": "srb2017",
     "url": "https://www.srb.europa.eu/en/content/banco-popular",
     "title": "SRB resolution of Banco Popular, 7 June 2017",
     "title_es": "Resolución del SRB sobre Banco Popular, 7 de junio de 2017",
-    "publisher": "Single Resolution Board"
+    "publisher": "Single Resolution Board",
+    "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "bbva-archive",
+    "url": "https://www.bbva.com",
+    "title": "BBVA historical archive (Bilbao–Vizcaya 1988; Argentaria 1999; Unnim; Catalunya Banc)",
+    "title_es": "Archivo histórico de BBVA (Bilbao–Vizcaya 1988; Argentaria 1999; Unnim; Catalunya Banc)",
+    "publisher": "BBVA",
+    "verification_status": "Verified — Company disclosure"
+  },
+  {
+    "id": "kutxabank-corp",
+    "url": "https://www.kutxabank.com",
+    "title": "Kutxabank corporate description: business transfers from BBK, Kutxa and Vital",
+    "title_es": "Descripción corporativa de Kutxabank: cesión de negocio de BBK, Kutxa y Vital",
+    "publisher": "Kutxabank",
+    "verification_status": "Verified — Company disclosure"
+  },
+  {
+    "id": "ibercaja-caja3",
+    "url": "https://www.ibercaja.com",
+    "title": "Ibercaja acquires 100% of Banco Grupo Caja3 (25 Jul 2013)",
+    "title_es": "Ibercaja adquiere el 100% de Banco Grupo Caja3 (25 jul 2013)",
+    "publisher": "Ibercaja Banco",
+    "verification_status": "Verified — Company disclosure"
+  },
+  {
+    "id": "frob",
+    "url": "https://www.frob.es",
+    "title": "FROB interventions, sales and assistance table",
+    "title_es": "Intervenciones, ventas y tabla de ayudas del FROB",
+    "publisher": "FROB",
+    "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "frob-2026",
+    "url": "https://www.frob.es",
+    "title": "FROB assistance and recoveries position at 30 June 2026",
+    "title_es": "Posición de ayudas y recuperaciones del FROB a 30 de junio de 2026",
+    "publisher": "FROB",
+    "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "caixabank-history",
+    "url": "https://www.caixabank.com",
+    "title": "CaixaBank corporate chronology (2011 bank transfer; Bankia 2021)",
+    "title_es": "Cronología corporativa de CaixaBank (cesión de 2011; Bankia 2021)",
+    "publisher": "CaixaBank",
+    "verification_status": "Verified — Company disclosure"
+  },
+  {
+    "id": "cnmv-tsb-2026",
+    "url": "https://www.cnmv.es",
+    "title": "Santander completes the acquisition of TSB (1 May 2026)",
+    "title_es": "Santander completa la adquisición de TSB (1 may 2026)",
+    "publisher": "CNMV",
+    "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "bde-cajas",
+    "url": "https://www.bde.es",
+    "title": "Banco de España: two traditional cajas remained after restructuring",
+    "title_es": "Banco de España: quedaron dos cajas tradicionales tras la reestructuración",
+    "publisher": "Banco de España",
+    "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "bde-branches",
+    "url": "https://www.bde.es",
+    "title": "Banco de España branch-network observations, 2008–2020",
+    "title_es": "Observaciones de oficinas del Banco de España, 2008–2020",
+    "publisher": "Banco de España",
+    "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "funcas-2023",
+    "url": "https://www.funcas.es",
+    "title": "Funcas compilation: branches 2023 and employment 2008–2022",
+    "title_es": "Compilación de Funcas: oficinas 2023 y empleo 2008–2022",
+    "publisher": "Funcas",
+    "verification_status": "Secondary"
+  },
+  {
+    "id": "ecb-struct",
+    "url": "https://www.ecb.europa.eu",
+    "title": "ECB structural indicators for the EU banking sector",
+    "title_es": "Indicadores estructurales del BCE sobre el sector bancario de la UE",
+    "publisher": "European Central Bank",
+    "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "bde-aid-2018",
+    "url": "https://www.bde.es",
+    "title": "Banco de España note on restructuring support, November 2018",
+    "title_es": "Nota del Banco de España sobre el apoyo a la reestructuración, noviembre de 2018",
+    "publisher": "Banco de España",
+    "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "bde-1921",
+    "url": "https://www.bde.es",
+    "title": "100 años de la Ley de Ordenación Bancaria de 1921 (Martín-Aceña / Martínez Ruiz, 2022)",
+    "title_es": "100 años de la Ley de Ordenación Bancaria de 1921 (Martín-Aceña / Martínez Ruiz, 2022)",
+    "publisher": "Banco de España",
+    "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "bde-guia-2019",
+    "url": "https://www.bde.es",
+    "title": "Guía de archivos históricos de la banca en España (2019)",
+    "title_es": "Guía de archivos históricos de la banca en España (2019)",
+    "publisher": "Banco de España",
+    "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "bde-supervision-2025",
+    "url": "https://www.bde.es",
+    "title": "Historia de la supervisión bancaria en España (November 2025)",
+    "title_es": "Historia de la supervisión bancaria en España (noviembre de 2025)",
+    "publisher": "Banco de España",
+    "verification_status": "Verified — Primary Source"
   },
   {
     "id": "check",
@@ -69,6 +230,7 @@
     "title": "Known, not yet pinned to a primary source",
     "title_es": "Hecho conocido, aún sin documento primario",
     "publisher": "Editorial",
-    "note": "Verify before citing. Shown in the UI as unverified."
+    "note": "Verify before citing. Shown in the UI as unverified.",
+    "verification_status": "Unverified"
   }
 ]
