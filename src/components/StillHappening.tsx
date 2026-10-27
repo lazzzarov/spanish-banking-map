@@ -4,7 +4,7 @@ import { useLocale } from "./LocaleContext";
 export function StillHappening({ sources }: { sources: SourceRecord[] }) {
   const { t } = useLocale();
   const bid = sources.find((source) => source.id === "bbva2025");
-  const stake = sources.find((source) => source.id === "reuters2026");
+  const stake = sources.find((source) => source.id === "cnmv-bpce-2026") ?? sources.find((source) => source.id === "reuters2026");
 
   return (
     <section className="grid gap-3 md:grid-cols-[auto_1fr]">
@@ -20,7 +20,7 @@ export function StillHappening({ sources }: { sources: SourceRecord[] }) {
           rel="noreferrer"
           className="rounded-lg border border-line bg-panel px-4 py-3 text-sm text-fog/90 hover:border-accent/40"
         >
-          <span className="mb-1 block font-mono text-[10px] text-muted">2025 · bid_failed</span>
+          <span className="mb-1 block font-mono text-[10px] text-muted">2025 · failed_acquisition_attempt</span>
           {t.stillBid}
         </a>
         <a
@@ -29,7 +29,7 @@ export function StillHappening({ sources }: { sources: SourceRecord[] }) {
           rel="noreferrer"
           className="rounded-lg border border-line bg-panel px-4 py-3 text-sm text-fog/90 hover:border-accent/40"
         >
-          <span className="mb-1 block font-mono text-[10px] text-muted">2026 · minority_stake</span>
+          <span className="mb-1 block font-mono text-[10px] text-muted">2026 · minority_equity_investment</span>
           {t.stillStake}
         </a>
       </div>

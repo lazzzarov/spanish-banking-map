@@ -3,22 +3,24 @@ import { SiteHeader } from "./SiteHeader";
 
 const COPY = {
   en: {
-    p1: "This site is a consolidation genealogy, not a complete census of Spanish credit institutions. It follows the 2010–2012 caja restructuring and the bank-level deals on either side of it, through a failed 2025 bid and a 2026 minority stake.",
-    p2: "Featured destination groups in this file are CaixaBank, Santander, BBVA, Sabadell, Unicaja, Ibercaja, Kutxabank and Abanca. They are not every surviving Spanish bank. The Banco de España register is the reference for the full population.",
-    p3: "Known institutions on the official 2009–2021 Banco de España chart that are not separate nodes here include Banco Pastor, CajaSur, Caja Jaén, Caja Castilla-La Mancha and Banco de Valencia. We ship the curated tree first; we do not call it complete.",
-    p4: "A relationship is an event with a mechanism and an outcome. Only completed lineage events — SIP, merger, absorption, activity transfer, resolution, rebrand — move an institution into a current group. A minority stake and a failed bid stay on the map and never reparent anyone. BPCE’s 7% holding does not make Sabadell a BPCE subsidiary.",
-    p5: "Cajasol joined Banca Cívica’s SIP in 2010; the banking business reached CaixaBank in 2012 through that vehicle. The extra Cajasol→CaixaBank row is kept as a documented sequence with lineage turned off, so the family tree does not count it twice.",
-    p6: "A caja’s founding year is not the incorporation year of the bank that later took its business. Regions on the map are approximate historical headquarters, not branch coverage, assets or market share. Those metrics need a different dataset.",
-    p7: "Rows still marked check are visible as unverified. Cite the primary link on the event, or do not cite the row.",
+    p1: "This site is a curated historical banking genealogy, not a complete census of Spanish credit institutions and not a register of every bank since 1920. It follows the institutions that feed eight featured destination groups: CaixaBank, Santander, BBVA, Sabadell, Unicaja, Ibercaja, Kutxabank and Abanca.",
+    p2: "The Banco de España register remains the reference for the full population. Cooperative groups such as Cajamar are out of scope here.",
+    p3: "A relationship is a dated event with a mechanism and an outcome. Only completed events that transfer control or banking-business continuity move an institution into a current group. Minority stakes, failed bids, SAREB asset transfers and the 2026 TSB sale stay visible and never reparent Banco Sabadell.",
+    p4: "Legal status and banking-business continuity are stored apart. Caja Madrid’s banking business reached CaixaBank through BFA and Bankia; that does not mean the original caja legal person was absorbed by CaixaBank.",
+    p5: "Intermediate vehicles are kept on purpose: BFA, Banco CAM, Catalunya Banc, Novacaixagalicia, NCG Banco, Banco CEISS, Banco Grupo Caja3 and others. Acquisition and later legal absorption are two events.",
+    p6: "Caixa Ontinyent and Colonya–Caixa Pollença remain as independent traditional cajas. Headquarters on the map are historical origin points, not branch coverage or market share.",
+    p7: "Figures on the stats page keep their compiler and definition. Do not add FROB assistance, recoveries and remaining equity into one bailout-cost number, and do not compute concentration from the number of nodes in this file.",
+    p8: "Rows still marked check are visible as unverified. Cite the primary link on the event, or do not cite the row.",
   },
   es: {
-    p1: "Este sitio es una genealogía de la consolidación, no un censo completo de las entidades de crédito españolas. Sigue la reestructuración de cajas de 2010–2012 y las operaciones bancarias de su entorno, hasta una OPA fallida en 2025 y una participación minoritaria en 2026.",
-    p2: "Los grupos de destino destacados en este archivo son CaixaBank, Santander, BBVA, Sabadell, Unicaja, Ibercaja, Kutxabank y Abanca. No son todos los bancos españoles que siguen existiendo. El registro del Banco de España es la referencia de la población completa.",
-    p3: "En el mapa oficial del Banco de España de 2009–2021 aparecen, entre otras, entidades que aquí no son nodos propios: Banco Pastor, CajaSur, Caja Jaén, Caja Castilla-La Mancha y Banco de Valencia. Publicamos primero el árbol curado; no lo presentamos como historia completa.",
-    p4: "Cada relación es un hecho con un mecanismo y un resultado. Solo los hechos de linaje completados — SIP, fusión, absorción, cesión de negocio, resolución, cambio de marca — mueven una entidad a un grupo actual. Una participación minoritaria y una OPA fallida permanecen en el mapa y no cambian el padre de nadie. El 7% de BPCE no convierte a Sabadell en una filial de BPCE.",
-    p5: "Cajasol entró en el SIP de Banca Cívica en 2010; el negocio bancario llegó a CaixaBank en 2012 a través de ese vehículo. La fila extra Cajasol→CaixaBank se conserva como secuencia documentada con el linaje desactivado, para que el árbol no la cuente dos veces.",
-    p6: "El año de fundación de una caja no es el de constitución del banco que más tarde tomó su negocio. Las regiones del mapa son sedes históricas aproximadas, no red de oficinas, activos ni cuota de mercado. Esas métricas exigen otro dataset.",
-    p7: "Las filas que siguen marcadas como check se muestran como no verificadas. Cita el enlace primario del hecho, o no cites la fila.",
+    p1: "Este sitio es una genealogía histórica curada, no un censo completo de las entidades de crédito españolas ni un registro de todos los bancos desde 1920. Sigue a las entidades que alimentan ocho grupos de destino: CaixaBank, Santander, BBVA, Sabadell, Unicaja, Ibercaja, Kutxabank y Abanca.",
+    p2: "El registro del Banco de España sigue siendo la referencia de la población completa. Los grupos cooperativos como Cajamar quedan fuera de este recorte.",
+    p3: "Cada relación es un hecho fechado con un mecanismo y un resultado. Solo los hechos completados que transfieren el control o la continuidad del negocio bancario mueven una entidad a un grupo actual. Las participaciones minoritarias, las OPA fallidas, las cesiones a SAREB y la venta de TSB en 2026 permanecen visibles y no cambian el padre de Banco Sabadell.",
+    p4: "El estado jurídico y la continuidad del negocio bancario se guardan por separado. El negocio de Caja Madrid llegó a CaixaBank a través de BFA y Bankia; eso no significa que la persona jurídica original fuera absorbida por CaixaBank.",
+    p5: "Los vehículos intermedios se conservan a propósito: BFA, Banco CAM, Catalunya Banc, Novacaixagalicia, NCG Banco, Banco CEISS, Banco Grupo Caja3 y otros. La adquisición y la absorción jurídica posterior son dos hechos.",
+    p6: "Caixa Ontinyent y Colonya–Caixa Pollença siguen como cajas tradicionales independientes. Las sedes del mapa son orígenes históricos, no red de oficinas ni cuota de mercado.",
+    p7: "Las cifras de la página de datos conservan su compilador y su definición. No sumes ayudas del FROB, recuperaciones y plusvalías en un único coste del rescate, ni calcules concentración a partir del número de nodos de este archivo.",
+    p8: "Las filas que siguen marcadas como check se muestran como no verificadas. Cita el enlace primario del hecho, o no cites la fila.",
   },
 };
 
@@ -39,6 +41,7 @@ function Inner() {
           <p>{copy.p5}</p>
           <p>{copy.p6}</p>
           <p>{copy.p7}</p>
+          <p>{copy.p8}</p>
         </div>
       </main>
     </div>

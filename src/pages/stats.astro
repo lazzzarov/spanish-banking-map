@@ -1,0 +1,12 @@
+---
+import StatsPage from "../components/StatsPage";
+import Base from "../layouts/Base.astro";
+import stats from "../../data/stats.json";
+import sources from "../../data/sources.json";
+---
+<Base
+  title="Figures · Spain Banking Map"
+  description="Selected official observations on Spanish banking consolidation, with definitions and sources."
+>
+  <StatsPage client:load points={stats.points} sources={sources} />
+</Base>

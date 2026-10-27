@@ -16,7 +16,10 @@ function Inner({ sources }: { sources: SourceRecord[] }) {
             <li key={source.id} className="rounded-xl border border-line bg-panel px-5 py-4">
               <p className="font-mono text-[11px] text-accent">{source.id}</p>
               <p className="mt-1 text-fog">{locale === "es" ? source.title_es : source.title}</p>
-              <p className="mt-1 text-xs text-muted">{source.publisher}</p>
+              <p className="mt-1 text-xs text-muted">
+                {source.publisher}
+                {source.verification_status ? ` · ${source.verification_status}` : ""}
+              </p>
               {source.note && <p className="mt-2 text-xs text-muted">{source.note}</p>}
               {source.url ? (
                 <a href={source.url} target="_blank" rel="noreferrer" className="mt-3 inline-block text-sm text-accent">
