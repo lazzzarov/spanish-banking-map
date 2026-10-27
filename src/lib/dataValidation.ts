@@ -1,5 +1,5 @@
 import { doubleLineageParents } from "./bankGraph";
-import { MECHANISM_LINEAGE, type BankDataset } from "./types";
+import { MECHANISM_LINEAGE, NON_LINEAGE_ALWAYS, type BankDataset } from "./types";
 import type { SourceRecord } from "./types";
 
 export interface ValidationResult {
@@ -33,10 +33,10 @@ export function validateDataset(
     if (!entityIds.has(event.from)) errors.push(`Event ${event.id} from unknown ${event.from}`);
     if (!entityIds.has(event.to)) errors.push(`Event ${event.id} to unknown ${event.to}`);
     if (!sourceIds.has(event.src)) errors.push(`Event ${event.id} has unknown src ${event.src}`);
-    if (
-      (event.mechanism === "minority_stake" || event.mechanism === "bid_failed") &&
-      event.lineage
-    ) {
+    if (event.year < 1920 || event.year > 2026) {
+      errors.push(`Event ${event.id} year ${event.year} out of range`);
+    }
+    if (NON_LINEAGE_ALWAYS.includes(event.mechanism) && event.lineage) {
       errors.push(`Event ${event.id} is ${event.mechanism} but lineage is true`);
     }
     if (event.src === "check") warnings.push(`event ${event.id} still marked check`);

@@ -6,7 +6,7 @@ import {
   type FeaturedGroup,
 } from "./types";
 
-export const MIN_YEAR = 2009;
+export const MIN_YEAR = 1920;
 export const MAX_YEAR = 2026;
 
 export function entityMap(dataset: BankDataset): Map<string, Entity> {
@@ -102,6 +102,21 @@ export function childrenByParent(events: Event[]): Map<string, string[]> {
   return children;
 }
 
+/** Lineage descendants of a group head, head first, vehicles before leaf siblings. */
+export function familyOf(dataset: BankDataset, groupId: string): string[] {
+  const children = childrenByParent(dataset.events);
+  const ids: string[] = [];
+  const walk = (id: string) => {
+    ids.push(id);
+    const kids = [...(children.get(id) ?? [])].sort(
+      (a, b) => (children.get(b)?.length ?? 0) - (children.get(a)?.length ?? 0),
+    );
+    for (const child of kids) walk(child);
+  };
+  walk(groupId);
+  return ids;
+}
+
 export function visibleEntities(dataset: BankDataset, year: number): Entity[] {
   const absorbedByYear = new Set(
     lineageEvents(eventsUpTo(dataset.events, year)).map((event) => event.from),
@@ -109,7 +124,7 @@ export function visibleEntities(dataset: BankDataset, year: number): Entity[] {
 
   return dataset.entities.filter((entity) => {
     if (entity.founded && entity.founded > year) return false;
-    if (entity.group_role === "foreign_shareholder") {
+    if (entity.group_role === "foreign_shareholder" || entity.group_role === "asset_vehicle") {
       return dataset.events.some(
         (event) =>
           (event.from === entity.id || event.to === entity.id) && event.year <= year,
@@ -131,9 +146,11 @@ export function searchEntities(entities: Entity[], query: string): Entity[] {
   return entities
     .filter((entity) => {
       const es = entity.name_es?.toLowerCase() ?? "";
+      const aliases = (entity.aliases ?? []).join(" ").toLowerCase();
       return (
         entity.name.toLowerCase().includes(q) ||
         es.includes(q) ||
+        aliases.includes(q) ||
         entity.id.replaceAll("-", " ").includes(q)
       );
     })
@@ -152,6 +169,44 @@ export function groupColor(groupId: string | undefined): string {
     abanca: "#d8b4fe",
   };
   return colors[groupId ?? ""] ?? "#64748b";
+}
+
+export interface GenealogyStats {
+  independent: number;
+  consolidations: number;
+  largestFamily: { id: FeaturedGroup | ""; count: number };
+}
+
+export function genealogyStats(dataset: BankDataset, year: number): GenealogyStats {
+  const lineage = lineageEvents(eventsUpTo(dataset.events, year));
+  const absorbed = new Set(lineage.map((event) => event.from));
+  const independent = dataset.entities.filter((entity) => {
+    if (entity.group_role === "foreign_shareholder" || entity.group_role === "asset_vehicle") return false;
+    if (entity.founded && entity.founded > year) return false;
+    return !absorbed.has(entity.id);
+  }).length;
+
+  const counts = Object.fromEntries(FEATURED_GROUPS.map((group) => [group, 0])) as Record<
+    FeaturedGroup,
+    number
+  >;
+  for (const entity of dataset.entities) {
+    if (entity.group_role === "foreign_shareholder" || entity.group_role === "asset_vehicle") continue;
+    if (entity.founded && entity.founded > year) continue;
+    const walked = walkLineage(dataset, entity.id, year);
+    if (FEATURED_GROUPS.includes(walked.group as FeaturedGroup) && walked.path.includes(walked.group)) {
+      counts[walked.group as FeaturedGroup] += 1;
+    }
+  }
+
+  let largestFamily: GenealogyStats["largestFamily"] = { id: "", count: 0 };
+  for (const group of FEATURED_GROUPS) {
+    if (counts[group] > largestFamily.count) {
+      largestFamily = { id: group, count: counts[group] };
+    }
+  }
+
+  return { independent, consolidations: lineage.length, largestFamily };
 }
 
 export function doubleLineageParents(events: Event[]): Map<string, string[]> {
