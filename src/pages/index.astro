@@ -1,0 +1,13 @@
+---
+import Explorer from "../components/Explorer";
+import Base from "../layouts/Base.astro";
+import banks from "../../data/banks.json";
+import sources from "../../data/sources.json";
+import regions from "../../data/regions.json";
+---
+<Base
+  title="Spain Banking Map"
+  description="Interactive genealogy of Spanish banking consolidation, 2010–2026."
+>
+  <Explorer client:load dataset={banks} sources={sources} regions={regions} />
+</Base>

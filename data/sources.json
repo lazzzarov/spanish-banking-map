@@ -1,0 +1,74 @@
+[
+  {
+    "id": "bde2021",
+    "url": "https://www.bde.es/f/webbde/GAP/Secciones/SalaPrensa/InformacionInteres/ReestructuracionSectorFinanciero/Arc/mapa-sector2021.pdf",
+    "title": "Map of the restructuring of the Spanish banking sector, 2009–2021",
+    "title_es": "Mapa de la reestructuración del sector bancario español, 2009–2021",
+    "publisher": "Banco de España"
+  },
+  {
+    "id": "rtve2011",
+    "url": "https://www.rtve.es/noticias/20110924/cuadro-fusiones-cajas-espana/332614.shtml",
+    "title": "Chart of savings-bank mergers in Spain",
+    "title_es": "Cuadro de fusiones de cajas en España",
+    "publisher": "RTVE"
+  },
+  {
+    "id": "bbva2025",
+    "url": "https://www.bbva.com/en/bbva-offer-sabadell/bbva-to-accelerate-shareholder-remuneration-following-the-lapse-of-its-offer-for-banco-sabadell",
+    "title": "BBVA offer for Banco Sabadell lapses (16 Oct 2025)",
+    "title_es": "La OPA de BBVA sobre Banco Sabadell caduca (16 oct 2025)",
+    "publisher": "BBVA"
+  },
+  {
+    "id": "reuters2026",
+    "url": "https://live.euronext.com/en/financial-news/frances-bpce-takes-7-stake-sabadell-bolstering-spanish-banks-defences",
+    "title": "BPCE takes about 7% of Sabadell",
+    "title_es": "BPCE toma alrededor del 7% de Sabadell",
+    "publisher": "Reuters / Euronext",
+    "note": "Secondary report of the October 2026 stake."
+  },
+  {
+    "id": "cnmc2021",
+    "url": "https://www.cnmc.es/prensa/fusion-bankia-caixabank-20210323",
+    "title": "CNMC authorises the absorption of Bankia by CaixaBank",
+    "title_es": "La CNMC autoriza la fusión por absorción de Bankia por CaixaBank",
+    "publisher": "CNMC"
+  },
+  {
+    "id": "cnmv2018",
+    "url": "https://www.cnmv.es/portal/hr/resultadobusquedahr?lang=es&nif=A86104189",
+    "title": "CNMV relevant facts: BMN absorbed by Bankia (deed registered 8 Jan 2018)",
+    "title_es": "Hechos relevantes CNMV: BMN absorbido por Bankia (escritura inscrita el 8 ene 2018)",
+    "publisher": "CNMV"
+  },
+  {
+    "id": "unicaja2021",
+    "url": "https://www.unicajabanco.com/en/sala-de-comunicacion/buscador-noticias/2021/07/unicaja-banco-culmina-la-integracion-legal-de-liberbank-que-conv",
+    "title": "Unicaja completes the legal integration of Liberbank (30 Jul 2021)",
+    "title_es": "Unicaja culmina la integración legal de Liberbank (30 jul 2021)",
+    "publisher": "Unicaja Banco"
+  },
+  {
+    "id": "santander2013",
+    "url": "https://www.santander.com/es/accionistas-e-inversores/informacion-general/historico-operaciones-corporativas/fusiones",
+    "title": "Santander corporate-merger archive (Banesto, January 2013)",
+    "title_es": "Archivo de fusiones de Santander (Banesto, enero 2013)",
+    "publisher": "Banco Santander"
+  },
+  {
+    "id": "srb2017",
+    "url": "https://www.srb.europa.eu/en/content/banco-popular",
+    "title": "SRB resolution of Banco Popular, 7 June 2017",
+    "title_es": "Resolución del SRB sobre Banco Popular, 7 de junio de 2017",
+    "publisher": "Single Resolution Board"
+  },
+  {
+    "id": "check",
+    "url": null,
+    "title": "Known, not yet pinned to a primary source",
+    "title_es": "Hecho conocido, aún sin documento primario",
+    "publisher": "Editorial",
+    "note": "Verify before citing. Shown in the UI as unverified."
+  }
+]

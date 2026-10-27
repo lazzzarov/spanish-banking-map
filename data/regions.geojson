@@ -1,0 +1,23 @@
+{
+  "type": "FeatureCollection",
+  "name": "spain-ccaa-simplified",
+  "features": [
+    { "type": "Feature", "properties": { "id": "GA", "name": "Galicia", "name_es": "Galicia" }, "geometry": { "type": "Polygon", "coordinates": [[[-9.3, 43.75], [-7.0, 43.75], [-6.75, 42.85], [-7.05, 41.87], [-8.88, 41.87], [-9.3, 42.75], [-9.3, 43.75]]] } },
+    { "type": "Feature", "properties": { "id": "AS", "name": "Asturias", "name_es": "Asturias" }, "geometry": { "type": "Polygon", "coordinates": [[[-7.0, 43.75], [-4.52, 43.58], [-4.55, 43.05], [-6.75, 42.85], [-7.0, 43.75]]] } },
+    { "type": "Feature", "properties": { "id": "CB", "name": "Cantabria", "name_es": "Cantabria" }, "geometry": { "type": "Polygon", "coordinates": [[[-4.52, 43.58], [-3.15, 43.48], [-3.35, 42.95], [-4.55, 43.05], [-4.52, 43.58]]] } },
+    { "type": "Feature", "properties": { "id": "PV", "name": "Basque Country", "name_es": "País Vasco" }, "geometry": { "type": "Polygon", "coordinates": [[[-3.15, 43.48], [-1.72, 43.38], [-1.72, 42.55], [-3.15, 42.78], [-3.35, 42.95], [-3.15, 43.48]]] } },
+    { "type": "Feature", "properties": { "id": "NC", "name": "Navarre", "name_es": "Navarra" }, "geometry": { "type": "Polygon", "coordinates": [[[-1.72, 43.38], [-0.72, 43.28], [-0.72, 42.25], [-1.72, 42.25], [-1.72, 43.38]]] } },
+    { "type": "Feature", "properties": { "id": "RI", "name": "La Rioja", "name_es": "La Rioja" }, "geometry": { "type": "Polygon", "coordinates": [[[-3.15, 42.78], [-1.72, 42.55], [-1.72, 42.2], [-3.05, 42.12], [-3.15, 42.78]]] } },
+    { "type": "Feature", "properties": { "id": "CT", "name": "Catalonia", "name_es": "Cataluña" }, "geometry": { "type": "Polygon", "coordinates": [[[0.15, 42.86], [3.32, 42.42], [3.2, 41.0], [0.52, 40.52], [0.16, 41.58], [0.68, 42.28], [0.15, 42.86]]] } },
+    { "type": "Feature", "properties": { "id": "AR", "name": "Aragon", "name_es": "Aragón" }, "geometry": { "type": "Polygon", "coordinates": [[[-1.72, 42.78], [0.15, 42.86], [0.68, 42.28], [0.16, 41.58], [-0.25, 40.52], [-1.52, 41.02], [-2.05, 41.82], [-1.72, 42.78]]] } },
+    { "type": "Feature", "properties": { "id": "VC", "name": "Valencian Community", "name_es": "Comunidad Valenciana" }, "geometry": { "type": "Polygon", "coordinates": [[[0.16, 41.58], [0.52, 40.52], [0.15, 38.0], [-0.75, 37.85], [-1.48, 39.0], [-0.25, 40.52], [0.16, 41.58]]] } },
+    { "type": "Feature", "properties": { "id": "MC", "name": "Murcia", "name_es": "Murcia" }, "geometry": { "type": "Polygon", "coordinates": [[[-1.48, 39.0], [-0.75, 37.85], [-0.7, 37.38], [-2.15, 37.4], [-2.25, 38.7], [-1.48, 39.0]]] } },
+    { "type": "Feature", "properties": { "id": "AN", "name": "Andalusia", "name_es": "Andalucía" }, "geometry": { "type": "Polygon", "coordinates": [[[-7.35, 38.2], [-5.45, 38.72], [-2.25, 38.7], [-2.15, 37.4], [-1.75, 36.72], [-5.35, 36.02], [-7.35, 37.15], [-7.35, 38.2]]] } },
+    { "type": "Feature", "properties": { "id": "EX", "name": "Extremadura", "name_es": "Extremadura" }, "geometry": { "type": "Polygon", "coordinates": [[[-7.35, 40.48], [-4.85, 40.48], [-4.85, 38.2], [-7.35, 38.2], [-7.35, 40.48]]] } },
+    { "type": "Feature", "properties": { "id": "CL", "name": "Castile and León", "name_es": "Castilla y León" }, "geometry": { "type": "Polygon", "coordinates": [[[-7.05, 42.85], [-4.55, 43.05], [-3.35, 42.95], [-3.05, 42.12], [-1.72, 42.2], [-2.05, 41.82], [-3.05, 41.0], [-6.15, 40.25], [-7.05, 41.87], [-7.05, 42.85]]] } },
+    { "type": "Feature", "properties": { "id": "CM", "name": "Castilla-La Mancha", "name_es": "Castilla-La Mancha" }, "geometry": { "type": "Polygon", "coordinates": [[[-5.45, 41.05], [-3.05, 41.0], [-1.52, 41.02], [-0.25, 40.52], [-1.48, 39.0], [-2.25, 38.7], [-5.45, 38.72], [-5.45, 41.05]]] } },
+    { "type": "Feature", "properties": { "id": "MD", "name": "Madrid", "name_es": "Madrid" }, "geometry": { "type": "Polygon", "coordinates": [[[-4.55, 41.18], [-3.28, 41.18], [-3.28, 40.12], [-4.55, 40.12], [-4.55, 41.18]]] } },
+    { "type": "Feature", "properties": { "id": "IB", "name": "Balearic Islands", "name_es": "Islas Baleares" }, "geometry": { "type": "Polygon", "coordinates": [[[1.2, 39.15], [3.48, 40.05], [4.32, 39.88], [3.18, 39.08], [2.32, 39.1], [1.2, 38.68], [1.2, 39.15]]] } },
+    { "type": "Feature", "properties": { "id": "CN", "name": "Canary Islands", "name_es": "Islas Canarias" }, "geometry": { "type": "Polygon", "coordinates": [[[-18.16, 28.85], [-13.42, 29.25], [-13.33, 27.64], [-18.0, 27.64], [-18.16, 28.85]]] } }
+  ]
+}
