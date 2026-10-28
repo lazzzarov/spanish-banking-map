@@ -3,6 +3,64 @@
     "as_of": "2026-10-27",
     "note": "Selected observations. Do not stitch series across compilers without reading the definition."
   },
+  "seriesMeta": {
+    "cajas": {
+      "why_en": "Shows how Spain’s traditional savings-bank sector collapsed from dozens of cajas to two independents after the crisis restructuring.",
+      "why_es": "Muestra cómo el sector de cajas pasó de decenas de entidades a dos independientes tras la reestructuración.",
+      "trend_en": "Sharp fall after 2010 SIPs and FROB-led mergers; the remaining two are local, not national networks.",
+      "trend_es": "Caída brusca tras los SIP de 2010 y las fusiones con FROB; las dos restantes son locales, no redes nacionales.",
+      "caution_en": "Do not read this as “every caja disappeared overnight” — most banking business moved into the eight large groups.",
+      "caution_es": "No significa que toda caja desapareció de golpe: la mayor parte del negocio pasó a los ocho grandes grupos."
+    },
+    "branches": {
+      "why_en": "Branch counts are a rough proxy for physical presence and rural access as digital banking grew.",
+      "why_es": "Las oficinas son un indicador aproximado de presencia física y acceso mientras crecía la banca digital.",
+      "trend_en": "Steady decline since 2008; closures accelerated after 2012 but continued through the 2020s.",
+      "trend_es": "Descenso constante desde 2008; el cierre se aceleró tras 2012 y siguió en la década de 2020.",
+      "caution_en": "Funcas 2023 is not the same series as Banco de España 2008–2020 points.",
+      "caution_es": "El punto de Funcas 2023 no es la misma serie que los del Banco de España 2008–2020."
+    },
+    "employment": {
+      "why_en": "Employment tracks how consolidation and digitisation reduced headcount in Spanish banking.",
+      "why_es": "El empleo refleja cómo la consolidación y la digitalización redujeron plantilla en la banca española.",
+      "trend_en": "Downward across the 2010s; ECB 2024 uses a different category than Funcas — compare definitions first.",
+      "trend_es": "A la baja en los 2010; el BCE 2024 usa otra categoría que Funcas: compare definiciones antes.",
+      "caution_en": "Do not compute a single “jobs lost in the crisis” number from these rows.",
+      "caution_es": "No calcule un único “empleo destruido en la crisis” sumando estas filas."
+    },
+    "frob": {
+      "why_en": "FROB (Fund for Orderly Bank Restructuring) injected public capital into failed or weak banks during the crisis.",
+      "why_es": "El FROB inyectó capital público en bancos débiles o resueltos durante la crisis.",
+      "trend_en": "Gross assistance peaked in the early 2010s; recoveries and stakes in CaixaBank/BFA still matter in 2026.",
+      "trend_es": "La asistencia bruta picó a principios de los 2010; recuperaciones y participaciones en CaixaBank/BFA siguen en 2026.",
+      "caution_en": "This is not final taxpayer loss — guarantees, recoveries and remaining stakes have different meanings.",
+      "caution_es": "No es pérdida fiscal final: avales, recuperaciones y participaciones restantes significan cosas distintas."
+    },
+    "frob_institution": {
+      "why_en": "Shows which resolved entities absorbed the largest capital support lines.",
+      "why_es": "Muestra qué entidades resueltas concentraron las mayores líneas de apoyo de capital.",
+      "trend_en": "BFA/Bankia, Catalunya Banc and NCG dominate the 2018 table; each line is a category, not a single cheque.",
+      "trend_es": "BFA/Bankia, Catalunya Banc y NCG dominan la tabla de 2018; cada línea es una categoría, no un cheque único.",
+      "caution_en": "Do not add institution lines into one bailout total.",
+      "caution_es": "No sume las líneas por entidad en un único coste de rescate."
+    },
+    "headline": {
+      "why_en": "Headline numbers journalists ask about: resolution prices, failed bids, and minority stakes.",
+      "why_es": "Cifras de titular que suelen preguntarse: precios en resolución, OPA fallidas y participaciones minoritarias.",
+      "trend_en": "Ownership stories continue after 2012 (BBVA–Sabadell 2025, BPCE 2026) without changing lineage.",
+      "trend_es": "Las historias de propiedad continúan tras 2012 (BBVA–Sabadell 2025, BPCE 2026) sin cambiar el linaje.",
+      "caution_en": "Stakes and failed bids do not reparent banks in this map’s lineage layer.",
+      "caution_es": "Participaciones y OPA fallidas no re-parentan bancos en la capa de linaje de este mapa."
+    },
+    "condition": {
+      "why_en": "Supervisory ratios for credit institutions in Spain at mid-2026 — health snapshot, not history.",
+      "why_es": "Ratios supervisoras de entidades de crédito en España a mitad de 2026: foto de salud, no historia.",
+      "trend_en": "CET1 and profitability recovered versus 2012; NPL ratios far below crisis peaks.",
+      "trend_es": "CET1 y rentabilidad recuperaron frente a 2012; la morosidad muy por debajo de picos de crisis.",
+      "caution_en": "Not comparable with 1920s accounting or pre-IFRS caja books.",
+      "caution_es": "No comparable con contabilidad de los años 1920 ni libros pre-IFRS de las cajas."
+    }
+  },
   "points": [
     {
       "id": "cajas-precrisis",

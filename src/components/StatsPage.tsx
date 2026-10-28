@@ -1,10 +1,22 @@
+import { useState } from "react";
+import { interpolate } from "../i18n";
 import type { SourceRecord, StatPoint } from "../lib/types";
 import { LocaleProvider, useLocale } from "./LocaleContext";
 import { SiteHeader } from "./SiteHeader";
 
+export interface SeriesInsight {
+  why_en: string;
+  why_es: string;
+  trend_en: string;
+  trend_es: string;
+  caution_en: string;
+  caution_es: string;
+}
+
 interface Props {
   points: StatPoint[];
   sources: SourceRecord[];
+  seriesMeta?: Record<string, SeriesInsight>;
 }
 
 function formatValue(point: StatPoint) {
@@ -37,8 +49,9 @@ function SeriesBars({ points }: { points: StatPoint[] }) {
   );
 }
 
-function Inner({ points, sources }: Props) {
+function Inner({ points, sources, seriesMeta = {} }: Props) {
   const { t, locale } = useLocale();
+  const [index, setIndex] = useState(0);
   const bySeries = (series: string) => points.filter((point) => point.series === series);
   const sourceTitle = (id: string) => {
     const found = sources.find((item) => item.id === id);
@@ -83,14 +96,18 @@ function Inner({ points, sources }: Props) {
     { id: "frob_institution", title: locale === "es" ? "Ayudas por entidad" : "Assistance by institution", series: "frob_institution" },
     { id: "headline", title: locale === "es" ? "Cifras de titular" : "Headline figures", series: "headline" },
     { id: "condition", title: locale === "es" ? "Condición actual (T2 2026)" : "Current condition (Q2 2026)", series: "condition" },
-  ];
+  ].filter((block) => bySeries(block.series).length > 0);
+
+  const current = blocks[Math.min(index, Math.max(blocks.length - 1, 0))];
+  const series = current ? bySeries(current.series) : [];
+  const numeric = series.length > 1 && series.every((point) => point.unit === series[0]?.unit);
 
   return (
     <div className="min-h-screen">
       <SiteHeader current="stats" />
       <main className="mx-auto max-w-5xl px-5 py-10 md:px-8">
         <p className="font-mono text-[11px] tracking-[0.22em] text-accent uppercase">{t.navStats}</p>
-        <h1 className="mt-3 text-3xl text-heading md:text-4xl">{t.statsTitle}</h1>
+        <h1 className="mt-4 text-3xl text-heading md:text-4xl">{t.statsTitle}</h1>
         <p className="mt-4 max-w-2xl text-sm text-muted">{t.statsLead}</p>
         <p className="mt-3 text-xs text-muted">{t.statsSeriesNote}</p>
         <p className="mt-2 text-xs text-muted">{t.statsFrobNote}</p>
@@ -105,36 +122,63 @@ function Inner({ points, sources }: Props) {
           ))}
         </section>
 
-        <div className="mt-10 grid gap-4 md:grid-cols-2">
-          {blocks.map((block) => {
-            const series = bySeries(block.series);
-            if (series.length === 0) return null;
-            const numeric = series.every((point) => point.unit === series[0]?.unit);
-            return (
-              <section key={block.id} className="rounded-2xl border border-line bg-panel px-5 py-5">
-                <h2 className="font-mono text-[11px] tracking-[0.18em] text-accent uppercase">{block.title}</h2>
-                {numeric && series.length > 1 && <SeriesBars points={series} />}
-                <ul className="mt-4 space-y-3">
-                  {series.map((point) => (
-                    <li key={point.id}>
-                      <div className="flex items-baseline justify-between gap-4">
-                        <p className="text-sm text-fog">{locale === "es" ? point.label_es : point.label}</p>
-                        <p className="shrink-0 font-mono text-base text-heading">
-                          {formatValue(point)}{" "}
-                          <span className="text-xs text-muted">{point.unit}</span>
-                        </p>
-                      </div>
-                      <p className="mt-1 text-xs text-muted">
-                        {locale === "es" ? point.definition_es : point.definition}
+        {current && (
+          <section className="mt-10">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <button
+                type="button"
+                disabled={index === 0}
+                onClick={() => setIndex((value) => Math.max(0, value - 1))}
+                className="text-sm text-muted disabled:opacity-40"
+              >
+                {t.figuresPrev}
+              </button>
+              <p className="font-mono text-[11px] text-muted">
+                {interpolate(t.figuresOf, { current: index + 1, total: blocks.length })}
+              </p>
+              <button
+                type="button"
+                disabled={index >= blocks.length - 1}
+                onClick={() => setIndex((value) => Math.min(blocks.length - 1, value + 1))}
+                className="text-sm text-accent disabled:opacity-40"
+              >
+                {t.figuresNext}
+              </button>
+            </div>
+            <div key={current.id} className="card-in rounded-2xl border border-line bg-panel px-5 py-5">
+              <h2 className="text-xl text-heading">{current.title}</h2>
+              {seriesMeta[current.series] && (
+                <div className="mt-4 space-y-2 rounded-lg bg-panel-2 px-4 py-3 text-sm text-fog">
+                  <p>{locale === "es" ? seriesMeta[current.series].why_es : seriesMeta[current.series].why_en}</p>
+                  <p className="text-xs text-muted">
+                    {locale === "es" ? seriesMeta[current.series].trend_es : seriesMeta[current.series].trend_en}
+                  </p>
+                  <p className="text-xs text-warn">
+                    {locale === "es" ? seriesMeta[current.series].caution_es : seriesMeta[current.series].caution_en}
+                  </p>
+                </div>
+              )}
+              {numeric && <SeriesBars points={series} />}
+              <ul className="mt-4 space-y-3">
+                {series.map((point) => (
+                  <li key={point.id}>
+                    <div className="flex items-baseline justify-between gap-4">
+                      <p className="text-sm text-fog">{locale === "es" ? point.label_es : point.label}</p>
+                      <p className="shrink-0 font-mono text-base text-heading">
+                        {formatValue(point)} <span className="text-xs text-muted">{point.unit}</span>
                       </p>
-                      <p className="mt-1 text-xs text-accent">{sourceTitle(point.src)}</p>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            );
-          })}
-        </div>
+                    </div>
+                    <p className="mt-1 text-xs text-muted">
+                      {locale === "es" ? point.definition_es : point.definition}
+                    </p>
+                    <p className="mt-1 text-xs text-accent">{sourceTitle(point.src)}</p>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-5 text-xs text-muted">{t.statsSeriesNote}</p>
+            </div>
+          </section>
+        )}
       </main>
     </div>
   );

@@ -25,3 +25,24 @@ export function nextPlayableYear(
   }
   return MAX_YEAR;
 }
+
+export function nearestPlayableYear(
+  events: Event[],
+  context: ContextEvent[],
+  year: number,
+  layer: GraphLayer,
+): number {
+  const hasHere =
+    eventsInYear(events, year, layer).length > 0 ||
+    ((layer === "context" || layer === "business") && context.some((item) => item.year === year));
+  if (hasHere) return year;
+  const forward = nextPlayableYear(events, context, year, layer);
+  if (forward !== MAX_YEAR || eventsInYear(events, MAX_YEAR, layer).length > 0) return forward;
+  for (let prev = year - 1; prev >= MIN_YEAR; prev--) {
+    if (eventsInYear(events, prev, layer).length > 0) return prev;
+    if ((layer === "context" || layer === "business") && context.some((item) => item.year === prev)) {
+      return prev;
+    }
+  }
+  return year;
+}

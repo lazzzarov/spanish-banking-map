@@ -100,9 +100,25 @@ export function eventsInYear(events: Event[], year: number, layer: GraphLayer): 
   return events.filter((event) => event.year === year && isOverlayMechanism(event.mechanism, layer));
 }
 
+function entityMentionedInText(dataset: BankDataset, text: string, fallbackId: string): string {
+  const lower = text.toLowerCase();
+  let best: { id: string; len: number } | null = null;
+  for (const entity of dataset.entities) {
+    const names = [entity.name, entity.name_es, ...(entity.aliases ?? [])].filter(Boolean) as string[];
+    for (const name of names) {
+      const needle = name.toLowerCase();
+      if (needle.length >= 4 && lower.includes(needle) && needle.length > (best?.len ?? 0)) {
+        best = { id: entity.id, len: needle.length };
+      }
+    }
+  }
+  return best?.id ?? fallbackId;
+}
+
 export function storyBeats(
   body: string,
   fallback: { entityId: string; year: number },
+  dataset?: BankDataset,
 ): { text: string; entityId: string; year: number }[] {
   const paragraphs = body
     .trim()
@@ -115,8 +131,47 @@ export function storyBeats(
     const years = [...text.matchAll(/\b(?:19|20)\d{2}\b/g)]
       .map((match) => Number(match[0]))
       .filter((year) => year >= MIN_YEAR && year <= MAX_YEAR);
-    return { text, entityId: fallback.entityId, year: years[0] ?? fallback.year };
+    const entityId = dataset ? entityMentionedInText(dataset, text, fallback.entityId) : fallback.entityId;
+    return { text, entityId, year: years[0] ?? fallback.year };
   });
+}
+
+export function firstSeenYear(dataset: BankDataset, entityId: string): number {
+  const entity = entityMap(dataset).get(entityId);
+  if (entity?.founded != null) return entity.founded;
+  const years = dataset.events
+    .filter((event) => event.from === entityId || event.to === entityId)
+    .map((event) => event.year);
+  if (years.length > 0) return Math.min(...years);
+  return MIN_YEAR;
+}
+
+export function absorbedIdsAtYear(dataset: BankDataset, year: number): Set<string> {
+  return new Set(lineageEvents(eventsUpTo(dataset.events, year)).map((event) => event.from));
+}
+
+export type MarkerPresence = "hidden" | "alive" | "historical";
+
+export function markerPresence(dataset: BankDataset, entity: Entity, year: number): MarkerPresence {
+  if (!entity.hq) return "hidden";
+  if (entity.group_role === "foreign_shareholder" || entity.group_role === "asset_vehicle") {
+    const seen = dataset.events.some(
+      (event) => (event.from === entity.id || event.to === entity.id) && event.year <= year,
+    );
+    return seen ? "alive" : "hidden";
+  }
+  if (firstSeenYear(dataset, entity.id) > year) return "hidden";
+  if (absorbedIdsAtYear(dataset, year).has(entity.id)) return "historical";
+  return "alive";
+}
+
+export function lineageParentAtYear(
+  dataset: BankDataset,
+  entityId: string,
+  year: number,
+): string | null {
+  const edge = lineageEvents(eventsUpTo(dataset.events, year)).find((event) => event.from === entityId);
+  return edge?.to ?? null;
 }
 
 export function childrenByParent(events: Event[]): Map<string, string[]> {
@@ -145,26 +200,7 @@ export function familyOf(dataset: BankDataset, groupId: string): string[] {
 }
 
 export function visibleEntities(dataset: BankDataset, year: number): Entity[] {
-  const absorbedByYear = new Set(
-    lineageEvents(eventsUpTo(dataset.events, year)).map((event) => event.from),
-  );
-
-  return dataset.entities.filter((entity) => {
-    if (entity.founded && entity.founded > year) return false;
-    if (entity.group_role === "foreign_shareholder" || entity.group_role === "asset_vehicle") {
-      return dataset.events.some(
-        (event) =>
-          (event.from === entity.id || event.to === entity.id) && event.year <= year,
-      );
-    }
-    if (entity.status === "active" && !absorbedByYear.has(entity.id)) return true;
-    const firstSeen = dataset.events
-      .filter((event) => event.from === entity.id || event.to === entity.id)
-      .map((event) => event.year);
-    if (entity.founded) firstSeen.push(entity.founded);
-    const appears = firstSeen.length === 0 || Math.min(...firstSeen) <= year;
-    return appears;
-  });
+  return dataset.entities.filter((entity) => markerPresence(dataset, entity, year) !== "hidden");
 }
 
 export function searchEntities(entities: Entity[], query: string): Entity[] {

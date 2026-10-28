@@ -84,3 +84,46 @@ input[type="range"] {
   transform-origin: center;
   animation: hq-pulse 1.6s ease-out infinite;
 }
+
+.explorer-scroll {
+  scroll-snap-type: y mandatory;
+}
+
+.explorer-section {
+  scroll-snap-align: start;
+  min-height: 100vh;
+}
+
+@keyframes intro-rise {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.intro-rise {
+  animation: intro-rise 900ms ease-out both;
+}
+
+.intro-rise-delay {
+  animation: intro-rise 900ms ease-out 200ms both;
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.card-in {
+  animation: card-in 220ms ease-out;
+}

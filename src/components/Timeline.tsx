@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { MAX_YEAR, MIN_YEAR } from "../lib/bankGraph";
 import { YEAR_MARKS } from "../lib/timelineUtils";
 import { ERAS, type ContextEvent } from "../lib/types";
@@ -26,20 +27,22 @@ export function Timeline({
   onContext,
 }: Props) {
   const { t, locale } = useLocale();
+  const [open, setOpen] = useState(false);
   const era = ERAS.find((item) => year >= item.from && year <= item.to);
   const nearby = context.filter((item) => Math.abs(item.year - year) <= 2);
 
   return (
-    <section className="rounded-xl border border-line bg-panel px-5 py-4">
-      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h2 className="font-mono text-[11px] tracking-[0.18em] text-muted uppercase">
-            {t.timelineTitle}
-          </h2>
-          {era && <p className="mt-1 text-xs text-muted">{era.label}</p>}
+    <section className="rounded-xl border border-line bg-panel px-4 py-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="min-w-0">
+          <h2 className="text-sm font-medium text-heading">{t.timelineTitle}</h2>
+          <p className="mt-1 truncate text-xs text-muted">
+            {year}
+            {era ? ` · ${era.label}` : ""}
+            {caption ? ` · ${caption}` : ""}
+          </p>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="font-mono text-lg text-accent">{year}</span>
+        <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={onToggle}
@@ -54,21 +57,14 @@ export function Timeline({
           >
             {t.reset}
           </button>
-        </div>
-      </div>
-      <div className="mb-3 flex flex-wrap gap-1.5">
-        {ERAS.map((item) => (
           <button
-            key={item.id}
             type="button"
-            onClick={() => onYear(item.from)}
-            className={`rounded-full border px-2 py-0.5 font-mono text-[10px] ${
-              year >= item.from && year <= item.to ? "border-accent text-accent" : "border-line text-muted"
-            }`}
+            onClick={() => setOpen((value) => !value)}
+            className="rounded border border-line px-3 py-1 font-mono text-[11px] text-muted hover:text-fog"
           >
-            {item.label}
+            {open ? t.collapseTimeline : t.expandTimeline}
           </button>
-        ))}
+        </div>
       </div>
       <input
         type="range"
@@ -76,38 +72,55 @@ export function Timeline({
         max={MAX_YEAR}
         value={year}
         onChange={(event) => onYear(Number(event.target.value))}
-        className="w-full"
+        className="mt-3 w-full"
       />
-      <div className="mt-2 flex justify-between font-mono text-[10px] text-muted">
-        {YEAR_MARKS.map((mark) => (
-          <button key={mark} type="button" onClick={() => onYear(mark)} className="hover:text-fog">
-            {mark}
-          </button>
-        ))}
-      </div>
-      <p className="mt-3 text-sm text-fog">{caption}</p>
-      {nearby.length > 0 && (
-        <ul className="mt-2 space-y-1">
-          {nearby.map((item) => (
-            <li key={item.id}>
+      {open && (
+        <div className="mt-3 border-t border-line pt-3">
+          <div className="mb-2 flex flex-wrap gap-1.5">
+            {ERAS.map((item) => (
               <button
+                key={item.id}
                 type="button"
-                onClick={() => {
-                  onYear(item.year);
-                  onContext?.(item);
-                }}
-                className="text-left text-xs text-accent hover:underline"
+                onClick={() => onYear(item.from)}
+                className={`rounded-full border px-2 py-0.5 font-mono text-[10px] ${
+                  year >= item.from && year <= item.to ? "border-accent text-accent" : "border-line text-muted"
+                }`}
               >
-                {item.year} · {locale === "es" ? item.name_es : item.name}
+                {item.label}
               </button>
-            </li>
-          ))}
-        </ul>
+            ))}
+          </div>
+          <div className="flex justify-between font-mono text-[10px] text-muted">
+            {YEAR_MARKS.map((mark) => (
+              <button key={mark} type="button" onClick={() => onYear(mark)} className="hover:text-fog">
+                {mark}
+              </button>
+            ))}
+          </div>
+          {nearby.length > 0 && (
+            <ul className="mt-2 space-y-1">
+              {nearby.map((item) => (
+                <li key={item.id}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onYear(item.year);
+                      onContext?.(item);
+                    }}
+                    className="text-left text-xs text-accent hover:underline"
+                  >
+                    {item.year} · {locale === "es" ? item.name_es : item.name}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+          <div className="mt-3">
+            <p className="mb-1 text-[10px] text-muted">{t.legendTitle}</p>
+            <MechanismLegend compact />
+          </div>
+        </div>
       )}
-      <div className="mt-4 border-t border-line pt-3">
-        <p className="mb-2 font-mono text-[10px] tracking-[0.16em] text-muted uppercase">{t.legendTitle}</p>
-        <MechanismLegend compact />
-      </div>
     </section>
   );
 }

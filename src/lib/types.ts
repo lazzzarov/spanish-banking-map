@@ -58,6 +58,8 @@ export interface Entity {
     | "cooperative_head"
     | "asset_vehicle";
   publication_ready?: boolean;
+  summary?: string;
+  summary_es?: string;
 }
 
 export interface Event {

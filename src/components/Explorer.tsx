@@ -1,11 +1,10 @@
-import { useEffect, useLayoutEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { interpolate } from "../i18n";
 import { currentGroupOf, entityMap, eventsInYear, MAX_YEAR, MIN_YEAR, pathToGroup, storyBeats } from "../lib/bankGraph";
 import { explorerHref, guideKey, parseExplorerQuery, writeExplorerQuery } from "../lib/deepLinks";
 import type { RegionCollection } from "../lib/geo";
-import { nextPlayableYear } from "../lib/timelineUtils";
+import { nearestPlayableYear, nextPlayableYear } from "../lib/timelineUtils";
 import {
-  ERAS,
   FEATURED_GROUPS,
   OTHER_SURVIVORS,
   type BankDataset,
@@ -16,15 +15,17 @@ import {
   type SourceRecord,
 } from "../lib/types";
 import { BankDetails } from "./BankDetails";
-import { FilterControls, type GroupFilter } from "./FilterControls";
+import { BankRail } from "./BankRail";
 import { GenealogyStats } from "./GenealogyStats";
-import { GuideModal } from "./GuideModal";
+import { GuideStrip } from "./GuideStrip";
+import { IntroSection } from "./IntroSection";
 import { LocaleProvider, useLocale } from "./LocaleContext";
-import { SearchBar } from "./SearchBar";
 import { SiteHeader } from "./SiteHeader";
 import { SpainMap } from "./SpainMap";
 import { StillHappening } from "./StillHappening";
 import { Timeline } from "./Timeline";
+
+export type GroupFilter = string | "surviving" | null;
 
 export interface StoryLink {
   slug: string;
@@ -72,12 +73,29 @@ function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [],
   const [guide, setGuide] = useState<string | null>(initial.query.guide);
   const [guidesOpen, setGuidesOpen] = useState(initial.query.guides && !initial.query.guide);
   const [guideStep, setGuideStep] = useState(0);
+  const mapSectionRef = useRef<HTMLElement>(null);
 
   const pausePlay = () => setPlaying(false);
 
   const setYearFromUser = (next: number) => {
     pausePlay();
     setYear(next);
+  };
+
+  const clearSelection = () => {
+    pausePlay();
+    setSelectedId(null);
+    setGroupFilter(null);
+  };
+
+  const select = (id: string) => {
+    pausePlay();
+    setSelectedId(id);
+    setYear(MAX_YEAR);
+    const group = currentGroupOf(dataset, id);
+    if (FEATURED_GROUPS.includes(group as FeaturedGroup) || OTHER_SURVIVORS.includes(group as (typeof OTHER_SURVIVORS)[number])) {
+      setGroupFilter(group);
+    }
   };
 
   useLayoutEffect(() => {
@@ -95,6 +113,11 @@ function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [],
     else if (initial.query.lang) setLocale(initial.query.lang);
     setReady(true);
   }, [dataset, initial.query.lang, initialSearch, setLocale]);
+
+  useEffect(() => {
+    if (!ready || !linked) return;
+    mapSectionRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [ready, linked]);
 
   useEffect(() => {
     if (!ready) return;
@@ -115,22 +138,26 @@ function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [],
         if (next >= MAX_YEAR) setPlaying(false);
         return next;
       });
-    }, 700);
+    }, 900);
     return () => window.clearInterval(timer);
   }, [playing, dataset.events, contextEvents, layer]);
 
   const currentGuide = stories.find((story) => story.locale === locale && guideKey(story.slug) === guide);
-  const beats = currentGuide
-    ? storyBeats(currentGuide.body, { entityId: currentGuide.entityId, year: currentGuide.year })
-    : [];
+  const beats = useMemo(
+    () =>
+      currentGuide
+        ? storyBeats(currentGuide.body, { entityId: currentGuide.entityId, year: currentGuide.year }, dataset)
+        : [],
+    [currentGuide, dataset],
+  );
 
   useEffect(() => {
     const beat = beats[guideStep];
-    if (!beat) return;
+    if (!beat || !guide) return;
     setSelectedId(beat.entityId);
     setYear(beat.year);
     setPlaying(false);
-  }, [guide, guideStep, currentGuide?.slug]);
+  }, [guide, guideStep, beats]);
 
   const highlight = useMemo(
     () => (selectedId ? pathToGroup(dataset, selectedId, year) : []),
@@ -138,11 +165,10 @@ function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [],
   );
   const selected = selectedId ? entityMap(dataset).get(selectedId) ?? null : null;
   const yearEvents = useMemo(() => eventsInYear(dataset.events, year, layer), [dataset.events, year, layer]);
-  const era = ERAS.find((item) => year >= item.from && year <= item.to);
   const caption =
     yearEvents.length > 0
       ? yearEvents
-          .slice(0, 3)
+          .slice(0, 2)
           .map((event) => {
             const from = entityMap(dataset).get(event.from);
             const to = entityMap(dataset).get(event.to);
@@ -151,20 +177,27 @@ function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [],
           .join(" · ")
       : interpolate(t.yearEventsEmpty, { year });
 
-  const select = (id: string) => {
-    pausePlay();
-    setSelectedId(id);
-    const group = currentGroupOf(dataset, id);
-    if (FEATURED_GROUPS.includes(group as FeaturedGroup) || OTHER_SURVIVORS.includes(group as (typeof OTHER_SURVIVORS)[number])) {
-      setGroupFilter(group);
-    }
-  };
+  const layerBanner =
+    layer === "ownership"
+      ? t.layerBannerOwnership
+      : layer === "asset"
+        ? t.layerBannerAsset
+        : layer === "context"
+          ? t.layerBannerContext
+          : t.layerBannerBusiness;
 
   const openGuide = (key: string) => {
     setGuide(key);
     setGuideStep(0);
     setGuidesOpen(false);
     setPlaying(false);
+    mapSectionRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const exitGuide = () => {
+    setGuide(null);
+    setGuidesOpen(false);
+    setGuideStep(0);
   };
 
   const copyLink = async () => {
@@ -183,29 +216,30 @@ function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [],
     }
   };
 
+  const guideBeatText = guide && beats[guideStep] ? beats[guideStep].text : null;
+  const panelEntity = guide && beats[guideStep] ? entityMap(dataset).get(beats[guideStep].entityId) ?? selected : selected;
+
   return (
     <div className="min-h-screen">
       <SiteHeader current={guide || guidesOpen ? "stories" : "explore"} />
-      <main className="mx-auto max-w-6xl px-5 py-6 md:px-8">
-        <div className="flex items-start justify-between gap-4">
-          <p className="font-mono text-[11px] tracking-[0.22em] text-accent uppercase">{t.heroKicker}</p>
-          <button type="button" onClick={copyLink} className="font-mono text-[11px] text-muted hover:text-accent">
-            {copied ? t.copied : t.copyLink}
-          </button>
-        </div>
-        <h1 className="mt-3 text-3xl leading-none tracking-tight text-heading md:text-4xl lg:text-5xl">
-          {t.heroTitle}
-        </h1>
-        <p className="mt-3 max-w-2xl text-sm text-muted md:text-base">
-          {interpolate(t.heroLead, { count: dataset.entities.length })}
-        </p>
-        <p className="mt-2 max-w-2xl text-xs text-muted">{t.scopeCaveat}</p>
+      <main className="explorer-scroll">
+        <IntroSection
+          entityCount={dataset.entities.length}
+          onContinue={() => mapSectionRef.current?.scrollIntoView({ behavior: "smooth" })}
+        />
 
-        <div className="mt-6">
+        <section ref={mapSectionRef} className="explorer-section mx-auto max-w-7xl px-5 py-8 md:px-8">
+          <div className="mb-4 flex items-start justify-between gap-4">
+            <p className="text-[11px] text-accent">{t.heroKicker}</p>
+            <button type="button" onClick={copyLink} className="text-[11px] text-muted hover:text-accent">
+              {copied ? t.copied : t.copyLink}
+            </button>
+          </div>
+
           <Timeline
             year={year}
             playing={playing}
-            caption={era ? `${era.label}. ${caption}` : caption}
+            caption={caption}
             onYear={setYearFromUser}
             onToggle={() => {
               if (!playing && year >= MAX_YEAR) setYear(MIN_YEAR);
@@ -222,87 +256,84 @@ function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [],
               setYearFromUser(item.year);
             }}
           />
-        </div>
 
-        <div className="mt-5 grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-          <SearchBar entities={dataset.entities} onSelect={select} />
-          <FilterControls
-            selected={groupFilter}
-            onChange={(group) => setGroupFilter(group)}
-            layer={layer}
-            onLayer={(next) => {
-              setLayer(next);
-              if (next !== "context") setContextNote(null);
-            }}
-          />
-        </div>
-
-        <section className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.9fr)]">
-          <div className="rounded-xl border border-line bg-panel p-4">
-            <SpainMap
+          <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(200px,0.55fr)_minmax(0,1.2fr)_minmax(280px,0.75fr)]">
+            <BankRail
               dataset={dataset}
-              regions={regions}
               year={year}
               selectedId={selectedId}
-              highlight={highlight}
-              groupFilter={groupFilter === "surviving" ? null : groupFilter}
-              survivingOnly={groupFilter === "surviving"}
+              groupFilter={groupFilter}
+              onSelectBank={select}
+              onSelectGroup={(group) => setGroupFilter(group as GroupFilter)}
+            />
+            <div className="relative rounded-xl border border-line bg-panel p-4">
+              <SpainMap
+                dataset={dataset}
+                regions={regions}
+                year={year}
+                selectedId={selectedId}
+                highlight={highlight}
+                groupFilter={groupFilter === "surviving" ? null : groupFilter}
+                survivingOnly={groupFilter === "surviving"}
+                yearEvents={yearEvents}
+                layer={layer}
+                banner={layerBanner}
+                emptyMessage={yearEvents.length === 0 && layer !== "context" ? t.layerEmpty : undefined}
+                onSelect={select}
+                onClear={clearSelection}
+                onLayer={(next) => {
+                  setLayer(next);
+                  if (next !== "context") setContextNote(null);
+                  setYear((current) => nearestPlayableYear(dataset.events, contextEvents, current, next));
+                }}
+              />
+              {contextNote && layer === "context" && (
+                <div className="mt-3 rounded-xl border border-line bg-panel-2 px-4 py-3">
+                  <p className="text-[11px] text-accent">{contextNote.year}</p>
+                  <h3 className="mt-1 text-lg text-heading">
+                    {locale === "es" ? contextNote.name_es : contextNote.name}
+                  </h3>
+                  <p className="mt-2 text-sm text-fog">
+                    {locale === "es" ? contextNote.description_es : contextNote.description}
+                  </p>
+                </div>
+              )}
+              <GuideStrip
+                dataset={dataset}
+                stories={stories}
+                guide={guide}
+                pickerOpen={guidesOpen}
+                step={guideStep}
+                onPick={openGuide}
+                onClose={exitGuide}
+                onStep={setGuideStep}
+              />
+            </div>
+            <BankDetails
+              dataset={dataset}
+              sources={sources}
+              stories={stories}
+              entity={panelEntity}
+              year={year}
               yearEvents={yearEvents}
               layer={layer}
-              emptyMessage={yearEvents.length === 0 && layer !== "context" ? t.layerEmpty : undefined}
               onSelect={select}
+              onGuide={openGuide}
+              guideBeat={guideBeatText}
             />
-            {contextNote && layer === "context" && (
-              <div className="mt-3 rounded-xl border border-line bg-panel-2 px-4 py-3">
-                <p className="font-mono text-[10px] tracking-[0.16em] text-accent uppercase">{contextNote.year}</p>
-                <h3 className="mt-1 text-lg text-heading">
-                  {locale === "es" ? contextNote.name_es : contextNote.name}
-                </h3>
-                <p className="mt-2 text-sm text-fog">
-                  {locale === "es" ? contextNote.description_es : contextNote.description}
-                </p>
-              </div>
-            )}
           </div>
-          <BankDetails
-            dataset={dataset}
-            sources={sources}
-            stories={stories}
-            entity={selected}
-            year={year}
-            yearEvents={yearEvents}
-            layer={layer}
-            groupFilter={groupFilter}
-            highlight={highlight}
-            onSelect={select}
-            onGuide={openGuide}
-          />
         </section>
 
-        <div className="mt-4">
-          <GenealogyStats dataset={dataset} year={year} />
-        </div>
-
-        {year >= 2025 && (
-          <div className="mt-4">
+        <section className="explorer-section mx-auto max-w-6xl px-5 py-12 md:px-8">
+          <h2 className="text-2xl text-heading">{t.sectionFacts}</h2>
+          <div className="mt-6">
+            <GenealogyStats dataset={dataset} year={year} />
+          </div>
+          <div className="mt-6">
             <StillHappening sources={sources} />
           </div>
-        )}
+        </section>
       </main>
-
-      <GuideModal
-        stories={stories}
-        guide={guide}
-        pickerOpen={guidesOpen}
-        step={guideStep}
-        onPick={openGuide}
-        onClose={() => {
-          setGuide(null);
-          setGuidesOpen(false);
-          setGuideStep(0);
-        }}
-        onStep={setGuideStep}
-      />
     </div>
   );
 }

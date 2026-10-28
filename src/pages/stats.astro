@@ -8,5 +8,5 @@ import sources from "../../data/sources.json";
   title="Figures · Spain Banking Map"
   description="Selected official observations on Spanish banking consolidation, with definitions and sources."
 >
-  <StatsPage client:load points={stats.points} sources={sources} />
+  <StatsPage client:load points={stats.points} sources={sources} seriesMeta={stats.seriesMeta} />
 </Base>
