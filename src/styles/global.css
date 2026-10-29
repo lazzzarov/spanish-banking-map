@@ -29,6 +29,7 @@
   --dot-stroke: #ffffff;
   --dot-halo: rgba(255, 255, 255, 0.95);
   --glow: rgba(31, 111, 235, 0.1);
+  --deal: #c2610c;
 }
 
 html[data-theme="dark"] {
@@ -46,6 +47,7 @@ html[data-theme="dark"] {
   --dot-stroke: #1a2030;
   --dot-halo: rgba(248, 250, 252, 0.85);
   --glow: rgba(76, 141, 255, 0.08);
+  --deal: #f59e0b;
 }
 
 html,

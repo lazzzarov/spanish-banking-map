@@ -83,7 +83,6 @@ export function SpainMap({
   const svgRef = useRef<SVGSVGElement>(null);
   const zoomLayerRef = useRef<SVGGElement>(null);
   const zoomRef = useRef<ReturnType<typeof zoom<SVGSVGElement>> | null>(null);
-  const [transform, setTransform] = useState<ZoomTransform>(zoomIdentity);
   const [tooltip, setTooltip] = useState<MapTooltipPayload | null>(null);
   const [stackMenu, setStackMenu] = useState<StackMenu | null>(null);
   const hoverTimer = useRef<number | null>(null);
@@ -213,6 +212,7 @@ export function SpainMap({
   });
 
   const renderedStacks = [...stacks.entries()];
+  const selectedPoint = selectedId ? pointOf(selectedId) : null;
 
   useEffect(() => {
     const svg = svgRef.current;
@@ -227,7 +227,6 @@ export function SpainMap({
       ])
       .on("zoom", (event) => {
         select(layer).attr("transform", event.transform.toString());
-        setTransform(event.transform);
       });
 
     zoomRef.current = behavior;
@@ -304,26 +303,41 @@ export function SpainMap({
 
   return (
     <div className="relative flex min-h-[320px] flex-1 flex-col">
-      <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
-        <div>
-          <h2 className="text-sm font-medium text-heading">{t.mapTitle}</h2>
-          <p className="mt-1 text-xs text-muted">{t.mapHint}</p>
-        </div>
-        <div className="flex flex-wrap gap-1">
+      <h2 className="sr-only">{t.mapTitle}</h2>
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+        <ul className="flex flex-wrap gap-4 text-xs text-muted" aria-label={t.legendTitle}>
+          <li className="flex items-center gap-1.5">
+            <span aria-hidden="true" className="h-2.5 w-2.5 rounded-full bg-accent" />
+            {t.mapLegendActive}
+          </li>
+          <li className="flex items-center gap-1.5">
+            <span aria-hidden="true" className="h-2 w-2 rounded-full border-[1.5px] border-accent bg-panel" />
+            {t.mapLegendHistorical}
+          </li>
+          <li className="flex items-center gap-1.5">
+            <span aria-hidden="true" className="w-4 border-t-2 border-muted" />
+            {t.mapLegendDeal}
+          </li>
+        </ul>
+        <div className="flex flex-wrap gap-1.5">
           <button type="button" className="map-zoom-btn" onClick={() => zoomBy(1.35)} aria-label={t.mapZoomIn}>
             +
           </button>
           <button type="button" className="map-zoom-btn" onClick={() => zoomBy(1 / 1.35)} aria-label={t.mapZoomOut}>
             −
           </button>
-          <button type="button" className="map-zoom-btn px-2 text-[11px]" onClick={onResetView}>
-            {t.mapZoomReset}
-          </button>
           {selectedId ? (
-            <button type="button" className="map-zoom-btn px-2 text-[11px]" onClick={zoomToSelection}>
+            <button type="button" className="map-zoom-btn px-3 text-[12px]" onClick={zoomToSelection}>
               {t.mapZoomToSelection}
             </button>
           ) : null}
+          <button
+            type="button"
+            onClick={onResetView}
+            className="h-8 rounded-md bg-heading px-3 text-[12px] font-semibold text-panel hover:opacity-90"
+          >
+            {t.mapShowAll}
+          </button>
         </div>
       </div>
       <div className="relative min-h-[280px] flex-1">
@@ -463,6 +477,22 @@ export function SpainMap({
                 </g>
               );
             })}
+            {selectedPoint && selectedId ? (
+              <text
+                x={selectedPoint[0]}
+                y={selectedPoint[1] - 14}
+                textAnchor="middle"
+                fontSize="12"
+                fontWeight={600}
+                fill="var(--heading)"
+                stroke="var(--panel)"
+                strokeWidth={3}
+                paintOrder="stroke"
+                className="pointer-events-none"
+              >
+                {labelOf(selectedId)}
+              </text>
+            ) : null}
           </g>
         </svg>
         {stackMenu ? (
@@ -493,15 +523,7 @@ export function SpainMap({
         ) : null}
       </div>
       <MapMarkerTooltip payload={tooltip} />
-      {yearEvents.length > 0 && (
-        <ul className="mt-2 space-y-1 text-xs text-muted">
-          {yearEvents.slice(0, 4).map((event) => (
-            <li key={event.id}>
-              {labelOf(event.from)} → {labelOf(event.to)} · {t[event.mechanism]}
-            </li>
-          ))}
-        </ul>
-      )}
+      <p className="mt-2 text-[11px] text-muted">{t.mapHint}</p>
       {calloutEvents.length > 0 && (
         <ul className="mt-2 space-y-1 text-xs text-accent">
           {calloutEvents.map((event) => (
@@ -511,9 +533,6 @@ export function SpainMap({
           ))}
         </ul>
       )}
-      <p className="mt-auto pt-2 font-mono text-[10px] text-muted">
-        {t.noRegion}: BPCE, TSB · {Math.round(transform.k * 100)}%
-      </p>
     </div>
   );
 }

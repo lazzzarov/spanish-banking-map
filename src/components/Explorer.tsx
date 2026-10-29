@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { interpolate } from "../i18n";
-import { currentGroupOf, entityMap, eventsInYear, MAX_YEAR, pathToGroup, storyBeats } from "../lib/bankGraph";
+import { currentGroupOf, entityMap, eventsInYear, MAX_YEAR, MIN_YEAR, pathToGroup, storyBeats } from "../lib/bankGraph";
+import { eventSentence } from "../lib/eventText";
 import { explorerHref, guideKey, isLinkedQuery, parseExplorerQuery, writeExplorerQuery } from "../lib/deepLinks";
 import type { RegionCollection } from "../lib/geo";
 import { nextPlayableYear } from "../lib/timelineUtils";
@@ -14,14 +15,13 @@ import {
 } from "../lib/types";
 import { BankDetails } from "./BankDetails";
 import { BankRail } from "./BankRail";
-import { DecadePrompt } from "./DecadePrompt";
-import { GuideStrip } from "./GuideStrip";
 import { IntroSection } from "./IntroSection";
 import { LocaleProvider, useLocale } from "./LocaleContext";
 import { SectionChevron } from "./SectionChevron";
 import { SiteHeader } from "./SiteHeader";
 import { SpainMap } from "./SpainMap";
 import { StillHappening } from "./StillHappening";
+import { StoryBanner, StoryCard, StoryStepper } from "./StoryPanel";
 import { Timeline } from "./Timeline";
 
 export type GroupFilter = string | null;
@@ -65,7 +65,6 @@ function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [] 
   const [ready, setReady] = useState(false);
   const [guide, setGuide] = useState<string | null>(null);
   const [guideStep, setGuideStep] = useState(0);
-  const [decadePromptOpen, setDecadePromptOpen] = useState(true);
   const [viewResetToken, setViewResetToken] = useState(0);
   const introSectionRef = useRef<HTMLElement>(null);
   const mapSectionRef = useRef<HTMLElement>(null);
@@ -77,7 +76,6 @@ function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [] 
   const setYearFromUser = (next: number) => {
     pausePlay();
     setYear(next);
-    setDecadePromptOpen(false);
   };
 
   const clearSelection = () => {
@@ -108,7 +106,6 @@ function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [] 
     setPlaying(false);
     setGuide(query.guide);
     setGuideStep(0);
-    setDecadePromptOpen(!linked);
     lastWritten.current = { entity: query.entity, guide: query.guide };
     return query;
   }, [dataset]);
@@ -168,7 +165,6 @@ function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [] 
     setSelectedId(beat.entityId);
     setYear(beat.year);
     setPlaying(false);
-    setDecadePromptOpen(false);
   }, [guide, guideStep, beats]);
 
   const highlight = useMemo(
@@ -177,23 +173,39 @@ function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [] 
   );
   const selected = selectedId ? entityMap(dataset).get(selectedId) ?? null : null;
   const yearEvents = useMemo(() => eventsInYear(dataset.events, year, "business"), [dataset.events, year]);
-  const caption =
-    yearEvents.length > 0
-      ? yearEvents
-          .slice(0, 2)
-          .map((event) => {
-            const from = entityMap(dataset).get(event.from);
-            const to = entityMap(dataset).get(event.to);
-            return `${from?.name ?? event.from} → ${to?.name ?? event.to}`;
-          })
-          .join(" · ")
-      : interpolate(t.yearEventsEmpty, { year });
+  const dealEvents = useMemo(
+    () => dataset.events.filter((event) => event.lineage && event.outcome === "completed"),
+    [dataset.events],
+  );
+  const dealCounts = useMemo(() => {
+    const counts = new Map<number, number>();
+    for (const event of dealEvents) counts.set(event.year, (counts.get(event.year) ?? 0) + 1);
+    return counts;
+  }, [dealEvents]);
+  const nameOf = (id: string) => {
+    const entity = entityMap(dataset).get(id);
+    if (!entity) return id;
+    return locale === "es" && entity.name_es ? entity.name_es : entity.name;
+  };
+  const caption = (() => {
+    if (yearEvents.length > 0) {
+      return yearEvents
+        .slice(0, 2)
+        .map((event) => eventSentence(t, event, nameOf))
+        .join(" · ");
+    }
+    const latest = dealEvents.filter((event) => event.year < year).sort((a, b) => b.year - a.year)[0];
+    if (!latest) return t.timelineNoDeals;
+    return `${t.timelineNoDeals} · ${interpolate(t.timelineLatest, {
+      year: latest.year,
+      text: eventSentence(t, latest, nameOf),
+    })}`;
+  })();
 
   const openGuide = (key: string) => {
     setGuide(key);
     setGuideStep(0);
     setPlaying(false);
-    setDecadePromptOpen(false);
     mapSectionRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
@@ -220,9 +232,23 @@ function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [] 
     }
   };
 
-  const guideBeatText = guide && beats[guideStep] ? beats[guideStep].text : null;
-  const panelEntity = guide && beats[guideStep] ? entityMap(dataset).get(beats[guideStep].entityId) ?? selected : selected;
-  const showStillHappening = year >= 2020;
+  const storyActive = Boolean(guide && currentGuide && beats.length > 0);
+  const showStillHappening = year >= 2020 && !storyActive;
+
+  // Story shortcuts: arrows step, Escape leaves. Ignored while typing in a field.
+  useEffect(() => {
+    if (!storyActive) return;
+    const onKey = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable)) return;
+      if (event.key === "Escape") exitGuide();
+      else if (event.key === "ArrowRight") setGuideStep((step) => Math.min(step + 1, beats.length - 1));
+      else if (event.key === "ArrowLeft") setGuideStep((step) => Math.max(step - 1, 0));
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+    // exitGuide only sets state; re-binding it every render is unnecessary.
+  }, [storyActive, beats.length]);
 
   return (
     <div className="min-h-screen">
@@ -251,61 +277,22 @@ function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [] 
           </div>
 
           <div className="md:mx-8">
-            <Timeline
-              year={year}
-              playing={playing}
-              caption={caption}
-              onYear={setYearFromUser}
-              onToggle={() => {
-                setPlaying((value) => !value);
-              }}
-              onReset={() => {
-                setPlaying(false);
-                setYear(MAX_YEAR);
-                setDecadePromptOpen(false);
-              }}
-              context={contextEvents}
-              onContext={(item) => setYearFromUser(item.year)}
-            />
-            {showStillHappening && (
-              <div className="mt-4">
-                <StillHappening sources={sources} />
-              </div>
-            )}
+            {storyActive && currentGuide ? <StoryBanner title={currentGuide.title} onExit={exitGuide} /> : null}
 
-            <div className="relative mt-4 grid gap-4 lg:grid-cols-[minmax(200px,0.55fr)_minmax(0,1.2fr)_minmax(280px,0.75fr)]">
-              <BankRail
-                dataset={dataset}
-                year={year}
-                selectedId={selectedId}
-                groupFilter={groupFilter}
-                onSelectBank={select}
-                onSelectGroup={(group) => setGroupFilter(group as GroupFilter)}
-              />
-              <div className="relative flex flex-col rounded-xl border border-line bg-panel p-4">
-                {decadePromptOpen && (
-                  <DecadePrompt
-                    onPick={(startYear) => {
-                      setYearFromUser(startYear);
-                      setDecadePromptOpen(false);
-                    }}
-                    onStayPresent={() => {
-                      setYear(MAX_YEAR);
-                      setDecadePromptOpen(false);
-                    }}
+            <div className="flex flex-wrap items-stretch gap-4">
+              {storyActive ? null : (
+                <div className="min-w-0 flex-[1_1_240px] lg:max-w-[280px]">
+                  <BankRail
+                    dataset={dataset}
+                    year={year}
+                    selectedId={selectedId}
+                    groupFilter={groupFilter}
+                    onSelectBank={select}
+                    onSelectGroup={(group) => setGroupFilter(group as GroupFilter)}
                   />
-                )}
-                {guide ? (
-                  <GuideStrip
-                    stories={stories}
-                    guide={guide}
-                    step={guideStep}
-                    beatCount={beats.length}
-                    onClose={exitGuide}
-                    onStep={setGuideStep}
-                    placement="top"
-                  />
-                ) : null}
+                </div>
+              )}
+              <div className="flex min-w-0 flex-[999_1_560px] flex-col gap-3 rounded-xl border border-line bg-panel p-4">
                 <SpainMap
                   dataset={dataset}
                   regions={regions}
@@ -319,30 +306,52 @@ function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [] 
                   onResetView={resetView}
                   viewResetToken={viewResetToken}
                 />
-                {guide ? (
-                  <GuideStrip
-                    stories={stories}
-                    guide={guide}
-                    step={guideStep}
-                    beatCount={beats.length}
-                    onClose={exitGuide}
-                    onStep={setGuideStep}
-                    placement="bottom"
+                {storyActive ? (
+                  <StoryStepper beats={beats} step={guideStep} onStep={setGuideStep} />
+                ) : (
+                  <Timeline
+                    year={year}
+                    playing={playing}
+                    dealCounts={dealCounts}
+                    caption={caption}
+                    onYear={setYearFromUser}
+                    onToggle={() => {
+                      if (!playing && year >= MAX_YEAR) setYear(MIN_YEAR);
+                      setPlaying((value) => !value);
+                    }}
+                    context={contextEvents}
                   />
-                ) : null}
+                )}
               </div>
-              <BankDetails
-                dataset={dataset}
-                sources={sources}
-                stories={stories}
-                entity={panelEntity}
-                year={year}
-                yearEvents={yearEvents}
-                onSelect={select}
-                onGuide={openGuide}
-                guideBeat={guideBeatText}
-              />
+              <div className="min-w-0 flex-[1_1_300px] lg:max-w-[380px]">
+                {storyActive && currentGuide ? (
+                  <StoryCard
+                    title={currentGuide.title}
+                    beats={beats}
+                    step={guideStep}
+                    onStep={setGuideStep}
+                    onExit={exitGuide}
+                  />
+                ) : (
+                  <BankDetails
+                    dataset={dataset}
+                    sources={sources}
+                    stories={stories}
+                    entity={selected}
+                    year={year}
+                    yearEvents={yearEvents}
+                    onSelect={select}
+                    onGuide={openGuide}
+                  />
+                )}
+              </div>
             </div>
+
+            {showStillHappening && (
+              <div className="mt-4">
+                <StillHappening sources={sources} />
+              </div>
+            )}
           </div>
         </section>
       </main>

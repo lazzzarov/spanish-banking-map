@@ -9,6 +9,7 @@ import {
   pathToGroup,
 } from "../lib/bankGraph";
 import { interpolate } from "../i18n";
+import { eventSentence, fateEvent, fateSentence } from "../lib/eventText";
 import { downloadSvgAsPng, downloadText, familyPathSvg } from "../lib/pathExport";
 import {
   ERAS,
@@ -33,7 +34,6 @@ interface Props {
   yearEvents: Event[];
   onSelect: (id: string) => void;
   onGuide?: (key: string) => void;
-  guideBeat?: string | null;
 }
 
 export function BankDetails({
@@ -45,7 +45,6 @@ export function BankDetails({
   yearEvents,
   onSelect,
   onGuide,
-  guideBeat,
 }: Props) {
   const { t, locale } = useLocale();
   const [familyOpen, setFamilyOpen] = useState(false);
@@ -59,12 +58,9 @@ export function BankDetails({
   };
 
   const renderEvent = (event: Event) => (
-    <li key={event.id} className="rounded-lg bg-panel-2 px-3 py-2 text-sm text-fog">
-      <span className="font-mono text-[10px] text-muted">{event.year}</span>
-      <span className="mx-1 text-muted">·</span>
-      {label(event.from)} → {label(event.to)}
-      <span className="mx-1 text-muted">·</span>
-      <span className="text-muted">{t[event.mechanism]}</span>
+    <li key={event.id} className="flex gap-3 text-[13px] leading-snug">
+      <span className="min-w-9 font-mono text-accent">{event.year}</span>
+      <span className="text-fog">{eventSentence(t, event, label)}</span>
     </li>
   );
 
@@ -78,7 +74,7 @@ export function BankDetails({
           return (
             <div key={era.id}>
               <p className="mb-1 font-mono text-[10px] text-accent">{era.label}</p>
-              <ul className="space-y-2">{eraEvents.map(renderEvent)}</ul>
+              <ol className="space-y-2.5">{eraEvents.map(renderEvent)}</ol>
             </div>
           );
         })}
@@ -128,25 +124,53 @@ export function BankDetails({
   const displayName = locale === "es" && entity.name_es ? entity.name_es : entity.name;
   const summary = locale === "es" && entity.summary_es ? entity.summary_es : entity.summary;
   const seen = firstSeenYear(dataset, entity.id);
+  const fate = entity.status === "active" ? null : fateEvent(dataset, entity.id);
+  const fateText = fate ? fateSentence(t, fate, label) : null;
+  const statusLabel = {
+    active: t.statusActive,
+    absorbed: t.statusAbsorbed,
+    rebranded: t.statusRebranded,
+    resolved: t.statusResolved,
+    historical_nonbank: t.statusHistorical,
+  }[entity.status];
+  const isHead = canOpenFamily && groupId === entity.id;
+  const familySize = isHead
+    ? dataset.entities.filter((item) => currentGroupOf(dataset, item.id, MAX_YEAR) === entity.id).length
+    : 0;
 
   return (
-    <aside className="flex h-full max-h-[min(720px,70vh)] flex-col overflow-y-auto rounded-xl border border-line bg-panel p-5">
-      {guideBeat && (
-        <div className="mb-4 rounded-lg border border-accent/30 bg-accent/5 px-3 py-2">
-          <p className="text-[11px] text-accent">{t.guideBeatTitle}</p>
-          <p className="mt-1 text-sm text-fog">{guideBeat}</p>
-        </div>
-      )}
-
-      <div className="flex items-start gap-3">
+    <aside className="flex h-full flex-col overflow-y-auto rounded-xl border border-line bg-panel p-5 lg:max-h-[min(860px,85vh)]">
+      <div className="flex items-center gap-3">
         <LogoBadge id={entity.id} name={displayName} groupId={groupId} />
-        <div>
-          <p className="text-[11px] text-muted">{entity.id}</p>
-          <h2 className="mt-1 text-xl text-heading">{displayName}</h2>
+        <div className="min-w-0">
+          <h2 className="text-xl font-bold text-heading">{displayName}</h2>
+          <p className="mt-0.5 text-[13px] text-muted">
+            {fateText ?? [statusLabel, entity.founded ? `${t.founded} ${entity.founded}` : null].filter(Boolean).join(" · ")}
+          </p>
         </div>
       </div>
 
+      {entity.status === "historical_nonbank" && (
+        <div className="mt-3 rounded-lg bg-panel-2 px-3 py-2">
+          <p className="text-xs font-semibold text-heading">{t.statusHistorical}</p>
+          <p className="mt-1 text-xs leading-relaxed text-muted">{t.statusHistoricalHelp}</p>
+        </div>
+      )}
+
       {summary && <p className="mt-3 text-sm leading-6 text-fog">{summary}</p>}
+
+      {isHead && (
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          <div className="rounded-lg bg-panel-2 px-3 py-2.5">
+            <p className="font-mono text-xl text-heading">{familySize}</p>
+            <p className="mt-0.5 text-xs text-muted">{t.detailFamily}</p>
+          </div>
+          <div className="rounded-lg bg-panel-2 px-3 py-2.5">
+            <p className="font-mono text-xl text-heading">{related.length}</p>
+            <p className="mt-0.5 text-xs text-muted">{t.detailDeals}</p>
+          </div>
+        </div>
+      )}
 
       {(entity.founded == null || seen !== entity.founded) && seen > MIN_YEAR && (
         <p className="mt-2 text-xs text-muted">{interpolate(t.appearsInYear, { year: seen })}</p>
@@ -159,13 +183,7 @@ export function BankDetails({
         </div>
         <div>
           <dt className="text-[11px] text-muted">{t.status}</dt>
-          <dd>
-            {entity.status === "active" && t.statusActive}
-            {entity.status === "absorbed" && t.statusAbsorbed}
-            {entity.status === "rebranded" && t.statusRebranded}
-            {entity.status === "resolved" && t.statusResolved}
-            {entity.status === "historical_nonbank" && t.statusHistorical}
-          </dd>
+          <dd>{statusLabel}</dd>
         </div>
         <div className="col-span-2 sm:col-span-1">
           <dt className="text-[11px] text-muted">{interpolate(t.groupInYear, { year })}</dt>
@@ -207,12 +225,12 @@ export function BankDetails({
             key={story.slug}
             type="button"
             onClick={() => onGuide?.(story.slug.replace(/-en$|-es$/, ""))}
-            className="mt-4 w-full rounded-lg border border-line px-3 py-2 text-left hover:border-accent"
+            className="mt-4 flex w-full items-center justify-between gap-3 rounded-lg bg-accent/10 px-3.5 py-3 text-left text-sm font-semibold text-accent hover:bg-accent/15"
           >
-            <p className="font-mono text-[10px] text-accent">{story.year}</p>
-            <p className="mt-1 text-sm text-accent">
-              {t.storyLink}: {story.title}
-            </p>
+            <span>
+              {t.storyKicker}: {story.title}
+            </span>
+            <span aria-hidden="true">→</span>
           </button>
         ))}
 
@@ -251,7 +269,7 @@ export function BankDetails({
           <details className="group">
             <summary className="cursor-pointer list-none text-sm font-medium text-heading marker:content-none">
               <span className="flex items-center justify-between gap-2">
-                {t.sectionConsolidation}
+                {t.detailTimeline}
                 <span className="font-mono text-[10px] font-normal text-muted">{related.length}</span>
               </span>
             </summary>
@@ -277,7 +295,7 @@ export function BankDetails({
           </details>
         ) : (
           <>
-            <h3 className="text-sm font-medium text-heading">{t.sectionConsolidation}</h3>
+            <h3 className="text-sm font-medium text-heading">{t.detailTimeline}</h3>
             <div className="mt-3">
               {related.length === 0 ? (
                 <p className="text-sm text-muted">{t.noConsolidationEvents}</p>
