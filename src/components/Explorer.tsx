@@ -1,7 +1,7 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { interpolate } from "../i18n";
 import { currentGroupOf, entityMap, eventsInYear, MAX_YEAR, pathToGroup, storyBeats } from "../lib/bankGraph";
-import { explorerHref, guideKey, parseExplorerQuery, writeExplorerQuery } from "../lib/deepLinks";
+import { explorerHref, guideKey, isLinkedQuery, parseExplorerQuery, writeExplorerQuery } from "../lib/deepLinks";
 import type { RegionCollection } from "../lib/geo";
 import { nextPlayableYear } from "../lib/timelineUtils";
 import {
@@ -42,7 +42,6 @@ interface Props {
   regions: RegionCollection;
   stories: StoryLink[];
   contextEvents?: ContextEvent[];
-  initialSearch?: string;
 }
 
 function readQuery(dataset: BankDataset, search: string) {
@@ -55,24 +54,23 @@ function readQuery(dataset: BankDataset, search: string) {
   };
 }
 
-function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [], initialSearch = "" }: Props) {
+function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [] }: Props) {
   const { t, locale, setLocale } = useLocale();
-  const initial = useMemo(() => readQuery(dataset, initialSearch), [dataset, initialSearch]);
-  const linked = Boolean(
-    initial.query.entity || initial.query.year != null || initial.query.guide || initial.query.guides,
-  );
-  const [year, setYear] = useState(initial.query.year ?? MAX_YEAR);
+  // The page is prerendered without a query; the address bar is read after hydration.
+  const [year, setYear] = useState(MAX_YEAR);
   const [playing, setPlaying] = useState(false);
-  const [selectedId, setSelectedId] = useState<string | null>(initial.query.entity);
-  const [groupFilter, setGroupFilter] = useState<GroupFilter>(linked ? initial.groupFilter : null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [groupFilter, setGroupFilter] = useState<GroupFilter>(null);
   const [copied, setCopied] = useState(false);
   const [ready, setReady] = useState(false);
-  const [guide, setGuide] = useState<string | null>(initial.query.guide);
+  const [guide, setGuide] = useState<string | null>(null);
   const [guideStep, setGuideStep] = useState(0);
-  const [decadePromptOpen, setDecadePromptOpen] = useState(!linked);
+  const [decadePromptOpen, setDecadePromptOpen] = useState(true);
   const [viewResetToken, setViewResetToken] = useState(0);
   const introSectionRef = useRef<HTMLElement>(null);
   const mapSectionRef = useRef<HTMLElement>(null);
+  /** What the address bar last reflected, to tell navigation (push) from tweaks (replace). */
+  const lastWritten = useRef<{ entity: string | null; guide: string | null } | null>(null);
 
   const pausePlay = () => setPlaying(false);
 
@@ -100,37 +98,48 @@ function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [],
     setSelectedId(id);
   };
 
-  useLayoutEffect(() => {
-    const fromWindow = readQuery(dataset, window.location.search || initialSearch);
-    const windowLinked = Boolean(
-      fromWindow.query.entity || fromWindow.query.year != null || fromWindow.query.guide || fromWindow.query.guides,
-    );
-    setSelectedId(fromWindow.query.entity);
-    setGroupFilter(windowLinked ? fromWindow.groupFilter : null);
-    setYear(fromWindow.query.year ?? MAX_YEAR);
+  /** Sets explorer state from the address bar: on load, and on Back/Forward. */
+  const applyLocation = useCallback(() => {
+    const { query, groupFilter: linkedGroup } = readQuery(dataset, window.location.search);
+    const linked = isLinkedQuery(query);
+    setSelectedId(query.entity);
+    setGroupFilter(linked ? linkedGroup : null);
+    setYear(query.year ?? MAX_YEAR);
     setPlaying(false);
-    setGuide(fromWindow.query.guide);
-    setDecadePromptOpen(!windowLinked);
-    if (fromWindow.query.lang) setLocale(fromWindow.query.lang);
-    else if (initial.query.lang) setLocale(initial.query.lang);
+    setGuide(query.guide);
+    setGuideStep(0);
+    setDecadePromptOpen(!linked);
+    lastWritten.current = { entity: query.entity, guide: query.guide };
+    return query;
+  }, [dataset]);
+
+  useLayoutEffect(() => {
+    const query = applyLocation();
+    if (query.lang) setLocale(query.lang);
     setReady(true);
-  }, [dataset, initial.query.lang, initialSearch, setLocale]);
+    if (isLinkedQuery(query)) {
+      // Jump rather than animate, and only after load so the browser's own scroll restore can't undo it.
+      const jump = () => mapSectionRef.current?.scrollIntoView();
+      if (document.readyState === "complete") jump();
+      else window.addEventListener("load", jump, { once: true });
+    }
+  }, [applyLocation, setLocale]);
 
   useEffect(() => {
-    if (!ready || !linked) return;
-    mapSectionRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [ready, linked]);
+    window.addEventListener("popstate", applyLocation);
+    return () => window.removeEventListener("popstate", applyLocation);
+  }, [applyLocation]);
 
   useEffect(() => {
     if (!ready) return;
-    writeExplorerQuery({
-      entity: selectedId,
-      year,
-      lang: locale,
-      guide,
-      guides: false,
-    });
-  }, [ready, selectedId, year, locale, guide]);
+    const previous = lastWritten.current;
+    // Opening or leaving a story, or picking a bank outside one, gets its own history entry.
+    // Scrubbing the year and stepping through a story only update the current entry.
+    const navigated =
+      previous != null && (previous.guide !== guide || (!guide && previous.entity !== selectedId));
+    writeExplorerQuery({ entity: selectedId, year, guide }, navigated ? "push" : "replace");
+    lastWritten.current = { entity: selectedId, guide };
+  }, [ready, selectedId, year, guide]);
 
   useEffect(() => {
     if (!playing) return;

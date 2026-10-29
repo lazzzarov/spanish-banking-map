@@ -24,6 +24,5 @@ const stories = (await getCollection("stories")).map((story) => ({
     regions={regions}
     stories={stories}
     contextEvents={contextEvents}
-    initialSearch={new URL(Astro.request.url).search}
   />
 </Base>

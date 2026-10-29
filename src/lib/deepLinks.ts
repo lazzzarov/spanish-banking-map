@@ -51,14 +51,30 @@ export function explorerHref(query: {
   return withBase(qs ? `/?${qs}` : "/");
 }
 
-export function writeExplorerQuery(query: {
-  entity: string | null;
-  year: number;
-  lang: Locale;
-  guide?: string | null;
-  guides?: boolean;
-}) {
+export function isLinkedQuery(query: ExplorerQuery): boolean {
+  return Boolean(query.entity || query.year != null || query.guide || query.guides);
+}
+
+/**
+ * Address-bar form of the explorer state. The present year and the language are left out:
+ * the year is the default, and the language is remembered per browser (copied links add it).
+ */
+export function addressHref(query: { entity: string | null; year: number; guide?: string | null }): string {
+  return explorerHref({
+    entity: query.entity,
+    year: query.year === MAX_YEAR ? null : query.year,
+    guide: query.guide,
+  });
+}
+
+/** `push` adds a history entry so Back returns here; `replace` updates the current one. */
+export function writeExplorerQuery(
+  query: { entity: string | null; year: number; guide?: string | null },
+  mode: "push" | "replace",
+) {
   if (typeof window === "undefined") return;
-  const href = explorerHref(query);
-  window.history.replaceState(null, "", href);
+  const href = addressHref(query);
+  if (href === `${window.location.pathname}${window.location.search}`) return;
+  if (mode === "push") window.history.pushState(null, "", href);
+  else window.history.replaceState(null, "", href);
 }

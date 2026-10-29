@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { explorerHref, parseExplorerQuery } from "../src/lib/deepLinks";
+import { addressHref, explorerHref, parseExplorerQuery } from "../src/lib/deepLinks";
+import { MAX_YEAR } from "../src/lib/bankGraph";
 
 const ids = new Set(["caja-madrid", "caixabank"]);
 
@@ -37,6 +38,14 @@ describe("deep links", () => {
   it("builds a shareable href", () => {
     expect(explorerHref({ entity: "caja-madrid", year: 2010, lang: "en" })).toBe(
       "/?entity=caja-madrid&year=2010&lang=en",
+    );
+  });
+
+  it("keeps the address bar clean of defaults", () => {
+    expect(addressHref({ entity: null, year: MAX_YEAR })).toBe("/");
+    expect(addressHref({ entity: "caixabank", year: MAX_YEAR })).toBe("/?entity=caixabank");
+    expect(addressHref({ entity: "caja-madrid", year: 2010, guide: "bankia-seven-cajas" })).toBe(
+      "/?entity=caja-madrid&year=2010&guide=bankia-seven-cajas",
     );
   });
 });
