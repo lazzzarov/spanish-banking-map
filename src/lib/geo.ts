@@ -1,5 +1,6 @@
-export const CANARY_DX = 16.6;
-export const CANARY_DY = 8.35;
+/** Moves the Canaries into open sea south-east of the Balearics, clear of the mainland coast, for the inset. */
+export const CANARY_DX = 18.56;
+export const CANARY_DY = 7.86;
 
 export type Ring = number[][];
 export type PolygonCoords = Ring[];

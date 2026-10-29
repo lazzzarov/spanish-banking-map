@@ -1,5 +1,6 @@
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -21,18 +22,35 @@ interface LocaleState {
 
 const LocaleContext = createContext<LocaleState | null>(null);
 
+/** Storage can throw when site data is blocked; preferences then last for the page view only. */
+function readStored(key: string): string | null {
+  try {
+    return window.localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function writeStored(key: string, value: string) {
+  try {
+    window.localStorage.setItem(key, value);
+  } catch {
+    /* Preference stays in memory. */
+  }
+}
+
 function detectLocale(): Locale {
   if (typeof window === "undefined") return "en";
   const lang = new URLSearchParams(window.location.search).get("lang");
   if (lang === "en" || lang === "es") return lang;
-  const stored = window.localStorage.getItem("locale");
+  const stored = readStored("locale");
   if (stored === "en" || stored === "es") return stored;
   return navigator.language.toLowerCase().startsWith("es") ? "es" : "en";
 }
 
 function detectTheme(): Theme {
   if (typeof window === "undefined") return "light";
-  return window.localStorage.getItem("theme") === "dark" ? "dark" : "light";
+  return readStored("theme") === "dark" ? "dark" : "light";
 }
 
 export function LocaleProvider({ children }: { children: ReactNode }) {
@@ -52,19 +70,20 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
     document.documentElement.setAttribute("data-theme", theme);
   }, [theme]);
 
-  const setLocale = (next: Locale) => {
+  // Stable identities: consumers list these in effect dependencies.
+  const setLocale = useCallback((next: Locale) => {
     setLocaleState(next);
-    window.localStorage.setItem("locale", next);
-  };
+    writeStored("locale", next);
+  }, []);
 
-  const setTheme = (next: Theme) => {
+  const setTheme = useCallback((next: Theme) => {
     setThemeState(next);
-    window.localStorage.setItem("theme", next);
-  };
+    writeStored("theme", next);
+  }, []);
 
   const value = useMemo(
     () => ({ locale, t: messages[locale], setLocale, theme, setTheme }),
-    [locale, theme],
+    [locale, theme, setLocale, setTheme],
   );
 
   return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>;

@@ -21,6 +21,10 @@ interface Props {
   yearEvents: Event[];
   onSelect: (id: string) => void;
   onClear: () => void;
+  /** Clears selection and filters; the map also refits its zoom. */
+  onResetView: () => void;
+  /** Bumped by the parent to refit the zoom without a click here. */
+  viewResetToken: number;
 }
 
 function isCrossCanary(from: Entity, to: Entity): boolean {
@@ -72,6 +76,8 @@ export function SpainMap({
   yearEvents,
   onSelect,
   onClear,
+  onResetView,
+  viewResetToken,
 }: Props) {
   const { t, locale } = useLocale();
   const svgRef = useRef<SVGSVGElement>(null);
@@ -105,6 +111,13 @@ export function SpainMap({
   }, [prepared]);
 
   const path = useMemo(() => geoPath(projection), [projection]);
+
+  const canaryInset = useMemo(() => {
+    const feature = prepared.features.find((item) => item.properties.id === "CN");
+    if (!feature) return null;
+    const [[x0, y0], [x1, y1]] = path.bounds(feature as GeoJSON.Feature);
+    return { feature, x: x0 - 10, y: y0 - 20, width: x1 - x0 + 20, height: y1 - y0 + 30 };
+  }, [prepared, path]);
 
   const presenceOf = (id: string): MarkerPresence => {
     const entity = byId.get(id);
@@ -239,6 +252,12 @@ export function SpainMap({
 
   const resetZoom = () => applyTransform(zoomIdentity);
 
+  useEffect(() => {
+    if (viewResetToken === 0) return;
+    setStackMenu(null);
+    resetZoom();
+  }, [viewResetToken]);
+
   const zoomToSelection = useCallback(() => {
     if (!selectedId) return;
     const entity = byId.get(selectedId);
@@ -284,7 +303,7 @@ export function SpainMap({
   };
 
   return (
-    <div className="relative flex h-full min-h-[320px] flex-col">
+    <div className="relative flex min-h-[320px] flex-1 flex-col">
       <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
         <div>
           <h2 className="text-sm font-medium text-heading">{t.mapTitle}</h2>
@@ -297,7 +316,7 @@ export function SpainMap({
           <button type="button" className="map-zoom-btn" onClick={() => zoomBy(1 / 1.35)} aria-label={t.mapZoomOut}>
             −
           </button>
-          <button type="button" className="map-zoom-btn px-2 text-[11px]" onClick={resetZoom}>
+          <button type="button" className="map-zoom-btn px-2 text-[11px]" onClick={onResetView}>
             {t.mapZoomReset}
           </button>
           {selectedId ? (
@@ -328,6 +347,29 @@ export function SpainMap({
                 onClick={onClear}
               />
             ))}
+            {canaryInset && (
+              <g className="pointer-events-none">
+                <rect
+                  x={canaryInset.x}
+                  y={canaryInset.y}
+                  width={canaryInset.width}
+                  height={canaryInset.height}
+                  rx={6}
+                  fill="none"
+                  stroke="var(--map-stroke)"
+                  strokeDasharray="3 3"
+                />
+                <text
+                  x={canaryInset.x + 6}
+                  y={canaryInset.y + 12}
+                  fill="var(--muted)"
+                  fontSize="9"
+                  fontFamily="IBM Plex Mono, monospace"
+                >
+                  {locale === "es" ? canaryInset.feature.properties.name_es : canaryInset.feature.properties.name}
+                </text>
+              </g>
+            )}
             {arcList.map(({ event, from, to, d, cx, cy, emphasized, faded, stroke }) => {
               const tip = quadAt(0.88, from, cx, cy, to);
               const tan = quadTangent(0.88, from, cx, cy, to);
@@ -421,9 +463,6 @@ export function SpainMap({
                 </g>
               );
             })}
-            <text x="78" y="456" fill="var(--muted)" fontSize="10" fontFamily="IBM Plex Mono, monospace">
-              CN
-            </text>
           </g>
         </svg>
         {stackMenu ? (

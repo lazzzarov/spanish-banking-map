@@ -70,6 +70,7 @@ function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [],
   const [guide, setGuide] = useState<string | null>(initial.query.guide);
   const [guideStep, setGuideStep] = useState(0);
   const [decadePromptOpen, setDecadePromptOpen] = useState(!linked);
+  const [viewResetToken, setViewResetToken] = useState(0);
   const introSectionRef = useRef<HTMLElement>(null);
   const mapSectionRef = useRef<HTMLElement>(null);
 
@@ -84,6 +85,14 @@ function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [],
   const clearSelection = () => {
     pausePlay();
     setSelectedId(null);
+  };
+
+  /** Back to the whole map: no selection or group filter, zoom fitted. */
+  const resetView = () => {
+    pausePlay();
+    setSelectedId(null);
+    setGroupFilter(null);
+    setViewResetToken((token) => token + 1);
   };
 
   const select = (id: string) => {
@@ -182,6 +191,8 @@ function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [],
   const exitGuide = () => {
     setGuide(null);
     setGuideStep(0);
+    setYear(MAX_YEAR);
+    resetView();
   };
 
   const copyLink = async () => {
@@ -262,7 +273,7 @@ function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [],
                 onSelectBank={select}
                 onSelectGroup={(group) => setGroupFilter(group as GroupFilter)}
               />
-              <div className="relative rounded-xl border border-line bg-panel p-4">
+              <div className="relative flex flex-col rounded-xl border border-line bg-panel p-4">
                 {decadePromptOpen && (
                   <DecadePrompt
                     onPick={(startYear) => {
@@ -296,6 +307,8 @@ function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [],
                   yearEvents={yearEvents}
                   onSelect={select}
                   onClear={clearSelection}
+                  onResetView={resetView}
+                  viewResetToken={viewResetToken}
                 />
                 {guide ? (
                   <GuideStrip
