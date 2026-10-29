@@ -78,11 +78,11 @@ function Inner({ sources }: { sources: SourceRecord[] }) {
           />
         </label>
         <div className="mt-6 space-y-3">
-          {folders.map((folder, index) => {
+          {folders.map((folder) => {
             const items = filtered.filter((source) => folderOf(source) === folder.id);
             if (items.length === 0) return null;
             return (
-              <details key={folder.id} open={Boolean(query) || index === 0} className="rounded-xl border border-line bg-panel">
+              <details key={folder.id} open={Boolean(query.trim())} className="rounded-xl border border-line bg-panel">
                 <summary className="cursor-pointer px-5 py-4 text-heading">
                   {folder.label}
                   <span className="ml-2 font-mono text-[11px] text-muted">{items.length}</span>

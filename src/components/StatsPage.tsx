@@ -148,15 +148,26 @@ function Inner({ points, sources, seriesMeta = {} }: Props) {
             <div key={current.id} className="card-in rounded-2xl border border-line bg-panel px-5 py-5">
               <h2 className="text-xl text-heading">{current.title}</h2>
               {seriesMeta[current.series] && (
-                <div className="mt-4 space-y-2 rounded-lg bg-panel-2 px-4 py-3 text-sm text-fog">
-                  <p>{locale === "es" ? seriesMeta[current.series].why_es : seriesMeta[current.series].why_en}</p>
-                  <p className="text-xs text-muted">
-                    {locale === "es" ? seriesMeta[current.series].trend_es : seriesMeta[current.series].trend_en}
-                  </p>
-                  <p className="text-xs text-warn">
-                    {locale === "es" ? seriesMeta[current.series].caution_es : seriesMeta[current.series].caution_en}
-                  </p>
-                </div>
+                <dl className="mt-4 grid gap-3 rounded-xl border border-line bg-panel-2 px-4 py-4 text-sm">
+                  <div>
+                    <dt className="font-mono text-[10px] text-accent uppercase">{t.statsInsightWhy}</dt>
+                    <dd className="mt-1 text-fog">
+                      {locale === "es" ? seriesMeta[current.series].why_es : seriesMeta[current.series].why_en}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="font-mono text-[10px] text-muted uppercase">{t.statsInsightTrend}</dt>
+                    <dd className="mt-1 text-xs text-muted">
+                      {locale === "es" ? seriesMeta[current.series].trend_es : seriesMeta[current.series].trend_en}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="font-mono text-[10px] text-warn uppercase">{t.statsInsightCaution}</dt>
+                    <dd className="mt-1 text-xs text-warn">
+                      {locale === "es" ? seriesMeta[current.series].caution_es : seriesMeta[current.series].caution_en}
+                    </dd>
+                  </div>
+                </dl>
               )}
               {numeric && <SeriesBars points={series} />}
               <ul className="mt-4 space-y-3">

@@ -27,6 +27,7 @@
   --map-empty: #e4ebf4;
   --map-stroke: #b7c4d6;
   --dot-stroke: #ffffff;
+  --dot-halo: rgba(255, 255, 255, 0.95);
   --glow: rgba(31, 111, 235, 0.1);
 }
 
@@ -42,7 +43,8 @@ html[data-theme="dark"] {
   --warn: #fbbf24;
   --map-empty: #1a2030;
   --map-stroke: #3a4558;
-  --dot-stroke: #07080b;
+  --dot-stroke: #1a2030;
+  --dot-halo: rgba(248, 250, 252, 0.85);
   --glow: rgba(76, 141, 255, 0.08);
 }
 
@@ -126,4 +128,82 @@ input[type="range"] {
 
 .card-in {
   animation: card-in 220ms ease-out;
+}
+
+@keyframes map-dot-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.map-marker-group {
+  animation: map-dot-in 420ms ease-out both;
+}
+
+@keyframes map-dot-pop {
+  from {
+    transform: scale(0.5);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.map-dot-inner {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: map-dot-pop 420ms ease-out both;
+}
+
+.map-zoom-btn {
+  display: inline-flex;
+  min-height: 2rem;
+  min-width: 2rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.map-zoom-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+@keyframes arc-draw {
+  from {
+    stroke-dashoffset: 120;
+    opacity: 0;
+  }
+  to {
+    stroke-dashoffset: 0;
+    opacity: 0.85;
+  }
+}
+
+.map-arc {
+  stroke-dasharray: 120;
+  animation: arc-draw 650ms ease-out both;
+}
+
+.decade-briefing {
+  animation: intro-rise 500ms ease-out both;
+}
+
+.section-chevron {
+  transition: transform 180ms ease, border-color 180ms ease, color 180ms ease;
+}
+
+.section-chevron:hover {
+  transform: scale(1.06);
+}
+
+.decade-panel {
+  animation: intro-rise 400ms ease-out both;
 }

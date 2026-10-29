@@ -1,19 +1,18 @@
-import { explorerHref } from "../lib/deepLinks";
+import { withBase } from "../lib/baseUrl";
 import { useLocale } from "./LocaleContext";
 
-export function SiteHeader({ current }: { current: "explore" | "sources" | "about" | "stories" | "stats" }) {
+export function SiteHeader({ current }: { current: "explore" | "sources" | "about" | "stats" }) {
   const { locale, setLocale, t, theme, setTheme } = useLocale();
   const links = [
-    { href: "/", id: "explore" as const, label: t.navExplore },
-    { href: explorerHref({ guides: true, lang: locale }), id: "stories" as const, label: t.navStories },
-    { href: "/stats", id: "stats" as const, label: t.navStats },
-    { href: "/sources", id: "sources" as const, label: t.navSources },
-    { href: "/about", id: "about" as const, label: t.navAbout },
+    { href: withBase("/"), id: "explore" as const, label: t.navExplore },
+    { href: withBase("/stats/"), id: "stats" as const, label: t.navStats },
+    { href: withBase("/sources/"), id: "sources" as const, label: t.navSources },
+    { href: withBase("/about/"), id: "about" as const, label: t.navAbout },
   ];
 
   return (
     <header className="flex items-center justify-between gap-6 border-b border-line px-5 py-4 md:px-8">
-      <a href="/" className="font-mono text-[11px] tracking-[0.22em] text-accent uppercase">
+      <a href={withBase("/")} className="font-mono text-[11px] tracking-[0.22em] text-accent uppercase">
         {t.brand}
       </a>
       <nav className="flex flex-wrap items-center justify-end gap-4 text-sm text-muted">

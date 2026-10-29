@@ -1,3 +1,4 @@
+import { withBase } from "./baseUrl";
 import { MAX_YEAR, MIN_YEAR } from "./bankGraph";
 import type { Locale } from "./types";
 
@@ -47,7 +48,7 @@ export function explorerHref(query: {
   if (query.guide) params.set("guide", query.guide);
   if (query.guides) params.set("guides", "1");
   const qs = params.toString();
-  return qs ? `/?${qs}` : "/";
+  return withBase(qs ? `/?${qs}` : "/");
 }
 
 export function writeExplorerQuery(query: {

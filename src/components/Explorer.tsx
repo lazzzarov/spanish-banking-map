@@ -1,31 +1,30 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { interpolate } from "../i18n";
-import { currentGroupOf, entityMap, eventsInYear, MAX_YEAR, MIN_YEAR, pathToGroup, storyBeats } from "../lib/bankGraph";
+import { currentGroupOf, entityMap, eventsInYear, MAX_YEAR, pathToGroup, storyBeats } from "../lib/bankGraph";
 import { explorerHref, guideKey, parseExplorerQuery, writeExplorerQuery } from "../lib/deepLinks";
 import type { RegionCollection } from "../lib/geo";
-import { nearestPlayableYear, nextPlayableYear } from "../lib/timelineUtils";
+import { nextPlayableYear } from "../lib/timelineUtils";
 import {
   FEATURED_GROUPS,
-  OTHER_SURVIVORS,
   type BankDataset,
   type ContextEvent,
   type FeaturedGroup,
-  type GraphLayer,
   type Locale,
   type SourceRecord,
 } from "../lib/types";
 import { BankDetails } from "./BankDetails";
 import { BankRail } from "./BankRail";
-import { GenealogyStats } from "./GenealogyStats";
+import { DecadePrompt } from "./DecadePrompt";
 import { GuideStrip } from "./GuideStrip";
 import { IntroSection } from "./IntroSection";
 import { LocaleProvider, useLocale } from "./LocaleContext";
+import { SectionChevron } from "./SectionChevron";
 import { SiteHeader } from "./SiteHeader";
 import { SpainMap } from "./SpainMap";
 import { StillHappening } from "./StillHappening";
 import { Timeline } from "./Timeline";
 
-export type GroupFilter = string | "surviving" | null;
+export type GroupFilter = string | null;
 
 export interface StoryLink {
   slug: string;
@@ -49,7 +48,7 @@ interface Props {
 function readQuery(dataset: BankDataset, search: string) {
   const ids = new Set(dataset.entities.map((entity) => entity.id));
   const query = parseExplorerQuery(search, ids);
-  const group = query.entity ? currentGroupOf(dataset, query.entity) : null;
+  const group = query.entity ? currentGroupOf(dataset, query.entity, query.year ?? MAX_YEAR) : null;
   return {
     query,
     groupFilter: FEATURED_GROUPS.includes(group as FeaturedGroup) ? (group as FeaturedGroup) : null,
@@ -62,17 +61,16 @@ function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [],
   const linked = Boolean(
     initial.query.entity || initial.query.year != null || initial.query.guide || initial.query.guides,
   );
-  const [year, setYear] = useState(initial.query.year ?? (linked ? MAX_YEAR : MIN_YEAR));
-  const [playing, setPlaying] = useState(!linked);
+  const [year, setYear] = useState(initial.query.year ?? MAX_YEAR);
+  const [playing, setPlaying] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(initial.query.entity);
-  const [groupFilter, setGroupFilter] = useState<GroupFilter>(initial.groupFilter);
-  const [layer, setLayer] = useState<GraphLayer>("business");
-  const [contextNote, setContextNote] = useState<ContextEvent | null>(null);
+  const [groupFilter, setGroupFilter] = useState<GroupFilter>(linked ? initial.groupFilter : null);
   const [copied, setCopied] = useState(false);
   const [ready, setReady] = useState(false);
   const [guide, setGuide] = useState<string | null>(initial.query.guide);
-  const [guidesOpen, setGuidesOpen] = useState(initial.query.guides && !initial.query.guide);
   const [guideStep, setGuideStep] = useState(0);
+  const [decadePromptOpen, setDecadePromptOpen] = useState(!linked);
+  const introSectionRef = useRef<HTMLElement>(null);
   const mapSectionRef = useRef<HTMLElement>(null);
 
   const pausePlay = () => setPlaying(false);
@@ -80,22 +78,17 @@ function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [],
   const setYearFromUser = (next: number) => {
     pausePlay();
     setYear(next);
+    setDecadePromptOpen(false);
   };
 
   const clearSelection = () => {
     pausePlay();
     setSelectedId(null);
-    setGroupFilter(null);
   };
 
   const select = (id: string) => {
     pausePlay();
     setSelectedId(id);
-    setYear(MAX_YEAR);
-    const group = currentGroupOf(dataset, id);
-    if (FEATURED_GROUPS.includes(group as FeaturedGroup) || OTHER_SURVIVORS.includes(group as (typeof OTHER_SURVIVORS)[number])) {
-      setGroupFilter(group);
-    }
   };
 
   useLayoutEffect(() => {
@@ -104,11 +97,11 @@ function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [],
       fromWindow.query.entity || fromWindow.query.year != null || fromWindow.query.guide || fromWindow.query.guides,
     );
     setSelectedId(fromWindow.query.entity);
-    setGroupFilter(fromWindow.groupFilter);
-    setYear(fromWindow.query.year ?? (windowLinked ? MAX_YEAR : MIN_YEAR));
-    setPlaying(!windowLinked);
+    setGroupFilter(windowLinked ? fromWindow.groupFilter : null);
+    setYear(fromWindow.query.year ?? MAX_YEAR);
+    setPlaying(false);
     setGuide(fromWindow.query.guide);
-    setGuidesOpen(fromWindow.query.guides && !fromWindow.query.guide);
+    setDecadePromptOpen(!windowLinked);
     if (fromWindow.query.lang) setLocale(fromWindow.query.lang);
     else if (initial.query.lang) setLocale(initial.query.lang);
     setReady(true);
@@ -126,21 +119,21 @@ function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [],
       year,
       lang: locale,
       guide,
-      guides: guidesOpen && !guide,
+      guides: false,
     });
-  }, [ready, selectedId, year, locale, guide, guidesOpen]);
+  }, [ready, selectedId, year, locale, guide]);
 
   useEffect(() => {
     if (!playing) return;
     const timer = window.setInterval(() => {
       setYear((current) => {
-        const next = nextPlayableYear(dataset.events, contextEvents, current, layer);
+        const next = nextPlayableYear(dataset.events, contextEvents, current, "business");
         if (next >= MAX_YEAR) setPlaying(false);
         return next;
       });
     }, 900);
     return () => window.clearInterval(timer);
-  }, [playing, dataset.events, contextEvents, layer]);
+  }, [playing, dataset.events, contextEvents]);
 
   const currentGuide = stories.find((story) => story.locale === locale && guideKey(story.slug) === guide);
   const beats = useMemo(
@@ -157,6 +150,7 @@ function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [],
     setSelectedId(beat.entityId);
     setYear(beat.year);
     setPlaying(false);
+    setDecadePromptOpen(false);
   }, [guide, guideStep, beats]);
 
   const highlight = useMemo(
@@ -164,7 +158,7 @@ function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [],
     [dataset, selectedId, year],
   );
   const selected = selectedId ? entityMap(dataset).get(selectedId) ?? null : null;
-  const yearEvents = useMemo(() => eventsInYear(dataset.events, year, layer), [dataset.events, year, layer]);
+  const yearEvents = useMemo(() => eventsInYear(dataset.events, year, "business"), [dataset.events, year]);
   const caption =
     yearEvents.length > 0
       ? yearEvents
@@ -177,26 +171,16 @@ function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [],
           .join(" · ")
       : interpolate(t.yearEventsEmpty, { year });
 
-  const layerBanner =
-    layer === "ownership"
-      ? t.layerBannerOwnership
-      : layer === "asset"
-        ? t.layerBannerAsset
-        : layer === "context"
-          ? t.layerBannerContext
-          : t.layerBannerBusiness;
-
   const openGuide = (key: string) => {
     setGuide(key);
     setGuideStep(0);
-    setGuidesOpen(false);
     setPlaying(false);
+    setDecadePromptOpen(false);
     mapSectionRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   const exitGuide = () => {
     setGuide(null);
-    setGuidesOpen(false);
     setGuideStep(0);
   };
 
@@ -218,119 +202,125 @@ function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [],
 
   const guideBeatText = guide && beats[guideStep] ? beats[guideStep].text : null;
   const panelEntity = guide && beats[guideStep] ? entityMap(dataset).get(beats[guideStep].entityId) ?? selected : selected;
+  const showStillHappening = year >= 2020;
 
   return (
     <div className="min-h-screen">
-      <SiteHeader current={guide || guidesOpen ? "stories" : "explore"} />
+      <SiteHeader current={guide ? "explore" : "explore"} />
       <main className="explorer-scroll">
-        <IntroSection
-          entityCount={dataset.entities.length}
-          onContinue={() => mapSectionRef.current?.scrollIntoView({ behavior: "smooth" })}
-        />
+        <section ref={introSectionRef}>
+          <IntroSection
+            entityCount={dataset.entities.length}
+            onContinue={() => mapSectionRef.current?.scrollIntoView({ behavior: "smooth" })}
+          />
+        </section>
 
-        <section ref={mapSectionRef} className="explorer-section mx-auto max-w-7xl px-5 py-8 md:px-8">
-          <div className="mb-4 flex items-start justify-between gap-4">
+        <section ref={mapSectionRef} className="explorer-section relative mx-auto max-w-7xl px-5 py-8 md:px-8">
+          <SectionChevron
+            direction="prev"
+            label={t.sectionBackIntro}
+            onClick={() => introSectionRef.current?.scrollIntoView({ behavior: "smooth" })}
+            className="absolute top-1/2 left-0 z-10 hidden -translate-y-1/2 md:flex"
+          />
+
+          <div className="mb-4 flex items-start justify-between gap-4 md:mx-8">
             <p className="text-[11px] text-accent">{t.heroKicker}</p>
             <button type="button" onClick={copyLink} className="text-[11px] text-muted hover:text-accent">
               {copied ? t.copied : t.copyLink}
             </button>
           </div>
 
-          <Timeline
-            year={year}
-            playing={playing}
-            caption={caption}
-            onYear={setYearFromUser}
-            onToggle={() => {
-              if (!playing && year >= MAX_YEAR) setYear(MIN_YEAR);
-              setPlaying((value) => !value);
-            }}
-            onReset={() => {
-              setPlaying(false);
-              setYear(MAX_YEAR);
-            }}
-            context={layer === "context" || layer === "business" ? contextEvents : []}
-            onContext={(item) => {
-              setLayer("context");
-              setContextNote(item);
-              setYearFromUser(item.year);
-            }}
-          />
-
-          <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(200px,0.55fr)_minmax(0,1.2fr)_minmax(280px,0.75fr)]">
-            <BankRail
-              dataset={dataset}
+          <div className="md:mx-8">
+            <Timeline
               year={year}
-              selectedId={selectedId}
-              groupFilter={groupFilter}
-              onSelectBank={select}
-              onSelectGroup={(group) => setGroupFilter(group as GroupFilter)}
+              playing={playing}
+              caption={caption}
+              onYear={setYearFromUser}
+              onToggle={() => {
+                setPlaying((value) => !value);
+              }}
+              onReset={() => {
+                setPlaying(false);
+                setYear(MAX_YEAR);
+                setDecadePromptOpen(false);
+              }}
+              context={contextEvents}
+              onContext={(item) => setYearFromUser(item.year)}
             />
-            <div className="relative rounded-xl border border-line bg-panel p-4">
-              <SpainMap
+            {showStillHappening && (
+              <div className="mt-4">
+                <StillHappening sources={sources} />
+              </div>
+            )}
+
+            <div className="relative mt-4 grid gap-4 lg:grid-cols-[minmax(200px,0.55fr)_minmax(0,1.2fr)_minmax(280px,0.75fr)]">
+              <BankRail
                 dataset={dataset}
-                regions={regions}
                 year={year}
                 selectedId={selectedId}
-                highlight={highlight}
-                groupFilter={groupFilter === "surviving" ? null : groupFilter}
-                survivingOnly={groupFilter === "surviving"}
-                yearEvents={yearEvents}
-                layer={layer}
-                banner={layerBanner}
-                emptyMessage={yearEvents.length === 0 && layer !== "context" ? t.layerEmpty : undefined}
-                onSelect={select}
-                onClear={clearSelection}
-                onLayer={(next) => {
-                  setLayer(next);
-                  if (next !== "context") setContextNote(null);
-                  setYear((current) => nearestPlayableYear(dataset.events, contextEvents, current, next));
-                }}
+                groupFilter={groupFilter}
+                onSelectBank={select}
+                onSelectGroup={(group) => setGroupFilter(group as GroupFilter)}
               />
-              {contextNote && layer === "context" && (
-                <div className="mt-3 rounded-xl border border-line bg-panel-2 px-4 py-3">
-                  <p className="text-[11px] text-accent">{contextNote.year}</p>
-                  <h3 className="mt-1 text-lg text-heading">
-                    {locale === "es" ? contextNote.name_es : contextNote.name}
-                  </h3>
-                  <p className="mt-2 text-sm text-fog">
-                    {locale === "es" ? contextNote.description_es : contextNote.description}
-                  </p>
-                </div>
-              )}
-              <GuideStrip
+              <div className="relative rounded-xl border border-line bg-panel p-4">
+                {decadePromptOpen && (
+                  <DecadePrompt
+                    onPick={(startYear) => {
+                      setYearFromUser(startYear);
+                      setDecadePromptOpen(false);
+                    }}
+                    onStayPresent={() => {
+                      setYear(MAX_YEAR);
+                      setDecadePromptOpen(false);
+                    }}
+                  />
+                )}
+                {guide ? (
+                  <GuideStrip
+                    stories={stories}
+                    guide={guide}
+                    step={guideStep}
+                    beatCount={beats.length}
+                    onClose={exitGuide}
+                    onStep={setGuideStep}
+                    placement="top"
+                  />
+                ) : null}
+                <SpainMap
+                  dataset={dataset}
+                  regions={regions}
+                  year={year}
+                  selectedId={selectedId}
+                  highlight={highlight}
+                  groupFilter={groupFilter}
+                  yearEvents={yearEvents}
+                  onSelect={select}
+                  onClear={clearSelection}
+                />
+                {guide ? (
+                  <GuideStrip
+                    stories={stories}
+                    guide={guide}
+                    step={guideStep}
+                    beatCount={beats.length}
+                    onClose={exitGuide}
+                    onStep={setGuideStep}
+                    placement="bottom"
+                  />
+                ) : null}
+              </div>
+              <BankDetails
                 dataset={dataset}
+                sources={sources}
                 stories={stories}
-                guide={guide}
-                pickerOpen={guidesOpen}
-                step={guideStep}
-                onPick={openGuide}
-                onClose={exitGuide}
-                onStep={setGuideStep}
+                entity={panelEntity}
+                year={year}
+                yearEvents={yearEvents}
+                onSelect={select}
+                onGuide={openGuide}
+                guideBeat={guideBeatText}
               />
             </div>
-            <BankDetails
-              dataset={dataset}
-              sources={sources}
-              stories={stories}
-              entity={panelEntity}
-              year={year}
-              yearEvents={yearEvents}
-              layer={layer}
-              onSelect={select}
-              onGuide={openGuide}
-              guideBeat={guideBeatText}
-            />
-          </div>
-        </section>
-
-        <section className="explorer-section mx-auto max-w-6xl px-5 py-12 md:px-8">
-          <h2 className="text-2xl text-heading">{t.sectionFacts}</h2>
-          <div className="mt-6">
-            <GenealogyStats dataset={dataset} year={year} />
-          </div>
-          <div className="mt-6">
-            <StillHappening sources={sources} />
           </div>
         </section>
       </main>

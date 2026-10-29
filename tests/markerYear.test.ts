@@ -26,4 +26,13 @@ describe("markerPresence by year", () => {
     expect(firstSeenYear(dataset, "caja-madrid")).toBe(1702);
     expect(firstSeenYear(dataset, "bfa")).toBe(2010);
   });
+
+  it("shows early banks alive in 1920", () => {
+    const santander = dataset.entities.find((entity) => entity.id === "santander")!;
+    const bilbao = dataset.entities.find((entity) => entity.id === "banco-bilbao")!;
+    const laCaixa = dataset.entities.find((entity) => entity.id === "la-caixa")!;
+    expect(markerPresence(dataset, santander, 1920)).toBe("alive");
+    expect(markerPresence(dataset, bilbao, 1920)).toBe("alive");
+    expect(markerPresence(dataset, laCaixa, 1920)).toBe("alive");
+  });
 });

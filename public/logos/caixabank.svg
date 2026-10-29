@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="CaixaBank">
+  <rect width="120" height="120" rx="60" fill="#fff"/>
+  <path fill="#007eae" d="M60 22l8.5 26h27.5l-22.3 16.2 8.5 26L60 74l-22.2 16.2 8.5-26L24 48h27.5z"/>
+  <text x="60" y="108" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#007eae">CaixaBank</text>
+</svg>

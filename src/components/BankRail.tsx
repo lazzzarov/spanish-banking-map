@@ -36,8 +36,9 @@ function labelOf(entity: Entity, locale: "en" | "es") {
 export function BankRail({ dataset, year, selectedId, groupFilter, onSelectBank, onSelectGroup }: Props) {
   const { t, locale } = useLocale();
   const [query, setQuery] = useState("");
+  const sectionIds = useMemo(() => [...FEATURED_GROUPS, "other"], []);
   const [open, setOpen] = useState<Record<string, boolean>>(() =>
-    Object.fromEntries([...FEATURED_GROUPS, "surviving", "other"].map((id) => [id, true])),
+    Object.fromEntries(sectionIds.map((id) => [id, true])),
   );
 
   const visible = useMemo(
@@ -53,15 +54,12 @@ export function BankRail({ dataset, year, selectedId, groupFilter, onSelectBank,
   const byGroup = useMemo(() => {
     const map = new Map<string, Entity[]>();
     for (const group of FEATURED_GROUPS) map.set(group, []);
-    map.set("surviving", []);
     map.set("other", []);
 
     for (const entity of matches) {
       const group = currentGroupOf(dataset, entity.id, year);
       if (FEATURED_GROUPS.includes(group as FeaturedGroup)) {
         map.get(group)!.push(entity);
-      } else if (entity.group_role === "independent_caja") {
-        map.get("surviving")!.push(entity);
       } else {
         map.get("other")!.push(entity);
       }
@@ -75,9 +73,10 @@ export function BankRail({ dataset, year, selectedId, groupFilter, onSelectBank,
 
   const sections = [
     ...FEATURED_GROUPS.map((id) => ({ id, title: GROUP_LABELS[id] ?? id })),
-    { id: "surviving", title: t.filterSurviving },
     { id: "other", title: t.filterOther },
   ];
+
+  const allExpanded = sectionIds.every((id) => open[id] ?? true);
 
   return (
     <aside className="flex max-h-[min(720px,70vh)] flex-col rounded-xl border border-line bg-panel p-3">
@@ -88,15 +87,26 @@ export function BankRail({ dataset, year, selectedId, groupFilter, onSelectBank,
         placeholder={t.railSearch}
         className="mb-2 w-full rounded-lg border border-line bg-panel-2 px-2 py-1.5 text-sm text-fog outline-none focus:border-accent"
       />
-      <button
-        type="button"
-        onClick={() => onSelectGroup(null)}
-        className={`mb-2 rounded-lg px-2 py-1.5 text-left text-sm ${
-          groupFilter === null ? "bg-panel-2 text-accent" : "text-muted hover:text-fog"
-        }`}
-      >
-        {t.railAll}
-      </button>
+      <div className="mb-2 flex gap-2">
+        <button
+          type="button"
+          onClick={() => onSelectGroup(null)}
+          className={`flex-1 rounded-lg px-2 py-1.5 text-left text-sm ${
+            groupFilter === null ? "bg-panel-2 text-accent" : "text-muted hover:text-fog"
+          }`}
+        >
+          {t.railAll}
+        </button>
+        <button
+          type="button"
+          onClick={() =>
+            setOpen(Object.fromEntries(sectionIds.map((id) => [id, !allExpanded])))
+          }
+          className="rounded-lg border border-line px-2 py-1.5 text-[11px] text-muted hover:text-fog"
+        >
+          {allExpanded ? t.railCollapseAll : t.railExpandAll}
+        </button>
+      </div>
       <div className="flex-1 overflow-y-auto pr-1">
         {sections.map((section) => {
           const banks = byGroup.get(section.id) ?? [];
@@ -108,8 +118,8 @@ export function BankRail({ dataset, year, selectedId, groupFilter, onSelectBank,
                 type="button"
                 onClick={() => {
                   setOpen((value) => ({ ...value, [section.id]: !expanded }));
-                  if (FEATURED_GROUPS.includes(section.id as FeaturedGroup) || section.id === "surviving") {
-                    onSelectGroup(section.id === "surviving" ? "surviving" : section.id);
+                  if (FEATURED_GROUPS.includes(section.id as FeaturedGroup)) {
+                    onSelectGroup(section.id);
                   }
                 }}
                 className="flex w-full items-center justify-between rounded px-1 py-1 text-left text-xs font-medium text-heading"

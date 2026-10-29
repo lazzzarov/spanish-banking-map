@@ -1,6 +1,29 @@
 import { LocaleProvider, useLocale } from "./LocaleContext";
 import { SiteHeader } from "./SiteHeader";
 
+const SECTIONS = {
+  en: [
+    { title: "Scope", key: "p1" as const },
+    { title: "Surviving heads", key: "p2" as const },
+    { title: "What counts as an event", key: "p3" as const },
+    { title: "Legal vs banking business", key: "p4" as const },
+    { title: "Intermediate vehicles", key: "p5" as const },
+    { title: "Independent cajas & the map", key: "p6" as const },
+    { title: "How to read Figures", key: "p7" as const },
+    { title: "Unverified rows", key: "p8" as const },
+  ],
+  es: [
+    { title: "Alcance", key: "p1" as const },
+    { title: "Cabezas supervivientes", key: "p2" as const },
+    { title: "Qué es un hecho", key: "p3" as const },
+    { title: "Jurídico vs negocio bancario", key: "p4" as const },
+    { title: "Vehículos intermedios", key: "p5" as const },
+    { title: "Cajas independientes y el mapa", key: "p6" as const },
+    { title: "Cómo leer Cifras", key: "p7" as const },
+    { title: "Filas sin verificar", key: "p8" as const },
+  ],
+};
+
 const COPY = {
   en: {
     p1: "This site is a curated historical banking genealogy, not a complete census of Spanish credit institutions and not a register of every bank since 1920. It follows the institutions that feed eight featured destination groups — CaixaBank, Santander, BBVA, Sabadell, Unicaja, Ibercaja, Kutxabank and Abanca — plus a short list of surviving independents and cooperatives.",
@@ -27,21 +50,23 @@ const COPY = {
 function Inner() {
   const { t, locale } = useLocale();
   const copy = COPY[locale];
+  const sections = SECTIONS[locale];
   return (
     <div className="min-h-screen">
       <SiteHeader current="about" />
-      <main className="mx-auto max-w-3xl px-5 py-10 md:px-8">
+      <main className="mx-auto max-w-4xl px-5 py-10 md:px-8">
         <p className="font-mono text-[11px] tracking-[0.22em] text-accent uppercase">{t.navAbout}</p>
         <h1 className="mt-3 text-3xl text-heading md:text-4xl">{t.aboutTitle}</h1>
-        <div className="mt-8 space-y-5 text-sm leading-7 text-fog/90">
-          <p>{copy.p1}</p>
-          <p>{copy.p2}</p>
-          <p>{copy.p3}</p>
-          <p>{copy.p4}</p>
-          <p>{copy.p5}</p>
-          <p>{copy.p6}</p>
-          <p>{copy.p7}</p>
-          <p>{copy.p8}</p>
+        <div className="mt-8 grid gap-4 md:grid-cols-2">
+          {sections.map((section, index) => (
+            <article
+              key={section.key}
+              className={`rounded-2xl border border-line bg-panel p-5 ${index === 0 ? "md:col-span-2" : ""}`}
+            >
+              <h2 className="font-mono text-[11px] tracking-[0.12em] text-accent uppercase">{section.title}</h2>
+              <p className="mt-3 text-sm leading-7 text-fog/90">{copy[section.key]}</p>
+            </article>
+          ))}
         </div>
       </main>
     </div>

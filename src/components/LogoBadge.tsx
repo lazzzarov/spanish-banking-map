@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { groupColor } from "../lib/bankGraph";
+import { withBase } from "../lib/baseUrl";
 
 export function LogoBadge({
   id,
@@ -13,6 +14,8 @@ export function LogoBadge({
   size?: number;
 }) {
   const [failed, setFailed] = useState(false);
+  const svgSrc = useMemo(() => withBase(`/logos/${id}.svg`), [id]);
+  const pngSrc = useMemo(() => withBase(`/logos/${id}.png`), [id]);
   const initials = name
     .split(/\s+/)
     .filter(Boolean)
@@ -29,15 +32,16 @@ export function LogoBadge({
       {initials || id.slice(0, 2).toUpperCase()}
       {!failed && (
         <img
-          src={`/logos/${id}.svg`}
+          src={svgSrc}
           alt=""
           width={size}
           height={size}
           className="absolute inset-0 h-full w-full object-cover"
           onError={(event) => {
             const img = event.currentTarget;
-            if (img.src.endsWith(".svg")) {
-              img.src = `/logos/${id}.png`;
+            if (!img.dataset.fallback) {
+              img.dataset.fallback = "1";
+              img.src = pngSrc;
               return;
             }
             setFailed(true);

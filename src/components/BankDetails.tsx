@@ -4,6 +4,7 @@ import {
   entityMap,
   eventsForEntity,
   firstSeenYear,
+  MAX_YEAR,
   MIN_YEAR,
   pathToGroup,
 } from "../lib/bankGraph";
@@ -12,11 +13,10 @@ import { downloadSvgAsPng, downloadText, familyPathSvg } from "../lib/pathExport
 import {
   ERAS,
   FEATURED_GROUPS,
-  isOverlayMechanism,
+  MECHANISM_LINEAGE,
   type BankDataset,
   type Entity,
   type Event,
-  type GraphLayer,
   type SourceRecord,
 } from "../lib/types";
 import { FamilyOverlay } from "./FamilyOverlay";
@@ -31,7 +31,6 @@ interface Props {
   entity: Entity | null;
   year: number;
   yearEvents: Event[];
-  layer: GraphLayer;
   onSelect: (id: string) => void;
   onGuide?: (key: string) => void;
   guideBeat?: string | null;
@@ -44,7 +43,6 @@ export function BankDetails({
   entity,
   year,
   yearEvents,
-  layer,
   onSelect,
   onGuide,
   guideBeat,
@@ -105,14 +103,21 @@ export function BankDetails({
   }
 
   const groupId = currentGroupOf(dataset, entity.id, year);
+  const presentGroupId = currentGroupOf(dataset, entity.id, MAX_YEAR);
   const group = byId.get(groupId);
+  const presentGroup = byId.get(presentGroupId);
   const path = pathToGroup(dataset, entity.id, year);
-  const related = eventsForEntity(dataset.events, entity.id).filter((event) => {
-    if (layer === "context") return false;
-    return isOverlayMechanism(event.mechanism, layer);
-  });
+  const allRelated = eventsForEntity(dataset.events, entity.id);
+  const related = allRelated.filter(
+    (event) => event.lineage && event.outcome === "completed" && MECHANISM_LINEAGE[event.mechanism],
+  );
+  const sideEvents = allRelated.filter(
+    (event) => !(event.lineage && event.outcome === "completed" && MECHANISM_LINEAGE[event.mechanism]),
+  );
   const visibleEvents = showAllEvents ? related : related.slice(-6);
   const hiddenCount = Math.max(0, related.length - visibleEvents.length);
+  const visibleSide = showAllEvents ? sideEvents : sideEvents.slice(-4);
+  const showPresentGroupFootnote = year < MAX_YEAR && presentGroupId !== groupId;
   const source = sources.find((item) => item.id === entity.src);
   const eventSources = [
     ...new Set(related.map((event) => event.src).filter((id) => id && id !== "check")),
@@ -162,9 +167,16 @@ export function BankDetails({
             {entity.status === "historical_nonbank" && t.statusHistorical}
           </dd>
         </div>
-        <div>
-          <dt className="text-[11px] text-muted">{t.currentGroup}</dt>
+        <div className="col-span-2 sm:col-span-1">
+          <dt className="text-[11px] text-muted">{interpolate(t.groupInYear, { year })}</dt>
           <dd>{group ? label(group.id) : groupId}</dd>
+          {showPresentGroupFootnote && (
+            <dd className="mt-1 text-xs text-accent">
+              {interpolate(t.presentDayGroup, {
+                group: presentGroup ? label(presentGroup.id) : presentGroupId,
+              })}
+            </dd>
+          )}
         </div>
         <div>
           <dt className="text-[11px] text-muted">{t.bankingBusiness}</dt>
@@ -184,51 +196,109 @@ export function BankDetails({
         <p className="mt-3 text-[11px] text-accent">{t.cooperativeHead}</p>
       )}
 
-      <div className="mt-5">
-        <p className="mb-2 text-[11px] text-muted">{t.pathToGroup}</p>
-        <ol className="space-y-1.5 text-sm">
-          {path.map((id, index) => (
-            <li key={id} className="flex items-start gap-2">
-              <span className="text-[10px] text-muted">{index + 1}</span>
-              <button type="button" className="text-left text-accent hover:underline" onClick={() => onSelect(id)}>
-                {label(id)}
-              </button>
-            </li>
-          ))}
-        </ol>
-      </div>
+      {stories
+        .filter(
+          (story) =>
+            story.locale === locale &&
+            (story.entityId === entity.id || story.groupId === entity.id || path.includes(story.entityId)),
+        )
+        .map((story) => (
+          <button
+            key={story.slug}
+            type="button"
+            onClick={() => onGuide?.(story.slug.replace(/-en$|-es$/, ""))}
+            className="mt-4 w-full rounded-lg border border-line px-3 py-2 text-left hover:border-accent"
+          >
+            <p className="font-mono text-[10px] text-accent">{story.year}</p>
+            <p className="mt-1 text-sm text-accent">
+              {t.storyLink}: {story.title}
+            </p>
+          </button>
+        ))}
 
-      <div className="mt-5">
-        <p className="mb-2 text-[11px] text-muted">{t.eventsByEra}</p>
-        {related.length === 0 ? (
-          <p className="text-sm text-muted">{t.layerEmpty}</p>
+      <section className="mt-6 border-t border-line pt-5">
+        <h3 className="text-sm font-medium text-heading">{t.pathToGroup}</h3>
+        <ol className="mt-3 space-y-0">
+          {path.map((id, index) => {
+            const isCurrent = id === entity.id;
+            return (
+              <li key={id} className="relative flex gap-3 pb-3 last:pb-0">
+                {index < path.length - 1 ? (
+                  <span className="absolute left-[11px] top-7 bottom-0 w-px bg-line" aria-hidden />
+                ) : null}
+                <span
+                  className={`relative z-[1] flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[10px] font-medium ${
+                    isCurrent ? "bg-accent text-white" : "bg-panel-2 text-muted"
+                  }`}
+                >
+                  {index + 1}
+                </span>
+                <button
+                  type="button"
+                  className={`pt-0.5 text-left text-sm ${isCurrent ? "font-medium text-heading" : "text-accent hover:underline"}`}
+                  onClick={() => onSelect(id)}
+                >
+                  {label(id)}
+                </button>
+              </li>
+            );
+          })}
+        </ol>
+      </section>
+
+      <section className="mt-6 border-t border-line pt-5">
+        {related.length > 6 ? (
+          <details className="group">
+            <summary className="cursor-pointer list-none text-sm font-medium text-heading marker:content-none">
+              <span className="flex items-center justify-between gap-2">
+                {t.sectionConsolidation}
+                <span className="font-mono text-[10px] font-normal text-muted">{related.length}</span>
+              </span>
+            </summary>
+            <div className="mt-3">
+              {related.length === 0 ? (
+                <p className="text-sm text-muted">{t.noConsolidationEvents}</p>
+              ) : (
+                <>
+                  {renderByEra(visibleEvents)}
+                  {hiddenCount > 0 && (
+                    <button type="button" className="mt-2 text-xs text-accent" onClick={() => setShowAllEvents(true)}>
+                      {interpolate(t.eventsMore, { count: hiddenCount })}
+                    </button>
+                  )}
+                  {showAllEvents && related.length > 6 && (
+                    <button type="button" className="mt-2 block text-xs text-muted" onClick={() => setShowAllEvents(false)}>
+                      {t.eventsFewer}
+                    </button>
+                  )}
+                </>
+              )}
+            </div>
+          </details>
         ) : (
           <>
-            {renderByEra(visibleEvents)}
-            {hiddenCount > 0 && (
-              <button
-                type="button"
-                className="mt-2 text-xs text-accent"
-                onClick={() => setShowAllEvents(true)}
-              >
-                {interpolate(t.eventsMore, { count: hiddenCount })}
-              </button>
-            )}
-            {showAllEvents && related.length > 6 && (
-              <button
-                type="button"
-                className="mt-2 block text-xs text-muted"
-                onClick={() => setShowAllEvents(false)}
-              >
-                {t.eventsFewer}
-              </button>
-            )}
+            <h3 className="text-sm font-medium text-heading">{t.sectionConsolidation}</h3>
+            <div className="mt-3">
+              {related.length === 0 ? (
+                <p className="text-sm text-muted">{t.noConsolidationEvents}</p>
+              ) : (
+                renderByEra(visibleEvents)
+              )}
+            </div>
           </>
         )}
-      </div>
+      </section>
 
-      <details className="mt-5 rounded-lg border border-line px-3 py-2">
-        <summary className="cursor-pointer text-[11px] text-muted">{t.sourcesToggle}</summary>
+      {sideEvents.length > 0 && (
+        <details className="mt-6 border-t border-line pt-5">
+          <summary className="cursor-pointer text-sm font-medium text-heading">{t.sectionOtherMoves}</summary>
+          <p className="mt-2 text-xs text-muted">{t.sideEventsHint}</p>
+          <div className="mt-3">{renderByEra(visibleSide)}</div>
+        </details>
+      )}
+
+      <details className="mt-6 border-t border-line pt-5">
+        <summary className="cursor-pointer text-sm font-medium text-heading">{t.sourcesToggle}</summary>
         <ul className="mt-2 space-y-2 text-sm">
           {source && (
             <li>
@@ -257,31 +327,13 @@ export function BankDetails({
         </ul>
       </details>
 
-      {stories
-        .filter(
-          (story) =>
-            story.locale === locale &&
-            (story.entityId === entity.id || story.groupId === entity.id || path.includes(story.entityId)),
-        )
-        .slice(0, 1)
-        .map((story) => (
-          <button
-            key={story.slug}
-            type="button"
-            onClick={() => onGuide?.(story.slug.replace(/-en$|-es$/, ""))}
-            className="mt-5 text-left text-sm text-accent"
-          >
-            {t.storyLink}: {story.title}
-          </button>
-        ))}
-
       {canOpenFamily && (
-        <button type="button" className="mt-5 text-sm text-accent" onClick={() => setFamilyOpen(true)}>
+        <button type="button" className="mt-6 text-sm text-accent" onClick={() => setFamilyOpen(true)}>
           {t.openFamily}
         </button>
       )}
 
-      <div className="mt-5 flex gap-3">
+      <div className="mt-4 flex gap-3 border-t border-line pt-4">
         <button
           type="button"
           className="text-[11px] text-muted hover:text-accent"

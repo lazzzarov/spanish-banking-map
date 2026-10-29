@@ -9,5 +9,7 @@ export async function getStaticPaths() {
 }
 
 const key = String(Astro.params.slug).replace(/-en$|-es$/, "");
-return Astro.redirect(`/?guide=${key}`);
+const base = import.meta.env.BASE_URL;
+const target = base.endsWith("/") ? `${base}?guide=${key}` : `${base}/?guide=${key}`;
+return Astro.redirect(target);
 ---

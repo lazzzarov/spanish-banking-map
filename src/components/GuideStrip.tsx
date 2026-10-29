@@ -1,102 +1,90 @@
-import { useMemo } from "react";
-import { storyBeats } from "../lib/bankGraph";
 import { guideKey } from "../lib/deepLinks";
-import type { BankDataset } from "../lib/types";
 import type { StoryLink } from "./Explorer";
 import { useLocale } from "./LocaleContext";
 
 interface Props {
-  dataset: BankDataset;
   stories: StoryLink[];
   guide: string | null;
-  pickerOpen: boolean;
   step: number;
-  onPick: (key: string) => void;
+  beatCount: number;
   onClose: () => void;
   onStep: (step: number) => void;
+  /** Top bar is sticky and prominent; bottom is a slim duplicate. */
+  placement?: "top" | "bottom";
 }
 
-export function GuideStrip({ dataset, stories, guide, pickerOpen, step, onPick, onClose, onStep }: Props) {
+export function GuideStrip({
+  stories,
+  guide,
+  step,
+  beatCount,
+  onClose,
+  onStep,
+  placement = "bottom",
+}: Props) {
   const { t, locale } = useLocale();
-  const visible = useMemo(
-    () =>
-      stories
-        .filter((story) => story.locale === locale)
-        .sort((a, b) => a.year - b.year || a.title.localeCompare(b.title)),
-    [locale, stories],
-  );
-  const current = visible.find((story) => guideKey(story.slug) === guide) ?? null;
-  const beats = current
-    ? storyBeats(current.body, { entityId: current.entityId, year: current.year }, dataset)
-    : [];
-  const beat = beats[step];
+  const current = stories.find((story) => story.locale === locale && guideKey(story.slug) === guide) ?? null;
+  if (!current || beatCount === 0) return null;
 
-  if (!pickerOpen && !current) return null;
-
-  return (
-    <div className="pointer-events-none absolute inset-x-3 bottom-3 z-20 md:inset-x-5">
-      <div className="pointer-events-auto max-h-[45vh] overflow-y-auto rounded-2xl border border-line bg-panel/95 p-4 shadow-xl backdrop-blur">
-        {!current && (
-          <div>
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="text-sm font-medium text-heading">{t.guidesTitle}</p>
-                <p className="mt-1 text-xs text-muted">{t.guidesLead}</p>
-              </div>
-              <button type="button" onClick={onClose} className="text-xs text-muted">
-                {t.guideClose}
-              </button>
-            </div>
-            <ul className="mt-3 space-y-2">
-              {visible.map((story) => (
-                <li key={story.slug}>
-                  <button
-                    type="button"
-                    onClick={() => onPick(guideKey(story.slug))}
-                    className="w-full rounded-xl border border-line px-3 py-2 text-left hover:border-accent"
-                  >
-                    <p className="font-mono text-[10px] text-accent">{story.year}</p>
-                    <p className="mt-1 text-xs text-fog">{story.title}</p>
-                  </button>
-                </li>
-              ))}
-            </ul>
+  if (placement === "top") {
+    return (
+      <div className="sticky top-0 z-20 mb-3 rounded-xl border border-accent/35 bg-accent/10 px-4 py-3 shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="min-w-0 flex-1">
+            <p className="font-mono text-[10px] uppercase tracking-wide text-accent">
+              {step + 1}/{beatCount}
+            </p>
+            <p className="truncate text-sm font-medium text-heading">{current.title}</p>
           </div>
-        )}
-        {current && beat && (
-          <div>
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="font-mono text-[10px] text-accent">
-                  {current.title} · {step + 1}/{beats.length}
-                </p>
-                <p className="mt-2 text-sm leading-6 text-fog">{beat.text}</p>
-              </div>
-              <button type="button" onClick={onClose} className="shrink-0 text-xs text-muted">
-                {t.guideExit}
-              </button>
-            </div>
-            <div className="mt-3 flex flex-wrap justify-between gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              disabled={step === 0}
+              onClick={() => onStep(step - 1)}
+              className="min-h-11 rounded-lg border border-line bg-panel px-4 text-sm text-muted disabled:opacity-40"
+            >
+              {t.guideBack}
+            </button>
+            {step < beatCount - 1 ? (
               <button
                 type="button"
-                disabled={step === 0}
-                onClick={() => onStep(step - 1)}
-                className="text-xs text-muted disabled:opacity-40"
+                onClick={() => onStep(step + 1)}
+                className="min-h-11 rounded-lg bg-accent px-5 text-sm font-medium text-white hover:opacity-90"
               >
-                {t.guideBack}
+                {t.guideNext}
               </button>
-              {step < beats.length - 1 ? (
-                <button type="button" onClick={() => onStep(step + 1)} className="text-xs text-accent">
-                  {t.guideNext}
-                </button>
-              ) : (
-                <button type="button" onClick={onClose} className="text-xs text-accent">
-                  {t.guideExit}
-                </button>
-              )}
-            </div>
+            ) : null}
+            <button type="button" onClick={onClose} className="min-h-11 px-3 text-sm text-muted hover:text-accent">
+              {t.guideExit}
+            </button>
           </div>
-        )}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-line bg-panel-2 px-4 py-2">
+      <p className="font-mono text-[10px] text-accent">
+        {current.title} · {step + 1}/{beatCount}
+      </p>
+      <div className="flex flex-wrap gap-3">
+        <button
+          type="button"
+          disabled={step === 0}
+          onClick={() => onStep(step - 1)}
+          className="text-xs text-muted disabled:opacity-40"
+        >
+          {t.guideBack}
+        </button>
+        {step < beatCount - 1 ? (
+          <button type="button" onClick={() => onStep(step + 1)} className="text-xs text-accent">
+            {t.guideNext}
+          </button>
+        ) : null}
+        <button type="button" onClick={onClose} className="text-xs text-muted">
+          {t.guideExit}
+        </button>
       </div>
     </div>
   );

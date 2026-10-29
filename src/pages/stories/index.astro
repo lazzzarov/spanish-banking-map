@@ -1,3 +1,5 @@
 ---
-return Astro.redirect("/?guides=1");
+const base = import.meta.env.BASE_URL;
+const target = base.endsWith("/") ? `${base}?guides=1` : `${base}/?guides=1`;
+return Astro.redirect(target);
 ---
