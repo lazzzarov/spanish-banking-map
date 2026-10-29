@@ -261,7 +261,7 @@ function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [] 
           />
         </section>
 
-        <section ref={mapSectionRef} className="explorer-section relative mx-auto max-w-7xl px-5 py-8 md:px-8">
+        <section ref={mapSectionRef} className="explorer-section relative mx-auto w-full max-w-[1920px] px-5 py-8 md:px-8">
           <SectionChevron
             direction="prev"
             label={t.sectionBackIntro}

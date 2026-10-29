@@ -344,7 +344,7 @@ export function SpainMap({
         <svg
           ref={svgRef}
           viewBox="0 0 640 500"
-          className="map-svg h-full w-full touch-none"
+          className="map-svg h-full max-h-[56vh] w-full touch-none"
           data-year={year}
           onClick={() => setStackMenu(null)}
         >

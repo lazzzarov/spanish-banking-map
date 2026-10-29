@@ -66,7 +66,7 @@ export function Timeline({ year, playing, dealCounts, caption, onYear, onToggle,
           <p className="font-mono text-3xl leading-none text-heading">{year}</p>
           <p className="mt-1 line-clamp-2 text-xs text-muted">{caption}</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <button
             type="button"
             disabled={prevDeal == null}
@@ -83,6 +83,15 @@ export function Timeline({ year, playing, dealCounts, caption, onYear, onToggle,
           >
             {t.timelineNextDeal}
           </button>
+          {year < MAX_YEAR ? (
+            <button
+              type="button"
+              onClick={() => onYear(MAX_YEAR)}
+              className="h-9 rounded-lg bg-accent/10 px-3 text-[13px] font-semibold text-accent hover:bg-accent/15"
+            >
+              {interpolate(t.timelinePresent, { year: MAX_YEAR })}
+            </button>
+          ) : null}
         </div>
       </div>
 

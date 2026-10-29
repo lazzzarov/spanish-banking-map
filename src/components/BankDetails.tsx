@@ -196,12 +196,6 @@ export function BankDetails({
             </dd>
           )}
         </div>
-        <div>
-          <dt className="text-[11px] text-muted">{t.bankingBusiness}</dt>
-          <dd>
-            {entity.banking_business_status === "transferred" ? t.businessTransferred : t.businessActive}
-          </dd>
-        </div>
       </dl>
 
       {entity.group_role === "independent_caja" && (

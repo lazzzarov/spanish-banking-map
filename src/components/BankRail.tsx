@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { interpolate } from "../i18n";
 import { currentGroupOf, groupColor, markerPresence, MAX_YEAR, searchEntities } from "../lib/bankGraph";
 import { FEATURED_GROUPS, type BankDataset, type Entity, type FeaturedGroup } from "../lib/types";
@@ -38,7 +38,10 @@ function labelOf(entity: Entity, locale: "en" | "es") {
 export function BankRail({ dataset, year, selectedId, groupFilter, onSelectBank, onSelectGroup }: Props) {
   const { t, locale } = useLocale();
   const [query, setQuery] = useState("");
-  const [openLocal, setOpenLocal] = useState<string | null>(null);
+  // undefined: open the filtered or selected bank's group; null: everything collapsed.
+  const [openOverride, setOpenOverride] = useState<string | null | undefined>(undefined);
+
+  useEffect(() => setOpenOverride(undefined), [selectedId]);
 
   const onMap = useMemo(
     () => dataset.entities.filter((entity) => markerPresence(dataset, entity, year) !== "hidden"),
@@ -72,7 +75,10 @@ export function BankRail({ dataset, year, selectedId, groupFilter, onSelectBank,
     .sort((a, b) => (a.id === "other" ? 1 : b.id === "other" ? -1 : b.banks.length - a.banks.length));
 
   const selectedGroup = selectedId ? currentGroupOf(dataset, selectedId, year) : null;
-  const openId = openLocal ?? groupFilter ?? (selectedGroup && byGroup.has(selectedGroup) ? selectedGroup : null);
+  const openId =
+    openOverride !== undefined
+      ? openOverride
+      : (groupFilter ?? (selectedGroup && byGroup.has(selectedGroup) ? selectedGroup : null));
   const matches = query.trim() ? searchEntities(onMap, query) : null;
 
   const bankButton = (entity: Entity) => (
@@ -116,13 +122,24 @@ export function BankRail({ dataset, year, selectedId, groupFilter, onSelectBank,
           )
         ) : (
           <>
-            <p className="mb-1.5 font-mono text-[11px] tracking-[0.08em] text-muted uppercase">
-              {year >= MAX_YEAR ? t.currentGroup : interpolate(t.groupInYear, { year })}
-            </p>
+            <div className="mb-1.5 flex items-center justify-between gap-2">
+              <p className="font-mono text-[11px] tracking-[0.08em] text-muted uppercase">
+                {year >= MAX_YEAR ? t.currentGroup : interpolate(t.groupInYear, { year })}
+              </p>
+              {openId ? (
+                <button
+                  type="button"
+                  onClick={() => setOpenOverride(null)}
+                  className="rounded-md px-2 py-1 text-xs text-muted hover:bg-panel-2 hover:text-fog"
+                >
+                  {t.railCollapseAll}
+                </button>
+              ) : null}
+            </div>
             <button
               type="button"
               onClick={() => {
-                setOpenLocal(null);
+                setOpenOverride(null);
                 onSelectGroup(null);
               }}
               aria-pressed={groupFilter === null}
@@ -144,7 +161,7 @@ export function BankRail({ dataset, year, selectedId, groupFilter, onSelectBank,
                       aria-expanded={open}
                       aria-pressed={filtering}
                       onClick={() => {
-                        setOpenLocal(open ? null : section.id);
+                        setOpenOverride(open ? null : section.id);
                         // "Other survivors" is not a map filter; it only lists its banks.
                         if (section.id !== "other") onSelectGroup(filtering ? null : section.id);
                       }}

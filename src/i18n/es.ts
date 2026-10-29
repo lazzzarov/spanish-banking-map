@@ -215,6 +215,7 @@ export const es = {
   timelineDealCount: "{count} operaciones en {year}",
   timelinePrevDeal: "← Operación anterior",
   timelineNextDeal: "Siguiente operación →",
+  timelinePresent: "Volver a {year}",
   eraCambo: "Ley Cambó",
   eraCrisis: "Crisis bancaria",
   eraMergers: "Fusiones de los grandes",
