@@ -11,8 +11,10 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@astrojs/react": "^4.4.2",
-    "astro": "^5.16.6",
+    "@astrojs/react": "^7.1.2",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@fontsource/manrope": "^5.3.0",
+    "astro": "^7.4.4",
     "d3": "^7.9.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
@@ -25,6 +27,6 @@
     "tailwindcss": "^4.1.18",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",
-    "vitest": "^3.2.4"
+    "vitest": "^5.0.5"
   }
 }
