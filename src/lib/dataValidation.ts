@@ -20,6 +20,19 @@ export function validateDataset(
   const seenEntities = new Set<string>();
   const seenEvents = new Set<string>();
 
+  // Source URLs become links on the site, so only https is accepted (no javascript: or data: URLs).
+  for (const source of sources) {
+    if (source.url == null) continue;
+    let protocol = "";
+    try {
+      protocol = new URL(source.url).protocol;
+    } catch {
+      errors.push(`Source ${source.id} has an invalid url`);
+      continue;
+    }
+    if (protocol !== "https:") errors.push(`Source ${source.id} url must use https (got ${protocol})`);
+  }
+
   for (const entity of dataset.entities) {
     if (seenEntities.has(entity.id)) errors.push(`Duplicate entity id ${entity.id}`);
     seenEntities.add(entity.id);
