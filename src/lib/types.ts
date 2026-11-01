@@ -101,6 +101,16 @@ export interface SourceRecord {
   verification_status?: VerificationStatus;
 }
 
+/** Total assets for sizing map bubbles; `basis` says whether it is the entity alone or its group. */
+export interface AssetRecord {
+  entityId: string;
+  year: number;
+  total_assets_eur_bn: number;
+  basis: "entity" | "group";
+  src: string;
+  note?: string;
+}
+
 export interface ContextEvent {
   id: string;
   name: string;
@@ -151,6 +161,7 @@ export const OTHER_SURVIVORS = [
   "caja-almendralejo",
   "banca-pueyo",
   "arquia",
+  "bankinter",
 ] as const;
 
 export type OtherSurvivor = (typeof OTHER_SURVIVORS)[number];
@@ -170,6 +181,7 @@ export const GROUP_COLORS: Record<string, string> = {
   "caja-almendralejo": "#9a3412",
   "banca-pueyo": "#0369a1",
   arquia: "#4c1d95",
+  bankinter: "#c2410c",
 };
 
 export const MECHANISM_LINEAGE: Record<Mechanism, boolean> = {

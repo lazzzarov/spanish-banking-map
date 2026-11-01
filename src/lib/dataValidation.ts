@@ -1,12 +1,29 @@
 import { doubleLineageParents } from "./bankGraph";
 import { MECHANISM_LINEAGE, NON_LINEAGE_ALWAYS, type BankDataset } from "./types";
-import type { SourceRecord } from "./types";
+import type { AssetRecord, SourceRecord } from "./types";
 
 export interface ValidationResult {
   errors: string[];
   warnings: string[];
   entityCount: number;
   eventCount: number;
+}
+
+export function validateAssets(assets: AssetRecord[], dataset: BankDataset, sources: SourceRecord[]): string[] {
+  const errors: string[] = [];
+  const entityIds = new Set(dataset.entities.map((entity) => entity.id));
+  const sourceIds = new Set(sources.map((source) => source.id));
+  const seen = new Set<string>();
+  for (const asset of assets) {
+    const key = `${asset.entityId}:${asset.year}`;
+    if (seen.has(key)) errors.push(`Duplicate assets for ${key}`);
+    seen.add(key);
+    if (!entityIds.has(asset.entityId)) errors.push(`Assets for unknown entity ${asset.entityId}`);
+    if (!sourceIds.has(asset.src)) errors.push(`Assets for ${asset.entityId} have unknown src ${asset.src}`);
+    if (!(asset.total_assets_eur_bn > 0)) errors.push(`Assets for ${asset.entityId} must be positive`);
+    if (asset.basis !== "entity" && asset.basis !== "group") errors.push(`Assets for ${asset.entityId} have unknown basis`);
+  }
+  return errors;
 }
 
 export function validateDataset(

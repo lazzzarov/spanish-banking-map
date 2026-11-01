@@ -1,0 +1,124 @@
+[
+  {
+    "entityId": "santander",
+    "year": 2025,
+    "total_assets_eur_bn": 836.78,
+    "basis": "entity",
+    "src": "thebanks-santander"
+  },
+  {
+    "entityId": "caixabank",
+    "year": 2025,
+    "total_assets_eur_bn": 542.43,
+    "basis": "entity",
+    "src": "thebanks-caixabank"
+  },
+  {
+    "entityId": "bbva",
+    "year": 2025,
+    "total_assets_eur_bn": 532.05,
+    "basis": "entity",
+    "src": "thebanks-bbva"
+  },
+  {
+    "entityId": "sabadell",
+    "year": 2025,
+    "total_assets_eur_bn": 192.53,
+    "basis": "entity",
+    "src": "thebanks-sabadell"
+  },
+  {
+    "entityId": "bankinter",
+    "year": 2025,
+    "total_assets_eur_bn": 130.73,
+    "basis": "entity",
+    "src": "thebanks-bankinter"
+  },
+  {
+    "entityId": "unicaja",
+    "year": 2025,
+    "total_assets_eur_bn": 99.13,
+    "basis": "entity",
+    "src": "thebanks-unicaja"
+  },
+  {
+    "entityId": "abanca",
+    "year": 2025,
+    "total_assets_eur_bn": 73.48,
+    "basis": "entity",
+    "src": "thebanks-abanca"
+  },
+  {
+    "entityId": "kutxabank",
+    "year": 2025,
+    "total_assets_eur_bn": 68.21,
+    "basis": "entity",
+    "src": "thebanks-kutxabank"
+  },
+  {
+    "entityId": "cajamar",
+    "year": 2025,
+    "total_assets_eur_bn": 54.92,
+    "basis": "entity",
+    "src": "thebanks-cajamar",
+    "note": "Cajamar Caja Rural, the largest entity of the Cajamar cooperative group."
+  },
+  {
+    "entityId": "ibercaja",
+    "year": 2025,
+    "total_assets_eur_bn": 47.95,
+    "basis": "entity",
+    "src": "thebanks-ibercaja"
+  },
+  {
+    "entityId": "banca-march",
+    "year": 2025,
+    "total_assets_eur_bn": 18.21,
+    "basis": "entity",
+    "src": "thebanks-banca-march"
+  },
+  {
+    "entityId": "grupo-caja-rural",
+    "year": 2025,
+    "total_assets_eur_bn": 12.94,
+    "basis": "entity",
+    "src": "thebanks-grupo-caja-rural",
+    "note": "Banco Cooperativo Español, the group's central bank only; the rural cajas themselves are not added in."
+  },
+  {
+    "entityId": "caja-almendralejo",
+    "year": 2025,
+    "total_assets_eur_bn": 3.14,
+    "basis": "entity",
+    "src": "cajalmendralejo-2025"
+  },
+  {
+    "entityId": "arquia",
+    "year": 2025,
+    "total_assets_eur_bn": 2.86,
+    "basis": "group",
+    "src": "arquia-2025",
+    "note": "Consolidated group figure; Arquia does not publish an entity-only total."
+  },
+  {
+    "entityId": "banca-pueyo",
+    "year": 2025,
+    "total_assets_eur_bn": 2.78,
+    "basis": "entity",
+    "src": "thebanks-banca-pueyo"
+  },
+  {
+    "entityId": "caixa-ontinyent",
+    "year": 2025,
+    "total_assets_eur_bn": 1.47,
+    "basis": "entity",
+    "src": "caixa-ontinyent-2025"
+  },
+  {
+    "entityId": "colonya-pollenca",
+    "year": 2025,
+    "total_assets_eur_bn": 0.83,
+    "basis": "entity",
+    "src": "colonya-2025"
+  }
+]

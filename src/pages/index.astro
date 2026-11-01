@@ -4,6 +4,7 @@ import Explorer from "../components/Explorer";
 import Base from "../layouts/Base.astro";
 import banks from "../../data/banks.json";
 import sources from "../../data/sources.json";
+import assets from "../../data/assets.json";
 import regions from "../../data/regions.json";
 import contextEvents from "../../data/historical_context.json";
 
@@ -21,6 +22,7 @@ const stories = (await getCollection("stories")).map((story) => ({
     client:load
     dataset={banks}
     sources={sources}
+    assets={assets}
     regions={regions}
     stories={stories}
     contextEvents={contextEvents}

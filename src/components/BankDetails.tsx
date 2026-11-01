@@ -10,11 +10,13 @@ import {
 } from "../lib/bankGraph";
 import { interpolate } from "../i18n";
 import { eventSentence, fateEvent, fateSentence } from "../lib/eventText";
+import { formatEuroBn } from "../lib/format";
 import { downloadSvgAsPng, downloadText, familyPathSvg } from "../lib/pathExport";
 import {
   ERAS,
   FEATURED_GROUPS,
   MECHANISM_LINEAGE,
+  type AssetRecord,
   type BankDataset,
   type Entity,
   type Event,
@@ -28,6 +30,7 @@ import { useLocale } from "./LocaleContext";
 interface Props {
   dataset: BankDataset;
   sources: SourceRecord[];
+  assets: Map<string, AssetRecord>;
   stories: StoryLink[];
   entity: Entity | null;
   year: number;
@@ -39,6 +42,7 @@ interface Props {
 export function BankDetails({
   dataset,
   sources,
+  assets,
   stories,
   entity,
   year,
@@ -134,6 +138,8 @@ export function BankDetails({
     historical_nonbank: t.statusHistorical,
   }[entity.status];
   const isHead = canOpenFamily && groupId === entity.id;
+  const assetRecord = assets.get(entity.id) ?? null;
+  const assetSource = assetRecord ? sources.find((item) => item.id === assetRecord.src) : undefined;
   const familySize = isHead
     ? dataset.entities.filter((item) => currentGroupOf(dataset, item.id, MAX_YEAR) === entity.id).length
     : 0;
@@ -158,6 +164,29 @@ export function BankDetails({
       )}
 
       {summary && <p className="mt-3 text-sm leading-6 text-fog">{summary}</p>}
+
+      {assetRecord && (
+        <div className="mt-4 rounded-lg border border-[var(--deal)]/40 bg-[var(--deal)]/10 px-3 py-2.5">
+          <p className="font-mono text-xl text-heading">
+            {formatEuroBn(assetRecord.total_assets_eur_bn, locale)}
+            <span className="ml-2 font-sans text-xs text-muted">
+              {interpolate(t.assetsLabel, { year: assetRecord.year })}
+              {assetSource?.url ? (
+                <>
+                  {" · "}
+                  <a href={assetSource.url} target="_blank" rel="noreferrer" className="text-accent hover:underline">
+                    {assetSource.publisher}
+                  </a>
+                </>
+              ) : null}
+            </span>
+          </p>
+          <p className="mt-1 text-xs font-semibold text-fog">
+            {assetRecord.basis === "group" ? t.assetsGroupNote : t.assetsEntityNote}
+          </p>
+          {assetRecord.note ? <p className="mt-1 text-xs text-muted">{assetRecord.note}</p> : null}
+        </div>
+      )}
 
       {isHead && (
         <div className="mt-4 grid grid-cols-2 gap-2">

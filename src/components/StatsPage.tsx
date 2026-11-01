@@ -209,13 +209,40 @@ function Inner({ points, sources, seriesMeta = {} }: Props) {
     );
   };
 
-  const nav = [
-    { href: "#cajas", label: t.figNavCajas },
-    { href: "#jobs", label: t.figNavJobs },
-    { href: "#frob", label: t.figNavFrob },
-    { href: "#turning", label: t.figNavTurning },
-    { href: "#today", label: t.figNavToday },
+  const chapters = [
+    { href: "#cajas", title: t.figCh1, question: t.figCh1Q },
+    { href: "#branches", title: t.figCh2, question: t.figCh2Q },
+    { href: "#jobs", title: t.figCh3, question: t.figCh3Q },
+    { href: "#frob", title: t.figCh4, question: t.figCh4Q },
+    { href: "#turning", title: t.figCh5, question: t.figCh5Q },
+    { href: "#today", title: t.figCh6, question: t.figCh6Q },
   ];
+
+  const kicker = (n: number, dark = false) => (
+    <p className={`font-mono text-xs tracking-[0.12em] uppercase ${dark ? "opacity-75" : "text-accent"}`}>
+      {interpolate(t.figChapter, { n })}
+    </p>
+  );
+
+  // Each chapter says why its number was chosen, from the series notes in the data.
+  const whyLine = (series: string, dark = false) => {
+    const meta = seriesMeta[series];
+    if (!meta) return null;
+    return (
+      <p
+        className={`mt-3 flex flex-wrap gap-x-2.5 gap-y-1 rounded-lg px-3.5 py-3 text-sm leading-relaxed ${
+          dark ? "bg-panel/10" : "bg-accent/10"
+        }`}
+      >
+        <strong className={dark ? "" : "text-accent"}>{t.figWhyThis}</strong>
+        <span className={dark ? "opacity-90" : "text-fog"}>{locale === "es" ? meta.why_es : meta.why_en}</span>
+      </p>
+    );
+  };
+
+  const bridge = (text: string) => (
+    <p className="mx-auto max-w-2xl text-center text-[15px] leading-relaxed text-muted italic">{text}</p>
+  );
 
   return (
     <div className="min-h-screen">
@@ -227,24 +254,37 @@ function Inner({ points, sources, seriesMeta = {} }: Props) {
           <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-muted">{t.figLead}</p>
         </div>
 
-        <nav aria-label={t.navStats} className="flex flex-wrap gap-2">
-          {nav.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              className="rounded-full border border-line bg-panel px-3.5 py-2 text-[13px] text-fog hover:border-accent/50"
-            >
-              {item.label}
-            </a>
-          ))}
-        </nav>
+        <section className="flex flex-wrap gap-7 rounded-2xl border border-line bg-panel p-6 md:p-8">
+          <div className="min-w-0 flex-[1_1_360px]">
+            <h2 className="text-lg font-bold text-heading">{t.figWhyTitle}</h2>
+            <p className="mt-2.5 text-[15px] leading-relaxed text-fog">{t.figWhyBody}</p>
+            <p className="mt-2.5 text-[13px] leading-relaxed text-muted">{t.figWhyNote}</p>
+          </div>
+          <nav aria-label={t.navStats} className="min-w-0 flex-[1_1_280px]">
+            <ol className="flex flex-col gap-0.5">
+              {chapters.map((chapter, index) => (
+                <li key={chapter.href}>
+                  <a href={chapter.href} className="flex items-baseline gap-3.5 rounded-lg px-2.5 py-2 hover:bg-panel-2">
+                    <span className="min-w-5 font-mono text-xl text-accent">{index + 1}</span>
+                    <span>
+                      <span className="block text-sm font-semibold text-heading">{chapter.title}</span>
+                      <span className="block text-xs text-muted">{chapter.question}</span>
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        </section>
 
         {cajasFrom && cajasTo && (
           <Card id="cajas" className="flex flex-wrap items-center gap-8">
             <div className="min-w-0 flex-[1_1_300px]">
-              <h2 className="text-xl font-bold text-heading md:text-2xl">
+              {kicker(1)}
+              <h2 className="mt-1.5 text-xl font-bold text-heading md:text-2xl">
                 {interpolate(t.figCajasTitle, { from: cajasFrom.value, to: cajasTo.value })}
               </h2>
+              {whyLine("cajas")}
               <p className="mt-3 text-[15px] leading-relaxed text-fog">
                 {interpolate(t.figCajasBody, { from: cajasFrom.value, to: cajasTo.value })}
               </p>
@@ -273,19 +313,25 @@ function Inner({ points, sources, seriesMeta = {} }: Props) {
           </Card>
         )}
 
-        <div id="jobs" className="flex scroll-mt-6 flex-wrap gap-5">
+        {bridge(t.figBridge1)}
+
+        <div className="flex flex-wrap gap-5">
           {branches.length > 1 && (
-            <Card className="min-w-0 flex-[1_1_400px]">
-              <h2 className="text-lg font-bold text-heading md:text-xl">{changeTitle(t.figBranchesTitle, branches)}</h2>
+            <Card id="branches" className="min-w-0 flex-[1_1_400px]">
+              {kicker(2)}
+              <h2 className="mt-1.5 text-lg font-bold text-heading md:text-xl">{changeTitle(t.figBranchesTitle, branches)}</h2>
               <p className="mt-1 text-sm text-muted">{t.figBranchesSub}</p>
+              {whyLine("branches")}
               {columnChart(branches)}
               <p className="mt-4 text-xs leading-relaxed text-muted">{caution("branches") ?? t.figOtherSource}</p>
             </Card>
           )}
           {jobs.length > 1 && (
-            <Card className="min-w-0 flex-[1_1_400px]">
-              <h2 className="text-lg font-bold text-heading md:text-xl">{changeTitle(t.figJobsTitle, jobs)}</h2>
+            <Card id="jobs" className="min-w-0 flex-[1_1_400px]">
+              {kicker(3)}
+              <h2 className="mt-1.5 text-lg font-bold text-heading md:text-xl">{changeTitle(t.figJobsTitle, jobs)}</h2>
               <p className="mt-1 text-sm text-muted">{t.figJobsSub}</p>
+              {whyLine("employment")}
               {columnChart(jobs)}
               <p className="mt-4 text-xs leading-relaxed text-muted">{caution("employment") ?? t.figOtherSource}</p>
             </Card>
@@ -293,15 +339,19 @@ function Inner({ points, sources, seriesMeta = {} }: Props) {
           <p className="w-full text-xs text-muted">{t.figOtherSource}</p>
         </div>
 
+        {bridge(t.figBridge2)}
+
         {frobGranted && frobRecovered && (
           <Card id="frob" className="flex flex-col gap-6">
             <div>
-              <h2 className="text-xl font-bold text-heading md:text-2xl">
+              {kicker(4)}
+              <h2 className="mt-1.5 text-xl font-bold text-heading md:text-2xl">
                 {interpolate(t.figFrobTitle, {
                   granted: f.euroBn(frobGranted.value),
                   recovered: f.euroBn(frobRecovered.value),
                 })}
               </h2>
+              {whyLine("frob")}
               <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted">
                 {t.statsFrobNote} {cite(frobGranted.src)}
               </p>
@@ -352,9 +402,13 @@ function Inner({ points, sources, seriesMeta = {} }: Props) {
           </Card>
         )}
 
+        {bridge(t.figBridge3)}
+
         {turning.length > 0 && (
           <Card id="turning">
-            <h2 className="text-xl font-bold text-heading md:text-2xl">{t.figTurningTitle}</h2>
+            {kicker(5)}
+            <h2 className="mt-1.5 text-xl font-bold text-heading md:text-2xl">{t.figTurningTitle}</h2>
+            {whyLine("headline")}
             <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted">{t.figTurningLead}</p>
             <div className="mt-4">
               {turning.map((item) => (
@@ -393,9 +447,13 @@ function Inner({ points, sources, seriesMeta = {} }: Props) {
           </Card>
         )}
 
+        {bridge(t.figBridge4)}
+
         {today.length > 0 && (
           <section id="today" className="scroll-mt-6 rounded-2xl bg-heading p-6 text-panel md:p-8">
-            <h2 className="text-xl font-bold md:text-2xl">{t.figTodayTitle}</h2>
+            {kicker(6, true)}
+            <h2 className="mt-1.5 text-xl font-bold md:text-2xl">{t.figTodayTitle}</h2>
+            {whyLine("condition", true)}
             <p className="mt-1 text-sm opacity-75">
               {interpolate(t.figTodaySub, { date: today[0].date.replace("-", " ") })} {cite(today[0].src)}
             </p>
