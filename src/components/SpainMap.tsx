@@ -1,6 +1,7 @@
 import { geoMercator, geoPath, select, zoom, zoomIdentity, type ZoomTransform } from "d3";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { interpolate } from "../i18n";
+import { assetsAt } from "../lib/assets";
 import { currentGroupOf, familiesAtYear, groupColor, markerPresence, type MarkerPresence } from "../lib/bankGraph";
 import { withBase } from "../lib/baseUrl";
 import { formatEuroBn } from "../lib/format";
@@ -12,8 +13,8 @@ import { useLocale } from "./LocaleContext";
 interface Props {
   dataset: BankDataset;
   regions: RegionCollection;
-  /** Latest total assets per entity, used to size family bubbles. */
-  assets: Map<string, AssetRecord>;
+  /** Total assets per entity, oldest year first, used to size family bubbles. */
+  assets: Map<string, AssetRecord[]>;
   year: number;
   selectedId: string | null;
   highlight: string[];
@@ -180,11 +181,8 @@ export function SpainMap({
     return entity.status;
   };
 
-  // Sizes from a year's accounts apply from that year on; earlier years fall back to institution counts.
-  const assetsFor = (id: string): AssetRecord | null => {
-    const record = assets.get(id);
-    return record && year >= record.year ? record : null;
-  };
+  // A family is sized by its head's latest accounts at or before this year; before the first one, by institution count.
+  const assetsFor = (id: string): AssetRecord | null => assetsAt(assets.get(id), year);
 
   const bubbles = families
     .map((family) => {

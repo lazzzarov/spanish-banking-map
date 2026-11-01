@@ -9,6 +9,7 @@ import {
   pathToGroup,
 } from "../lib/bankGraph";
 import { interpolate } from "../i18n";
+import { assetsAt } from "../lib/assets";
 import { eventSentence, fateEvent, fateSentence } from "../lib/eventText";
 import { formatEuroBn } from "../lib/format";
 import { downloadSvgAsPng, downloadText, familyPathSvg } from "../lib/pathExport";
@@ -30,7 +31,7 @@ import { useLocale } from "./LocaleContext";
 interface Props {
   dataset: BankDataset;
   sources: SourceRecord[];
-  assets: Map<string, AssetRecord>;
+  assets: Map<string, AssetRecord[]>;
   stories: StoryLink[];
   entity: Entity | null;
   year: number;
@@ -138,7 +139,8 @@ export function BankDetails({
     historical_nonbank: t.statusHistorical,
   }[entity.status];
   const isHead = canOpenFamily && groupId === entity.id;
-  const assetRecord = assets.get(entity.id) ?? null;
+  const assetRecords = assets.get(entity.id);
+  const assetRecord = assetsAt(assetRecords, year) ?? assetRecords?.[0] ?? null;
   const assetSource = assetRecord ? sources.find((item) => item.id === assetRecord.src) : undefined;
   const familySize = isHead
     ? dataset.entities.filter((item) => currentGroupOf(dataset, item.id, MAX_YEAR) === entity.id).length

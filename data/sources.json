@@ -424,5 +424,277 @@
     "title_es": "Colonya, Caixa d'Estalvis de Pollença, cuentas anuales 2025",
     "publisher": "Colonya",
     "verification_status": "Verified — Company disclosure"
+  },
+  {
+    "id": "aeb-anuario-1987",
+    "url": "https://aebanca.es/wp-content/uploads/2017/10/1987.pdf",
+    "title": "AEB statistical yearbook of Spanish banking 1987 (individual balances)",
+    "title_es": "AEB, Anuario Estadístico de la Banca en España 1987 (balances individuales)",
+    "publisher": "Asociación Española de Banca (AEB)",
+    "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "aeb-anuario-1998",
+    "url": "https://aebanca.es/wp-content/uploads/2017/10/1998.pdf",
+    "title": "AEB statistical yearbook of Spanish banking 1998 (individual balances)",
+    "title_es": "AEB, Anuario Estadístico de la Banca en España 1998 (balances individuales)",
+    "publisher": "Asociación Española de Banca (AEB)",
+    "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "aeb-anuario-1990",
+    "url": "https://aebanca.es/wp-content/uploads/2017/10/1990.pdf",
+    "title": "AEB statistical yearbook of Spanish banking 1990 (individual balances)",
+    "title_es": "AEB, Anuario Estadístico de la Banca en España 1990 (balances individuales)",
+    "publisher": "Asociación Española de Banca (AEB)",
+    "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "aeb-anuario-1993",
+    "url": "https://aebanca.es/wp-content/uploads/2017/10/1993.pdf",
+    "title": "AEB statistical yearbook of Spanish banking 1993 (individual balances)",
+    "title_es": "AEB, Anuario Estadístico de la Banca en España 1993 (balances individuales)",
+    "publisher": "Asociación Española de Banca (AEB)",
+    "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "aeb-anuario-2012",
+    "url": "https://aebanca.es/wp-content/uploads/2017/10/2012.pdf",
+    "title": "AEB statistical yearbook of Spanish banking 2012 (individual balances)",
+    "title_es": "AEB, Anuario Estadístico de la Banca en España 2012 (balances individuales)",
+    "publisher": "Asociación Española de Banca (AEB)",
+    "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "aeb-anuario-2000",
+    "url": "https://aebanca.es/wp-content/uploads/2017/10/2000.pdf",
+    "title": "AEB statistical yearbook of Spanish banking 2000 (individual balances)",
+    "title_es": "AEB, Anuario Estadístico de la Banca en España 2000 (balances individuales)",
+    "publisher": "Asociación Española de Banca (AEB)",
+    "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "aeb-anuario-2003",
+    "url": "https://aebanca.es/wp-content/uploads/2017/10/2003.pdf",
+    "title": "AEB statistical yearbook of Spanish banking 2003 (individual balances)",
+    "title_es": "AEB, Anuario Estadístico de la Banca en España 2003 (balances individuales)",
+    "publisher": "Asociación Española de Banca (AEB)",
+    "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "aeb-anuario-2005",
+    "url": "https://aebanca.es/wp-content/uploads/2017/10/2005.pdf",
+    "title": "AEB statistical yearbook of Spanish banking 2005 (individual balances)",
+    "title_es": "AEB, Anuario Estadístico de la Banca en España 2005 (balances individuales)",
+    "publisher": "Asociación Española de Banca (AEB)",
+    "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "ceca-anuario-2009",
+    "url": "https://www.ceca.es/wp-content/uploads/2024/04/AE2009.pdf",
+    "title": "CECA statistical yearbook of the savings banks 2009 (individual balances)",
+    "title_es": "CECA, Anuario Estadístico 2009 (balances individuales)",
+    "publisher": "CECA",
+    "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "assets-bfa-2010",
+    "url": "https://www.bportugal.pt/sites/default/files/anexos/documentos-relacionados/ft0168_d110823_h114951-0168-cac-201012-cac_2.pdf",
+    "title": "Banco Financiero y de Ahorros group, 2010 management report and consolidated balance sheet (filed by its Portuguese branch with Banco de Portugal)",
+    "title_es": "Grupo Banco Financiero y de Ahorros, informe de gestión y balance consolidado 2010 (depositado por su sucursal en Portugal ante el Banco de Portugal)",
+    "publisher": "Banco Financiero y de Ahorros, S.A. (hosted by Banco de Portugal)",
+    "verification_status": "Verified — Company disclosure"
+  },
+  {
+    "id": "assets-bankia-2011",
+    "url": "https://ddd.uab.cat/pub/infanu/118220/iaBANKIAa2011ispa.pdf",
+    "title": "Bankia, S.A. individual annual accounts 2011",
+    "title_es": "Bankia, S.A., cuentas anuales del ejercicio 2011",
+    "publisher": "Bankia (copy in the Universitat Autònoma de Barcelona annual-report repository)",
+    "verification_status": "Verified — Company disclosure"
+  },
+  {
+    "id": "assets-bankia-2017",
+    "url": "https://ddd.uab.cat/pub/infanu/118220/iaBANKIAa2017ispa1.pdf",
+    "title": "Bankia, S.A. individual annual accounts 2017",
+    "title_es": "Bankia, S.A., cuentas anuales del ejercicio 2017",
+    "publisher": "Bankia (copy in the Universitat Autònoma de Barcelona annual-report repository)",
+    "verification_status": "Verified — Company disclosure"
+  },
+  {
+    "id": "assets-bankia-2020",
+    "url": "https://www.caixabank.com/deployedfiles/caixabank_com/Estaticos/PDFs/Accionistasinversores/consolidated-financial-statements-2020.pdf",
+    "title": "Bankia, S.A. and subsidiaries, consolidated financial statements 2020",
+    "title_es": "Bankia, S.A. y sociedades dependientes, cuentas anuales consolidadas 2020",
+    "publisher": "Bankia (hosted by CaixaBank)",
+    "verification_status": "Verified — Company disclosure"
+  },
+  {
+    "id": "ceca-anuario-2011",
+    "url": "https://www.ceca.es/wp-content/uploads/2024/04/anuario2011.pdf",
+    "title": "CECA statistical yearbook of the savings banks 2011 (individual balances)",
+    "title_es": "CECA, Anuario Estadístico 2011 (balances individuales)",
+    "publisher": "CECA",
+    "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "assets-bmn-2017",
+    "url": "https://ddd.uab.cat/pub/infanu/118220/iaBANKIAa2017ispa.pdf",
+    "title": "Bankia Group consolidated annual accounts 2017",
+    "title_es": "Grupo Bankia, cuentas anuales consolidadas del ejercicio 2017",
+    "publisher": "Bankia (copy in the Universitat Autònoma de Barcelona annual-report repository)",
+    "verification_status": "Verified — Company disclosure"
+  },
+  {
+    "id": "assets-catalunya-caixa-2010",
+    "url": "https://ddd.uab.cat/pub/infanu/118269/iaCAICATa2010ispa.pdf",
+    "title": "CatalunyaCaixa annual report 2010 (individual annual accounts)",
+    "title_es": "CatalunyaCaixa, informe anual 2010 (cuentas anuales individuales)",
+    "publisher": "Caixa d'Estalvis de Catalunya, Tarragona i Manresa",
+    "verification_status": "Verified — Company disclosure"
+  },
+  {
+    "id": "assets-catalunya-banc-2014",
+    "url": "https://shareholdersandinvestors.bbva.com/wp-content/uploads/2017/05/2015CXauditedAnnualAccountsandManagementReport_tcm927-571995.pdf",
+    "title": "Catalunya Banc, S.A. audited annual accounts and management report 2015 (with 2014 comparatives)",
+    "title_es": "Catalunya Banc, S.A., cuentas anuales auditadas e informe de gestión 2015",
+    "publisher": "Catalunya Banc / BBVA",
+    "verification_status": "Verified — Company disclosure"
+  },
+  {
+    "id": "assets-unnim-banc-2011",
+    "url": "https://shareholdersandinvestors.bbva.com/TLBB/fbinir/mult/2011CUENTASINDICIDUALESUNNIM_tcm927-372783.pdf",
+    "title": "Unnim Banc, S.A. audit report, annual accounts at 31 December 2011 and directors' report",
+    "title_es": "Unnim Banc, S.A., cuentas anuales individuales 2011",
+    "publisher": "Unnim Banc / BBVA",
+    "verification_status": "Verified — Company disclosure"
+  },
+  {
+    "id": "ceca-anuario-2010",
+    "url": "https://www.ceca.es/wp-content/uploads/2024/04/AE2010.pdf",
+    "title": "CECA statistical yearbook of the savings banks 2010 (individual balances)",
+    "title_es": "CECA, Anuario Estadístico 2010 (balances individuales)",
+    "publisher": "CECA",
+    "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "assets-ncg-banco-2013",
+    "url": "https://www.cnmv.es/AUDITA/2013/15162.pdf",
+    "title": "NCG Banco, S.A. annual accounts for the year ended 31 December 2013 (CNMV audit filing)",
+    "title_es": "NCG Banco, S.A., cuentas anuales del ejercicio 2013",
+    "publisher": "NCG Banco / CNMV",
+    "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "aeb-anuario-2013",
+    "url": "https://aebanca.es/wp-content/uploads/2017/10/2013.pdf",
+    "title": "AEB statistical yearbook of Spanish banking 2013 (individual balances)",
+    "title_es": "AEB, Anuario Estadístico de la Banca en España 2013 (balances individuales)",
+    "publisher": "Asociación Española de Banca (AEB)",
+    "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "ceca-anuario-2017",
+    "url": "https://www.ceca.es/wp-content/uploads/2024/04/ANUARIO-ESTADISTICO-2017.pdf",
+    "title": "CECA statistical yearbook of the savings banks 2017 (individual balances)",
+    "title_es": "CECA, Anuario Estadístico 2017 (balances individuales)",
+    "publisher": "CECA",
+    "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "ceca-anuario-2012",
+    "url": "https://www.ceca.es/wp-content/uploads/2024/04/anuario2012.pdf",
+    "title": "CECA statistical yearbook of the savings banks 2012 (individual balances)",
+    "title_es": "CECA, Anuario Estadístico 2012 (balances individuales)",
+    "publisher": "CECA",
+    "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "ceca-anuario-2020",
+    "url": "https://www.ceca.es/wp-content/uploads/2021/07/ANUARIO-2020.pdf",
+    "title": "CECA statistical yearbook of the savings banks 2020 (individual balances)",
+    "title_es": "CECA, Anuario Estadístico 2020 (balances individuales)",
+    "publisher": "CECA",
+    "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "aeb-anuario-2011",
+    "url": "https://aebanca.es/wp-content/uploads/2017/10/2011.pdf",
+    "title": "AEB statistical yearbook of Spanish banking 2011 (individual balances)",
+    "title_es": "AEB, Anuario Estadístico de la Banca en España 2011 (balances individuales)",
+    "publisher": "Asociación Española de Banca (AEB)",
+    "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "aeb-anuario-2010",
+    "url": "https://aebanca.es/wp-content/uploads/2017/10/2010.pdf",
+    "title": "AEB statistical yearbook of Spanish banking 2010 (individual balances)",
+    "title_es": "AEB, Anuario Estadístico de la Banca en España 2010 (balances individuales)",
+    "publisher": "Asociación Española de Banca (AEB)",
+    "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "aeb-balances-12-2016",
+    "url": "https://aebanca.es/wp-content/uploads/2017/12/Bal1216-web.pdf",
+    "title": "AEB individual bank balances, December 2016",
+    "title_es": "AEB, balances individuales de la banca, diciembre de 2016",
+    "publisher": "Asociación Española de Banca (AEB)",
+    "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "aeb-anuario-2008",
+    "url": "https://aebanca.es/wp-content/uploads/2017/10/2008.pdf",
+    "title": "AEB statistical yearbook of Spanish banking 2008 (individual balances)",
+    "title_es": "AEB, Anuario Estadístico de la Banca en España 2008 (balances individuales)",
+    "publisher": "Asociación Española de Banca (AEB)",
+    "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "aeb-balances-12-2020",
+    "url": "https://aebanca.es/wp-content/uploads/2021/03/bal1220.pdf",
+    "title": "AEB individual bank balances, December 2020",
+    "title_es": "AEB, balances individuales de la banca, diciembre de 2020",
+    "publisher": "Asociación Española de Banca (AEB)",
+    "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "aeb-anuario-2014",
+    "url": "https://aebanca.es/wp-content/uploads/2017/10/2014.pdf",
+    "title": "AEB statistical yearbook of Spanish banking 2014 (individual balances)",
+    "title_es": "AEB, Anuario Estadístico de la Banca en España 2014 (balances individuales)",
+    "publisher": "Asociación Española de Banca (AEB)",
+    "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "ceca-anuario-2016",
+    "url": "https://www.ceca.es/wp-content/uploads/2024/04/Anuario-2016.pdf",
+    "title": "CECA statistical yearbook of the savings banks 2016 (individual balances)",
+    "title_es": "CECA, Anuario Estadístico 2016 (balances individuales)",
+    "publisher": "CECA",
+    "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "aeb-balances-12-2013",
+    "url": "https://aebanca.es/wp-content/uploads/2017/12/Bal1213.pdf",
+    "title": "AEB individual bank balances, December 2013",
+    "title_es": "AEB, balances individuales de la banca, diciembre de 2013",
+    "publisher": "Asociación Española de Banca (AEB)",
+    "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "ceca-anuario-2013",
+    "url": "https://www.ceca.es/wp-content/uploads/2024/04/ANUARIO2013.pdf",
+    "title": "CECA statistical yearbook of the savings banks 2013 (individual balances)",
+    "title_es": "CECA, Anuario Estadístico 2013 (balances individuales)",
+    "publisher": "CECA",
+    "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "ceca-anuario-2014",
+    "url": "https://www.ceca.es/wp-content/uploads/2024/04/anuario2014.pdf",
+    "title": "CECA statistical yearbook of the savings banks 2014 (individual balances)",
+    "title_es": "CECA, Anuario Estadístico 2014 (balances individuales)",
+    "publisher": "CECA",
+    "verification_status": "Verified — Primary Source"
   }
 ]

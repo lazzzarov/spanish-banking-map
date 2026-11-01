@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { interpolate } from "../i18n";
+import { assetsByEntity } from "../lib/assets";
 import { currentGroupOf, entityMap, eventsInYear, MAX_YEAR, MIN_YEAR, pathToGroup, storyBeats } from "../lib/bankGraph";
 import { eventSentence } from "../lib/eventText";
 import { explorerHref, guideKey, isLinkedQuery, parseExplorerQuery, writeExplorerQuery } from "../lib/deepLinks";
@@ -59,7 +60,7 @@ function readQuery(dataset: BankDataset, search: string) {
 
 function ExplorerInner({ dataset, sources, assets = [], regions, stories, contextEvents = [] }: Props) {
   const { t, locale, setLocale } = useLocale();
-  const assetsById = useMemo(() => new Map(assets.map((record) => [record.entityId, record])), [assets]);
+  const assetsById = useMemo(() => assetsByEntity(assets), [assets]);
   // The page is prerendered without a query; the address bar is read after hydration.
   const [year, setYear] = useState(MAX_YEAR);
   const [playing, setPlaying] = useState(false);
