@@ -1015,5 +1015,12 @@
     "basis": "entity",
     "src": "ceca-anuario-2011",
     "note": "Caja de Ahorros de Vitoria y Álava (Caja Vital)."
+  },
+  {
+    "entityId": "cbnk",
+    "year": 2025,
+    "total_assets_eur_bn": 3.39,
+    "basis": "entity",
+    "src": "thebanks-cbnk"
   }
 ]

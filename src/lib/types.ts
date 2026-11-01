@@ -162,6 +162,7 @@ export const OTHER_SURVIVORS = [
   "banca-pueyo",
   "arquia",
   "bankinter",
+  "cbnk",
 ] as const;
 
 export type OtherSurvivor = (typeof OTHER_SURVIVORS)[number];
@@ -182,6 +183,7 @@ export const GROUP_COLORS: Record<string, string> = {
   "banca-pueyo": "#0369a1",
   arquia: "#4c1d95",
   bankinter: "#c2410c",
+  cbnk: "#854d0e",
 };
 
 export const MECHANISM_LINEAGE: Record<Mechanism, boolean> = {

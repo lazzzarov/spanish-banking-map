@@ -29,7 +29,7 @@ const SECTIONS = {
 const COPY = {
   en: {
     p1: "This site is a curated historical banking genealogy, not a complete census of Spanish credit institutions and not a register of every bank since 1920. It follows the institutions that feed eight featured destination groups — CaixaBank, Santander, BBVA, Sabadell, Unicaja, Ibercaja, Kutxabank and Abanca — plus a short list of surviving independents and cooperatives.",
-    p2: "Cajamar, Grupo Caja Rural, Banca March, Caja Almendralejo, Banca Pueyo, Arquia Banca and Bankinter appear as surviving heads only. Their internal family trees are not encoded. The Banco de España register remains the reference for the full population.",
+    p2: "Cajamar, Grupo Caja Rural, Banca March, Caja Almendralejo, Banca Pueyo, Arquia Banca, Bankinter and CBNK appear as surviving heads only. Their internal family trees are not encoded. The Banco de España register remains the reference for the full population.",
     p3: "A relationship is a dated event with a mechanism and an outcome. Only completed events that transfer control or banking-business continuity move an institution into a current group. Minority stakes, failed bids, SAREB asset transfers and the 2026 TSB sale stay visible and never reparent Banco Sabadell.",
     p4: "Legal status and banking-business continuity are stored apart. Caja Madrid’s banking business reached CaixaBank through BFA and Bankia; that does not mean the original caja legal person was absorbed by CaixaBank.",
     p5: "Intermediate vehicles are kept on purpose: BFA, Banco CAM, Catalunya Banc, Novacaixagalicia, NCG Banco, Banco CEISS, Banco Grupo Caja3 and others. Acquisition and later legal absorption are two events.",
@@ -40,7 +40,7 @@ const COPY = {
   },
   es: {
     p1: "Este sitio es una genealogía histórica curada, no un censo completo de las entidades de crédito españolas ni un registro de todos los bancos desde 1920. Sigue a las entidades que alimentan ocho grupos de destino — CaixaBank, Santander, BBVA, Sabadell, Unicaja, Ibercaja, Kutxabank y Abanca — y a una lista corta de independientes y cooperativas que siguen.",
-    p2: "Cajamar, Grupo Caja Rural, Banca March, Caja Almendralejo, Banca Pueyo, Arquia Banca y Bankinter aparecen solo como cabezas supervivientes. No se ha codificado su árbol interno. El registro del Banco de España sigue siendo la referencia de la población completa.",
+    p2: "Cajamar, Grupo Caja Rural, Banca March, Caja Almendralejo, Banca Pueyo, Arquia Banca, Bankinter y CBNK aparecen solo como cabezas supervivientes. No se ha codificado su árbol interno. El registro del Banco de España sigue siendo la referencia de la población completa.",
     p3: "Cada relación es un hecho fechado con un mecanismo y un resultado. Solo los hechos completados que transfieren el control o la continuidad del negocio bancario mueven una entidad a un grupo actual. Las participaciones minoritarias, las OPA fallidas, las cesiones a SAREB y la venta de TSB en 2026 permanecen visibles y no cambian el padre de Banco Sabadell.",
     p4: "El estado jurídico y la continuidad del negocio bancario se guardan por separado. El negocio de Caja Madrid llegó a CaixaBank a través de BFA y Bankia; eso no significa que la persona jurídica original fuera absorbida por CaixaBank.",
     p5: "Los vehículos intermedios se conservan a propósito: BFA, Banco CAM, Catalunya Banc, Novacaixagalicia, NCG Banco, Banco CEISS, Banco Grupo Caja3 y otros. La adquisición y la absorción jurídica posterior son dos hechos.",

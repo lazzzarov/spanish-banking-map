@@ -696,5 +696,21 @@
     "title_es": "CECA, Anuario Estadístico 2014 (balances individuales)",
     "publisher": "CECA",
     "verification_status": "Verified — Primary Source"
+  },
+  {
+    "id": "cbnk-2024-report",
+    "url": "https://www.cbnk.es/ca/dam/jcr:dab08b28-066a-4c9f-8449-d8863225c8b4/Memoria%20Sostenibilidad%20CBNK%202024.pdf",
+    "title": "CBNK Banco de Colectivos, sustainability report 2024 (history: Banco Caminos 2008, Bancofar 2014, CBNK 2023)",
+    "title_es": "CBNK Banco de Colectivos, memoria de sostenibilidad 2024 (historia: Banco Caminos 2008, Bancofar 2014, CBNK 2023)",
+    "publisher": "CBNK Banco de Colectivos",
+    "verification_status": "Verified — Company disclosure"
+  },
+  {
+    "id": "thebanks-cbnk",
+    "url": "https://thebanks.eu/banks/13080",
+    "title": "CBNK Banco de Colectivos, S.A.: total assets 2025 (TheBanks.eu profile)",
+    "title_es": "CBNK Banco de Colectivos, S.A.: activo total 2025 (ficha de TheBanks.eu)",
+    "publisher": "TheBanks.eu",
+    "verification_status": "Secondary"
   }
 ]
