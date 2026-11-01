@@ -269,7 +269,7 @@ export const es = {
   figTodayRoe: "Rentabilidad (ROE)",
   mapLegendSize: "Grupo · tamaño = activo total",
   mapLegendNoSize: "Sin tamaño para este año (según nº de entidades)",
-  mapSizeDisclaimer: "Tamaño de la burbuja = activo total de la entidad española de cada banco en 2025, no del grupo entero (el grupo Santander ronda 1,8 billones de €).",
+  mapSizeDisclaimer: "Tamaño de la burbuja = activo total de la entidad española que encabeza cada familia, según sus últimas cuentas publicadas en el año mostrado o antes, no del grupo entero (el grupo Santander ronda 1,8 billones de €). Son balances de cierre de años y fuentes distintos, así que los tamaños son aproximados.",
   mapSizeWhy: "¿Por qué la entidad y no el grupo?",
   mapFamilyCount: "{count} entidades en la familia",
   assetsLabel: "activo total, {year}",

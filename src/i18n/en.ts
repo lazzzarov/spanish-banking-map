@@ -268,7 +268,7 @@ export const en = {
   figTodayRoe: "Return on equity",
   mapLegendSize: "Bank group · size = total assets",
   mapLegendNoSize: "No size for this year (sized by number of banks)",
-  mapSizeDisclaimer: "Bubble size = total assets of each bank’s Spanish entity in 2025, not the whole group (Santander’s group is about €1.8tn).",
+  mapSizeDisclaimer: "Bubble size = total assets of the Spanish entity at the head of each family, from its latest accounts on or before the year shown, not the whole group (Santander’s group is about €1.8tn). Figures are year-end balances from different years and sources, so treat sizes as approximate.",
   mapSizeWhy: "Why entity, not group?",
   mapFamilyCount: "{count} institutions in the family",
   assetsLabel: "total assets, {year}",

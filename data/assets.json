@@ -1,45 +1,19 @@
 [
   {
-    "entityId": "santander",
-    "year": 2025,
-    "total_assets_eur_bn": 836.78,
+    "entityId": "abanca",
+    "year": 2014,
+    "total_assets_eur_bn": 53.89,
     "basis": "entity",
-    "src": "thebanks-santander"
+    "src": "ceca-anuario-2014",
+    "note": "Individual (parent-bank) figure from CECA's 'Datos básicos' profile, which matches the 'Balance individual público' table in the same yearbook."
   },
   {
-    "entityId": "caixabank",
-    "year": 2025,
-    "total_assets_eur_bn": 542.43,
+    "entityId": "abanca",
+    "year": 2020,
+    "total_assets_eur_bn": 67.14,
     "basis": "entity",
-    "src": "thebanks-caixabank"
-  },
-  {
-    "entityId": "bbva",
-    "year": 2025,
-    "total_assets_eur_bn": 532.05,
-    "basis": "entity",
-    "src": "thebanks-bbva"
-  },
-  {
-    "entityId": "sabadell",
-    "year": 2025,
-    "total_assets_eur_bn": 192.53,
-    "basis": "entity",
-    "src": "thebanks-sabadell"
-  },
-  {
-    "entityId": "bankinter",
-    "year": 2025,
-    "total_assets_eur_bn": 130.73,
-    "basis": "entity",
-    "src": "thebanks-bankinter"
-  },
-  {
-    "entityId": "unicaja",
-    "year": 2025,
-    "total_assets_eur_bn": 99.13,
-    "basis": "entity",
-    "src": "thebanks-unicaja"
+    "src": "ceca-anuario-2020",
+    "note": "Individual (parent-bank) figure from CECA's 'Datos básicos' profile, which matches the 'Balance individual público' table in the same yearbook."
   },
   {
     "entityId": "abanca",
@@ -49,48 +23,12 @@
     "src": "thebanks-abanca"
   },
   {
-    "entityId": "kutxabank",
-    "year": 2025,
-    "total_assets_eur_bn": 68.21,
+    "entityId": "argentaria",
+    "year": 1998,
+    "total_assets_eur_bn": 62.57,
     "basis": "entity",
-    "src": "thebanks-kutxabank"
-  },
-  {
-    "entityId": "cajamar",
-    "year": 2025,
-    "total_assets_eur_bn": 54.92,
-    "basis": "entity",
-    "src": "thebanks-cajamar",
-    "note": "Cajamar Caja Rural, the largest entity of the Cajamar cooperative group."
-  },
-  {
-    "entityId": "ibercaja",
-    "year": 2025,
-    "total_assets_eur_bn": 47.95,
-    "basis": "entity",
-    "src": "thebanks-ibercaja"
-  },
-  {
-    "entityId": "banca-march",
-    "year": 2025,
-    "total_assets_eur_bn": 18.21,
-    "basis": "entity",
-    "src": "thebanks-banca-march"
-  },
-  {
-    "entityId": "grupo-caja-rural",
-    "year": 2025,
-    "total_assets_eur_bn": 12.94,
-    "basis": "entity",
-    "src": "thebanks-grupo-caja-rural",
-    "note": "Banco Cooperativo Español, the group's central bank only; the rural cajas themselves are not added in."
-  },
-  {
-    "entityId": "caja-almendralejo",
-    "year": 2025,
-    "total_assets_eur_bn": 3.14,
-    "basis": "entity",
-    "src": "cajalmendralejo-2025"
+    "src": "aeb-anuario-1998",
+    "note": "Individual balance of 10,411,560 million pesetas; BBVA's 1999 annual report gives 10,400,466 (individual) and 11,619,143 (group) for 1998."
   },
   {
     "entityId": "arquia",
@@ -101,11 +39,396 @@
     "note": "Consolidated group figure; Arquia does not publish an entity-only total."
   },
   {
+    "entityId": "banca-civica",
+    "year": 2011,
+    "total_assets_eur_bn": 71.44,
+    "basis": "entity",
+    "src": "ceca-anuario-2011",
+    "note": "Banca Cívica, S.A. individual balance; the cajas had transferred their banking business to it in 2011."
+  },
+  {
+    "entityId": "banca-march",
+    "year": 2008,
+    "total_assets_eur_bn": 9.54,
+    "basis": "entity",
+    "src": "aeb-anuario-2008",
+    "note": "Individual (parent-bank) public balance sheet as published by AEB."
+  },
+  {
+    "entityId": "banca-march",
+    "year": 2020,
+    "total_assets_eur_bn": 14.47,
+    "basis": "entity",
+    "src": "aeb-balances-12-2020",
+    "note": "Individual (parent-bank) public balance sheet as published by AEB."
+  },
+  {
+    "entityId": "banca-march",
+    "year": 2025,
+    "total_assets_eur_bn": 18.21,
+    "basis": "entity",
+    "src": "thebanks-banca-march"
+  },
+  {
     "entityId": "banca-pueyo",
     "year": 2025,
     "total_assets_eur_bn": 2.78,
     "basis": "entity",
     "src": "thebanks-banca-pueyo"
+  },
+  {
+    "entityId": "bancaja",
+    "year": 2009,
+    "total_assets_eur_bn": 89.61,
+    "basis": "entity",
+    "src": "ceca-anuario-2009",
+    "note": "Individual balance of the caja."
+  },
+  {
+    "entityId": "banco-atlantico",
+    "year": 2003,
+    "total_assets_eur_bn": 9.09,
+    "basis": "entity",
+    "src": "aeb-anuario-2003",
+    "note": "Individual balance; the consolidated group total was 9.63 bn EUR."
+  },
+  {
+    "entityId": "banco-bilbao",
+    "year": 1987,
+    "total_assets_eur_bn": 14.82,
+    "basis": "entity",
+    "src": "aeb-anuario-1987",
+    "note": "Individual balance of 2,465,776 million pesetas, converted at 166.386 ESP/EUR."
+  },
+  {
+    "entityId": "banco-cam",
+    "year": 2011,
+    "total_assets_eur_bn": 67.89,
+    "basis": "entity",
+    "src": "ceca-anuario-2011",
+    "note": "Banco CAM, listed among the entities under orderly restructuring (Art. 7, RDL 9/2009)."
+  },
+  {
+    "entityId": "banco-ccm",
+    "year": 2017,
+    "total_assets_eur_bn": 15.07,
+    "basis": "entity",
+    "src": "ceca-anuario-2017",
+    "note": "Banco de Castilla-La Mancha, S.A.; the same figure appears in the individual public balance (p.29)."
+  },
+  {
+    "entityId": "banco-central",
+    "year": 1990,
+    "total_assets_eur_bn": 22.8,
+    "basis": "entity",
+    "src": "aeb-anuario-1990",
+    "note": "Individual balance of 3,792,993 million pesetas, converted at 166.386 ESP/EUR."
+  },
+  {
+    "entityId": "banco-de-valencia",
+    "year": 2011,
+    "total_assets_eur_bn": 22.44,
+    "basis": "entity",
+    "src": "aeb-anuario-2011",
+    "note": "Individual (parent-bank) public balance sheet as published by AEB."
+  },
+  {
+    "entityId": "banco-etcheverria",
+    "year": 2013,
+    "total_assets_eur_bn": 1.84,
+    "basis": "entity",
+    "src": "aeb-anuario-2013"
+  },
+  {
+    "entityId": "banco-exterior",
+    "year": 1990,
+    "total_assets_eur_bn": 10.58,
+    "basis": "entity",
+    "src": "aeb-anuario-1990",
+    "note": "Individual balance of 1,760,427 million pesetas excluding the separately reported official mediation-credit book (346,001 million pesetas)."
+  },
+  {
+    "entityId": "banco-gallego",
+    "year": 2012,
+    "total_assets_eur_bn": 4.26,
+    "basis": "entity",
+    "src": "aeb-anuario-2012",
+    "note": "Individual (parent-bank) public balance sheet as published by AEB."
+  },
+  {
+    "entityId": "banco-guipuzcoano",
+    "year": 2010,
+    "total_assets_eur_bn": 9.92,
+    "basis": "entity",
+    "src": "aeb-anuario-2010",
+    "note": "Individual (parent-bank) public balance sheet as published by AEB."
+  },
+  {
+    "entityId": "banco-herrero",
+    "year": 2000,
+    "total_assets_eur_bn": 3.41,
+    "basis": "entity",
+    "src": "aeb-anuario-2000",
+    "note": "Individual balance; the consolidated group total was 3.49 bn EUR."
+  },
+  {
+    "entityId": "banco-hispano-americano",
+    "year": 1990,
+    "total_assets_eur_bn": 20.17,
+    "basis": "entity",
+    "src": "aeb-anuario-1990",
+    "note": "Individual balance of 3,356,539 million pesetas, converted at 166.386 ESP/EUR."
+  },
+  {
+    "entityId": "banco-pastor",
+    "year": 2010,
+    "total_assets_eur_bn": 31.13,
+    "basis": "entity",
+    "src": "aeb-anuario-2010",
+    "note": "Individual (parent-bank) public balance sheet as published by AEB."
+  },
+  {
+    "entityId": "banco-popular",
+    "year": 2016,
+    "total_assets_eur_bn": 138.3,
+    "basis": "entity",
+    "src": "aeb-balances-12-2016",
+    "note": "Individual (parent-bank) public balance sheet as published by AEB."
+  },
+  {
+    "entityId": "banco-urquijo",
+    "year": 2005,
+    "total_assets_eur_bn": 3.78,
+    "basis": "entity",
+    "src": "aeb-anuario-2005",
+    "note": "Individual balance; the consolidated group total was 4.18 bn EUR."
+  },
+  {
+    "entityId": "banco-vizcaya",
+    "year": 1987,
+    "total_assets_eur_bn": 11.16,
+    "basis": "entity",
+    "src": "aeb-anuario-1987",
+    "note": "Individual balance of 1,856,258 million pesetas, converted at 166.386 ESP/EUR."
+  },
+  {
+    "entityId": "banesto",
+    "year": 1993,
+    "total_assets_eur_bn": 33.04,
+    "basis": "entity",
+    "src": "aeb-anuario-1993",
+    "note": "Individual balance of 5,496,769 million pesetas after the Bank of Spain intervention; this total includes 577,923 million pesetas of 1993 losses carried on the asset side."
+  },
+  {
+    "entityId": "banesto",
+    "year": 2012,
+    "total_assets_eur_bn": 107.33,
+    "basis": "entity",
+    "src": "aeb-anuario-2012",
+    "note": "Individual balance; the consolidated group total was 102.42 bn EUR."
+  },
+  {
+    "entityId": "bankia",
+    "year": 2011,
+    "total_assets_eur_bn": 298.37,
+    "basis": "entity",
+    "src": "assets-bankia-2011",
+    "note": "Individual balance of Bankia, S.A."
+  },
+  {
+    "entityId": "bankia",
+    "year": 2017,
+    "total_assets_eur_bn": 215.04,
+    "basis": "entity",
+    "src": "assets-bankia-2017",
+    "note": "Individual balance; it already includes BMN, whose business Bankia took over with accounting effect from 1 December 2017 (consolidated group: 213.93 bn)."
+  },
+  {
+    "entityId": "bankia",
+    "year": 2020,
+    "total_assets_eur_bn": 209.84,
+    "basis": "group",
+    "src": "assets-bankia-2020",
+    "note": "Consolidated group figure; Bankia’s individual 2020 balance was not found."
+  },
+  {
+    "entityId": "bankinter",
+    "year": 2008,
+    "total_assets_eur_bn": 56.42,
+    "basis": "entity",
+    "src": "aeb-anuario-2008",
+    "note": "Individual (parent-bank) public balance sheet as published by AEB."
+  },
+  {
+    "entityId": "bankinter",
+    "year": 2016,
+    "total_assets_eur_bn": 67.44,
+    "basis": "entity",
+    "src": "aeb-balances-12-2016",
+    "note": "Individual (parent-bank) public balance sheet as published by AEB."
+  },
+  {
+    "entityId": "bankinter",
+    "year": 2020,
+    "total_assets_eur_bn": 93.23,
+    "basis": "entity",
+    "src": "aeb-balances-12-2020",
+    "note": "Individual (parent-bank) public balance sheet as published by AEB."
+  },
+  {
+    "entityId": "bankinter",
+    "year": 2025,
+    "total_assets_eur_bn": 130.73,
+    "basis": "entity",
+    "src": "thebanks-bankinter"
+  },
+  {
+    "entityId": "bbk",
+    "year": 2011,
+    "total_assets_eur_bn": 28.89,
+    "basis": "entity",
+    "src": "ceca-anuario-2011",
+    "note": "Bilbao Bizkaia Kutxa individual balance, excluding its subsidiary BBK Bank CajaSur."
+  },
+  {
+    "entityId": "bbk-bank-cajasur",
+    "year": 2011,
+    "total_assets_eur_bn": 14.42,
+    "basis": "entity",
+    "src": "ceca-anuario-2011",
+    "note": "BBK Bank CajaSur, S.A.U."
+  },
+  {
+    "entityId": "bbv",
+    "year": 1998,
+    "total_assets_eur_bn": 89.15,
+    "basis": "entity",
+    "src": "aeb-anuario-1998",
+    "note": "Individual balance of 14,833,638 million pesetas; BBVA's 1999 annual report restates the 1998 individual figure as 14,818,115 million pesetas (89.06 bn EUR); the consolidated group total was 22,294,001 million pesetas (133.99 bn EUR)."
+  },
+  {
+    "entityId": "bbva",
+    "year": 2008,
+    "total_assets_eur_bn": 392.02,
+    "basis": "entity",
+    "src": "aeb-anuario-2008",
+    "note": "Individual (parent-bank) public balance sheet as published by AEB."
+  },
+  {
+    "entityId": "bbva",
+    "year": 2011,
+    "total_assets_eur_bn": 411.17,
+    "basis": "entity",
+    "src": "aeb-anuario-2011",
+    "note": "Individual (parent-bank) public balance sheet as published by AEB."
+  },
+  {
+    "entityId": "bbva",
+    "year": 2014,
+    "total_assets_eur_bn": 403.84,
+    "basis": "entity",
+    "src": "aeb-anuario-2014",
+    "note": "Individual (parent-bank) public balance sheet as published by AEB."
+  },
+  {
+    "entityId": "bbva",
+    "year": 2020,
+    "total_assets_eur_bn": 445.41,
+    "basis": "entity",
+    "src": "aeb-balances-12-2020",
+    "note": "Individual (parent-bank) public balance sheet as published by AEB."
+  },
+  {
+    "entityId": "bbva",
+    "year": 2025,
+    "total_assets_eur_bn": 532.05,
+    "basis": "entity",
+    "src": "thebanks-bbva"
+  },
+  {
+    "entityId": "bch",
+    "year": 1998,
+    "total_assets_eur_bn": 71.71,
+    "basis": "entity",
+    "src": "aeb-anuario-1998",
+    "note": "Individual balance of 11,931,333 million pesetas; the consolidated group total was 13,647,226 million pesetas (82.02 bn EUR)."
+  },
+  {
+    "entityId": "bfa",
+    "year": 2010,
+    "total_assets_eur_bn": 328.28,
+    "basis": "group",
+    "src": "assets-bfa-2010",
+    "note": "Consolidated figure of the SIP group, which combined the seven cajas; BFA’s own balance was only €4.5bn until the cajas moved their banking business into it in 2011."
+  },
+  {
+    "entityId": "bmn",
+    "year": 2011,
+    "total_assets_eur_bn": 66.8,
+    "basis": "entity",
+    "src": "ceca-anuario-2011",
+    "note": "Individual balance of BMN, S.A. after the four cajas segregated their banking business to it."
+  },
+  {
+    "entityId": "bmn",
+    "year": 2017,
+    "total_assets_eur_bn": 37.67,
+    "basis": "group",
+    "src": "assets-bmn-2017",
+    "note": "Group book value at 1 December 2017, the accounting date of the merger into Bankia, not a year-end balance; BMN’s own audited balance was not found."
+  },
+  {
+    "entityId": "cai",
+    "year": 2010,
+    "total_assets_eur_bn": 11.03,
+    "basis": "entity",
+    "src": "ceca-anuario-2010",
+    "note": "Caja de Ahorros de la Inmaculada de Aragón."
+  },
+  {
+    "entityId": "caixa-catalunya",
+    "year": 2009,
+    "total_assets_eur_bn": 61.89,
+    "basis": "entity",
+    "src": "ceca-anuario-2009"
+  },
+  {
+    "entityId": "caixa-galicia",
+    "year": 2009,
+    "total_assets_eur_bn": 46.08,
+    "basis": "entity",
+    "src": "ceca-anuario-2009",
+    "note": "Individual figure (matches 'Balances de situación individuales' in Caixa Galicia's 2009 consolidated accounts); group total was 46,339,755 thousand."
+  },
+  {
+    "entityId": "caixa-girona",
+    "year": 2009,
+    "total_assets_eur_bn": 7.8,
+    "basis": "entity",
+    "src": "ceca-anuario-2009"
+  },
+  {
+    "entityId": "caixa-laietana",
+    "year": 2009,
+    "total_assets_eur_bn": 8.91,
+    "basis": "entity",
+    "src": "ceca-anuario-2009",
+    "note": "Individual balance of the caja."
+  },
+  {
+    "entityId": "caixa-manlleu",
+    "year": 2009,
+    "total_assets_eur_bn": 2.64,
+    "basis": "entity",
+    "src": "ceca-anuario-2009",
+    "note": "Matches the individual public balance in Caixa Manlleu's 2009 audited accounts."
+  },
+  {
+    "entityId": "caixa-manresa",
+    "year": 2009,
+    "total_assets_eur_bn": 6.55,
+    "basis": "entity",
+    "src": "ceca-anuario-2009"
   },
   {
     "entityId": "caixa-ontinyent",
@@ -115,10 +438,582 @@
     "src": "caixa-ontinyent-2025"
   },
   {
+    "entityId": "caixa-penedes",
+    "year": 2009,
+    "total_assets_eur_bn": 22.82,
+    "basis": "entity",
+    "src": "ceca-anuario-2009",
+    "note": "Individual balance of the caja."
+  },
+  {
+    "entityId": "caixa-sabadell",
+    "year": 2009,
+    "total_assets_eur_bn": 13.31,
+    "basis": "entity",
+    "src": "ceca-anuario-2009",
+    "note": "Same figure appears as 'Total balanç' in the Caixa Sabadell 2009 annual report."
+  },
+  {
+    "entityId": "caixa-tarragona",
+    "year": 2009,
+    "total_assets_eur_bn": 10.89,
+    "basis": "entity",
+    "src": "ceca-anuario-2009",
+    "note": "Individual figure; the group's consolidated total was 10,829,304 thousand (Caixa Tarragona consolidated accounts 2009)."
+  },
+  {
+    "entityId": "caixa-terrassa",
+    "year": 2009,
+    "total_assets_eur_bn": 12.52,
+    "basis": "entity",
+    "src": "ceca-anuario-2009",
+    "note": "Matches the individual balance of Caixa d'Estalvis de Terrassa in its 2009 annual report; the group total was 12,889,701 thousand."
+  },
+  {
+    "entityId": "caixabank",
+    "year": 2011,
+    "total_assets_eur_bn": 264.32,
+    "basis": "entity",
+    "src": "ceca-anuario-2011",
+    "note": "Individual (parent-bank) figure from CECA's 'Datos básicos' profile, which matches the 'Balance individual público' table in the same yearbook."
+  },
+  {
+    "entityId": "caixabank",
+    "year": 2016,
+    "total_assets_eur_bn": 306.38,
+    "basis": "entity",
+    "src": "ceca-anuario-2016",
+    "note": "Individual (parent-bank) figure from CECA's 'Datos básicos' profile, which matches the 'Balance individual público' table in the same yearbook."
+  },
+  {
+    "entityId": "caixabank",
+    "year": 2020,
+    "total_assets_eur_bn": 349.94,
+    "basis": "entity",
+    "src": "ceca-anuario-2020",
+    "note": "Individual (parent-bank) figure from CECA's 'Datos básicos' profile, which matches the 'Balance individual público' table in the same yearbook."
+  },
+  {
+    "entityId": "caixabank",
+    "year": 2025,
+    "total_assets_eur_bn": 542.43,
+    "basis": "entity",
+    "src": "thebanks-caixabank"
+  },
+  {
+    "entityId": "caixanova",
+    "year": 2009,
+    "total_assets_eur_bn": 27.17,
+    "basis": "entity",
+    "src": "ceca-anuario-2009",
+    "note": "Individual figure; the consolidated group balance was 31,737,549 thousand (Caixanova annual report 2009)."
+  },
+  {
+    "entityId": "caja-almendralejo",
+    "year": 2025,
+    "total_assets_eur_bn": 3.14,
+    "basis": "entity",
+    "src": "cajalmendralejo-2025"
+  },
+  {
+    "entityId": "caja-avila",
+    "year": 2009,
+    "total_assets_eur_bn": 7.12,
+    "basis": "entity",
+    "src": "ceca-anuario-2009",
+    "note": "Individual balance of the caja."
+  },
+  {
+    "entityId": "caja-badajoz",
+    "year": 2010,
+    "total_assets_eur_bn": 4.17,
+    "basis": "entity",
+    "src": "ceca-anuario-2010",
+    "note": "Monte de Piedad y Caja General de Ahorros de Badajoz."
+  },
+  {
+    "entityId": "caja-burgos",
+    "year": 2009,
+    "total_assets_eur_bn": 12.5,
+    "basis": "entity",
+    "src": "ceca-anuario-2009",
+    "note": "Caja de Ahorros Municipal de Burgos."
+  },
+  {
+    "entityId": "caja-canarias",
+    "year": 2009,
+    "total_assets_eur_bn": 13.85,
+    "basis": "entity",
+    "src": "ceca-anuario-2009",
+    "note": "Caja General de Ahorros de Canarias (CajaCanarias); same figure in the individual public balance (p.66-67)."
+  },
+  {
+    "entityId": "caja-cantabria",
+    "year": 2010,
+    "total_assets_eur_bn": 9.91,
+    "basis": "entity",
+    "src": "ceca-anuario-2010",
+    "note": "Caja de Ahorros de Santander y Cantabria."
+  },
+  {
+    "entityId": "caja-circulo",
+    "year": 2010,
+    "total_assets_eur_bn": 4.97,
+    "basis": "entity",
+    "src": "ceca-anuario-2010",
+    "note": "Caja de Ahorros y Monte de Piedad del Círculo Católico de Obreros de Burgos."
+  },
+  {
+    "entityId": "caja-duero",
+    "year": 2009,
+    "total_assets_eur_bn": 21.24,
+    "basis": "entity",
+    "src": "ceca-anuario-2009"
+  },
+  {
+    "entityId": "caja-espana",
+    "year": 2009,
+    "total_assets_eur_bn": 25.11,
+    "basis": "entity",
+    "src": "ceca-anuario-2009"
+  },
+  {
+    "entityId": "caja-espana-duero",
+    "year": 2010,
+    "total_assets_eur_bn": 45.67,
+    "basis": "entity",
+    "src": "ceca-anuario-2010"
+  },
+  {
+    "entityId": "caja-extremadura",
+    "year": 2010,
+    "total_assets_eur_bn": 7.23,
+    "basis": "entity",
+    "src": "ceca-anuario-2010",
+    "note": "Caja de Ahorros y Monte de Piedad de Extremadura."
+  },
+  {
+    "entityId": "caja-granada",
+    "year": 2009,
+    "total_assets_eur_bn": 13.6,
+    "basis": "entity",
+    "src": "ceca-anuario-2009",
+    "note": "Individual balance of the caja."
+  },
+  {
+    "entityId": "caja-guadalajara",
+    "year": 2009,
+    "total_assets_eur_bn": 1.75,
+    "basis": "entity",
+    "src": "ceca-anuario-2009",
+    "note": "Caja de Ahorro Provincial de Guadalajara."
+  },
+  {
+    "entityId": "caja-jaen",
+    "year": 2009,
+    "total_assets_eur_bn": 0.98,
+    "basis": "entity",
+    "src": "ceca-anuario-2009",
+    "note": "Caja Provincial de Ahorros de Jaén."
+  },
+  {
+    "entityId": "caja-madrid",
+    "year": 2009,
+    "total_assets_eur_bn": 189.52,
+    "basis": "entity",
+    "src": "ceca-anuario-2009",
+    "note": "Individual balance of the caja; the consolidated group figure was 191.90 bn."
+  },
+  {
+    "entityId": "caja-murcia",
+    "year": 2009,
+    "total_assets_eur_bn": 22.16,
+    "basis": "entity",
+    "src": "ceca-anuario-2009",
+    "note": "Individual balance of the caja."
+  },
+  {
+    "entityId": "caja-navarra",
+    "year": 2009,
+    "total_assets_eur_bn": 19.38,
+    "basis": "entity",
+    "src": "ceca-anuario-2009",
+    "note": "Caja de Ahorros y Monte de Piedad de Navarra; matches its column in the individual public balance (p.64-65)."
+  },
+  {
+    "entityId": "caja-rioja",
+    "year": 2009,
+    "total_assets_eur_bn": 3.87,
+    "basis": "entity",
+    "src": "ceca-anuario-2009",
+    "note": "Individual balance of the caja."
+  },
+  {
+    "entityId": "caja-segovia",
+    "year": 2009,
+    "total_assets_eur_bn": 6.17,
+    "basis": "entity",
+    "src": "ceca-anuario-2009",
+    "note": "Individual balance of the caja."
+  },
+  {
+    "entityId": "caja3",
+    "year": 2012,
+    "total_assets_eur_bn": 18.74,
+    "basis": "entity",
+    "src": "ceca-anuario-2012",
+    "note": "Banco Grupo Cajatres; the consolidated figure for the same date is 19,616,764 thousand (p.71)."
+  },
+  {
+    "entityId": "cajamar",
+    "year": 2025,
+    "total_assets_eur_bn": 54.92,
+    "basis": "entity",
+    "src": "thebanks-cajamar",
+    "note": "Cajamar Caja Rural, the largest entity of the Cajamar cooperative group."
+  },
+  {
+    "entityId": "cajasol",
+    "year": 2009,
+    "total_assets_eur_bn": 29.7,
+    "basis": "entity",
+    "src": "ceca-anuario-2009",
+    "note": "Monte de Piedad y Caja de Ahorros de San Fernando de Huelva, Jerez y Sevilla (Cajasol), before absorbing Caja Guadalajara; same figure in the individual balance (p.68-69)."
+  },
+  {
+    "entityId": "cajastur",
+    "year": 2010,
+    "total_assets_eur_bn": 16.68,
+    "basis": "entity",
+    "src": "ceca-anuario-2010",
+    "note": "Caja de Ahorros de Asturias."
+  },
+  {
+    "entityId": "cajasur",
+    "year": 2010,
+    "total_assets_eur_bn": 15.3,
+    "basis": "entity",
+    "src": "ceca-anuario-2010",
+    "note": "CajaSur at 31/12/2010, while administered by the FROB after its May 2010 intervention."
+  },
+  {
+    "entityId": "cam",
+    "year": 2010,
+    "total_assets_eur_bn": 70.67,
+    "basis": "entity",
+    "src": "ceca-anuario-2010",
+    "note": "Caja de Ahorros del Mediterráneo; the figure matches its column in the individual public balance (p.52-53)."
+  },
+  {
+    "entityId": "catalunya-banc",
+    "year": 2014,
+    "total_assets_eur_bn": 53.13,
+    "basis": "entity",
+    "src": "assets-catalunya-banc-2014",
+    "note": "2014 comparative column of the individual balance sheet in the 2015 audited accounts."
+  },
+  {
+    "entityId": "catalunya-caixa",
+    "year": 2010,
+    "total_assets_eur_bn": 77.27,
+    "basis": "entity",
+    "src": "assets-catalunya-caixa-2010",
+    "note": "Six-month financial year after the 1 July 2010 merger; group consolidated assets were 74,716 million."
+  },
+  {
+    "entityId": "ccm",
+    "year": 2009,
+    "total_assets_eur_bn": 25.52,
+    "basis": "entity",
+    "src": "ceca-anuario-2009",
+    "note": "Caja de Ahorros de Castilla La Mancha, under Banco de España administration since March 2009."
+  },
+  {
+    "entityId": "ceiss",
+    "year": 2017,
+    "total_assets_eur_bn": 23.84,
+    "basis": "entity",
+    "src": "ceca-anuario-2017"
+  },
+  {
     "entityId": "colonya-pollenca",
     "year": 2025,
     "total_assets_eur_bn": 0.83,
     "basis": "entity",
     "src": "colonya-2025"
+  },
+  {
+    "entityId": "grupo-caja-rural",
+    "year": 2025,
+    "total_assets_eur_bn": 12.94,
+    "basis": "entity",
+    "src": "thebanks-grupo-caja-rural",
+    "note": "Banco Cooperativo Español, the group's central bank only; the rural cajas themselves are not added in."
+  },
+  {
+    "entityId": "ibercaja",
+    "year": 2011,
+    "total_assets_eur_bn": 42.3,
+    "basis": "entity",
+    "src": "ceca-anuario-2011",
+    "note": "Individual (parent-bank) figure from CECA's 'Datos básicos' profile, which matches the 'Balance individual público' table in the same yearbook."
+  },
+  {
+    "entityId": "ibercaja",
+    "year": 2013,
+    "total_assets_eur_bn": 39.44,
+    "basis": "entity",
+    "src": "ceca-anuario-2013",
+    "note": "Individual (parent-bank) figure from CECA's 'Datos básicos' profile, which matches the 'Balance individual público' table in the same yearbook. Banco Grupo Cajatres was still a separate subsidiary at end-2013."
+  },
+  {
+    "entityId": "ibercaja",
+    "year": 2020,
+    "total_assets_eur_bn": 51.18,
+    "basis": "entity",
+    "src": "ceca-anuario-2020",
+    "note": "Individual (parent-bank) figure from CECA's 'Datos básicos' profile, which matches the 'Balance individual público' table in the same yearbook."
+  },
+  {
+    "entityId": "ibercaja",
+    "year": 2025,
+    "total_assets_eur_bn": 47.95,
+    "basis": "entity",
+    "src": "thebanks-ibercaja"
+  },
+  {
+    "entityId": "ibercaja-caja",
+    "year": 2010,
+    "total_assets_eur_bn": 42.56,
+    "basis": "entity",
+    "src": "ceca-anuario-2010",
+    "note": "Caja de Ahorros y Monte de Piedad de Zaragoza, Aragón y Rioja (Ibercaja)."
+  },
+  {
+    "entityId": "kutxa",
+    "year": 2011,
+    "total_assets_eur_bn": 20.23,
+    "basis": "entity",
+    "src": "ceca-anuario-2011",
+    "note": "Caja de Ahorros y Monte de Piedad de Gipuzkoa y San Sebastián (Kutxa)."
+  },
+  {
+    "entityId": "kutxabank",
+    "year": 2012,
+    "total_assets_eur_bn": 53.91,
+    "basis": "entity",
+    "src": "ceca-anuario-2012",
+    "note": "Individual (parent-bank) figure from CECA's 'Datos básicos' profile, which matches the 'Balance individual público' table in the same yearbook. Excludes subsidiary BBK Bank Cajasur."
+  },
+  {
+    "entityId": "kutxabank",
+    "year": 2020,
+    "total_assets_eur_bn": 52.34,
+    "basis": "entity",
+    "src": "ceca-anuario-2020",
+    "note": "Individual (parent-bank) figure from CECA's 'Datos básicos' profile, which matches the 'Balance individual público' table in the same yearbook. Excludes subsidiary Cajasur Banco."
+  },
+  {
+    "entityId": "kutxabank",
+    "year": 2025,
+    "total_assets_eur_bn": 68.21,
+    "basis": "entity",
+    "src": "thebanks-kutxabank"
+  },
+  {
+    "entityId": "la-caixa",
+    "year": 2010,
+    "total_assets_eur_bn": 269.76,
+    "basis": "entity",
+    "src": "ceca-anuario-2010",
+    "note": "Individual figure; the consolidated Grupo 'la Caixa' total was 285,724 million (la Caixa annual report 2010)."
+  },
+  {
+    "entityId": "la-caja-de-canarias",
+    "year": 2009,
+    "total_assets_eur_bn": 9.3,
+    "basis": "entity",
+    "src": "ceca-anuario-2009",
+    "note": "Individual balance of the caja."
+  },
+  {
+    "entityId": "liberbank",
+    "year": 2020,
+    "total_assets_eur_bn": 47.58,
+    "basis": "entity",
+    "src": "ceca-anuario-2020",
+    "note": "Liberbank, S.A.; the same figure appears in the individual public balance (p.23)."
+  },
+  {
+    "entityId": "ncg-banco",
+    "year": 2013,
+    "total_assets_eur_bn": 52.74,
+    "basis": "entity",
+    "src": "assets-ncg-banco-2013",
+    "note": "Individual accounts; consolidated group total was 52,686,541 thousand."
+  },
+  {
+    "entityId": "novacaixagalicia",
+    "year": 2010,
+    "total_assets_eur_bn": 68.68,
+    "basis": "entity",
+    "src": "ceca-anuario-2010"
+  },
+  {
+    "entityId": "sa-nostra",
+    "year": 2009,
+    "total_assets_eur_bn": 13.52,
+    "basis": "entity",
+    "src": "ceca-anuario-2009",
+    "note": "Individual balance of the caja."
+  },
+  {
+    "entityId": "sabadell",
+    "year": 2008,
+    "total_assets_eur_bn": 78.7,
+    "basis": "entity",
+    "src": "aeb-anuario-2008",
+    "note": "Individual (parent-bank) public balance sheet as published by AEB."
+  },
+  {
+    "entityId": "sabadell",
+    "year": 2011,
+    "total_assets_eur_bn": 94.21,
+    "basis": "entity",
+    "src": "aeb-anuario-2011",
+    "note": "Individual (parent-bank) public balance sheet as published by AEB."
+  },
+  {
+    "entityId": "sabadell",
+    "year": 2013,
+    "total_assets_eur_bn": 157.74,
+    "basis": "entity",
+    "src": "aeb-balances-12-2013",
+    "note": "Individual (parent-bank) public balance sheet as published by AEB."
+  },
+  {
+    "entityId": "sabadell",
+    "year": 2016,
+    "total_assets_eur_bn": 166.74,
+    "basis": "entity",
+    "src": "aeb-balances-12-2016",
+    "note": "Individual (parent-bank) public balance sheet as published by AEB."
+  },
+  {
+    "entityId": "sabadell",
+    "year": 2020,
+    "total_assets_eur_bn": 188.91,
+    "basis": "entity",
+    "src": "aeb-balances-12-2020",
+    "note": "Individual (parent-bank) public balance sheet as published by AEB."
+  },
+  {
+    "entityId": "sabadell",
+    "year": 2025,
+    "total_assets_eur_bn": 192.53,
+    "basis": "entity",
+    "src": "thebanks-sabadell"
+  },
+  {
+    "entityId": "santander",
+    "year": 1998,
+    "total_assets_eur_bn": 74.31,
+    "basis": "entity",
+    "src": "aeb-anuario-1998",
+    "note": "Individual balance of 12,363,659 million pesetas; the consolidated group total was 25,798,566 million pesetas (155.05 bn EUR)."
+  },
+  {
+    "entityId": "santander",
+    "year": 2008,
+    "total_assets_eur_bn": 435.19,
+    "basis": "entity",
+    "src": "aeb-anuario-2008",
+    "note": "Individual (parent-bank) public balance sheet as published by AEB."
+  },
+  {
+    "entityId": "santander",
+    "year": 2012,
+    "total_assets_eur_bn": 475.64,
+    "basis": "entity",
+    "src": "aeb-anuario-2012",
+    "note": "Individual (parent-bank) public balance sheet as published by AEB."
+  },
+  {
+    "entityId": "santander",
+    "year": 2016,
+    "total_assets_eur_bn": 461.24,
+    "basis": "entity",
+    "src": "aeb-balances-12-2016",
+    "note": "Individual (parent-bank) public balance sheet as published by AEB."
+  },
+  {
+    "entityId": "santander",
+    "year": 2020,
+    "total_assets_eur_bn": 629.37,
+    "basis": "entity",
+    "src": "aeb-balances-12-2020",
+    "note": "Individual (parent-bank) public balance sheet as published by AEB."
+  },
+  {
+    "entityId": "santander",
+    "year": 2025,
+    "total_assets_eur_bn": 836.78,
+    "basis": "entity",
+    "src": "thebanks-santander"
+  },
+  {
+    "entityId": "unicaja",
+    "year": 2011,
+    "total_assets_eur_bn": 38.82,
+    "basis": "entity",
+    "src": "ceca-anuario-2011",
+    "note": "Individual (parent-bank) figure from CECA's 'Datos básicos' profile, which matches the 'Balance individual público' table in the same yearbook."
+  },
+  {
+    "entityId": "unicaja",
+    "year": 2017,
+    "total_assets_eur_bn": 34.46,
+    "basis": "entity",
+    "src": "ceca-anuario-2017",
+    "note": "Individual (parent-bank) figure from CECA's 'Datos básicos' profile, which matches the 'Balance individual público' table in the same yearbook. Unicaja Banco alone; Banco CEISS (EspañaDuero) was still a separate subsidiary in 2017."
+  },
+  {
+    "entityId": "unicaja",
+    "year": 2020,
+    "total_assets_eur_bn": 65.26,
+    "basis": "entity",
+    "src": "ceca-anuario-2020",
+    "note": "Individual (parent-bank) figure from CECA's 'Datos básicos' profile, which matches the 'Balance individual público' table in the same yearbook."
+  },
+  {
+    "entityId": "unicaja",
+    "year": 2025,
+    "total_assets_eur_bn": 99.13,
+    "basis": "entity",
+    "src": "thebanks-unicaja"
+  },
+  {
+    "entityId": "unicaja-caja",
+    "year": 2010,
+    "total_assets_eur_bn": 34.41,
+    "basis": "entity",
+    "src": "ceca-anuario-2010",
+    "note": "Unicaja at 31/12/2010, already including Caja Jaén, which it absorbed in 2010."
+  },
+  {
+    "entityId": "unnim-banc",
+    "year": 2011,
+    "total_assets_eur_bn": 29.51,
+    "basis": "entity",
+    "src": "assets-unnim-banc-2011",
+    "note": "Individual accounts of Unnim Banc, S.A.; consolidated group total was 29,288,005 thousand."
+  },
+  {
+    "entityId": "vital",
+    "year": 2011,
+    "total_assets_eur_bn": 8.33,
+    "basis": "entity",
+    "src": "ceca-anuario-2011",
+    "note": "Caja de Ahorros de Vitoria y Álava (Caja Vital)."
   }
 ]
