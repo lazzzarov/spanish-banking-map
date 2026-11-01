@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 import {
   currentGroupOf,
   doubleLineageParents,
+  familiesAtYear,
   familyOf,
   genealogyStats,
   pathToGroup,
@@ -86,5 +87,29 @@ describe("genealogy stats", () => {
     expect(late.consolidations).toBeGreaterThan(early.consolidations);
     expect(late.largestFamily.id).toBe("caixabank");
     expect(late.largestFamily.count).toBeGreaterThan(early.largestFamily.count);
+  });
+});
+
+describe("families on the map", () => {
+  const heads = (year: number) => familiesAtYear(dataset, year).map((family) => family.headId);
+
+  it("gathers the Bankia branch under CaixaBank today", () => {
+    const caixabank = familiesAtYear(dataset, 2026).find((family) => family.headId === "caixabank");
+    expect(caixabank?.memberIds).toEqual(expect.arrayContaining(["caja-madrid", "bankia", "la-caixa"]));
+  });
+
+  it("leaves out SAREB and the CAM SIP that was unwound", () => {
+    expect(heads(2026)).not.toContain("sareb");
+    expect(heads(2026)).not.toContain("sip-cam-2010");
+  });
+
+  it("keeps Caja Madrid as its own head before the crisis", () => {
+    expect(heads(2005)).toContain("caja-madrid");
+    expect(heads(2005)).not.toContain("caixabank");
+  });
+
+  it("puts every member in exactly one family", () => {
+    const members = familiesAtYear(dataset, 2026).flatMap((family) => [family.headId, ...family.memberIds]);
+    expect(new Set(members).size).toBe(members.length);
   });
 });

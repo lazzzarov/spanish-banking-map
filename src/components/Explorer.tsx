@@ -7,6 +7,7 @@ import type { RegionCollection } from "../lib/geo";
 import { nextPlayableYear } from "../lib/timelineUtils";
 import {
   FEATURED_GROUPS,
+  type AssetRecord,
   type BankDataset,
   type ContextEvent,
   type FeaturedGroup,
@@ -15,6 +16,7 @@ import {
 } from "../lib/types";
 import { BankDetails } from "./BankDetails";
 import { BankRail } from "./BankRail";
+import { EraStory } from "./EraStory";
 import { IntroSection } from "./IntroSection";
 import { LocaleProvider, useLocale } from "./LocaleContext";
 import { SectionChevron } from "./SectionChevron";
@@ -39,6 +41,7 @@ export interface StoryLink {
 interface Props {
   dataset: BankDataset;
   sources: SourceRecord[];
+  assets?: AssetRecord[];
   regions: RegionCollection;
   stories: StoryLink[];
   contextEvents?: ContextEvent[];
@@ -54,8 +57,9 @@ function readQuery(dataset: BankDataset, search: string) {
   };
 }
 
-function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [] }: Props) {
+function ExplorerInner({ dataset, sources, assets = [], regions, stories, contextEvents = [] }: Props) {
   const { t, locale, setLocale } = useLocale();
+  const assetsById = useMemo(() => new Map(assets.map((record) => [record.entityId, record])), [assets]);
   // The page is prerendered without a query; the address bar is read after hydration.
   const [year, setYear] = useState(MAX_YEAR);
   const [playing, setPlaying] = useState(false);
@@ -277,7 +281,23 @@ function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [] 
           </div>
 
           <div className="md:mx-8">
-            {storyActive && currentGuide ? <StoryBanner title={currentGuide.title} onExit={exitGuide} /> : null}
+            {storyActive && currentGuide ? (
+              <StoryBanner title={currentGuide.title} onExit={exitGuide} />
+            ) : (
+              <EraStory
+                year={year}
+                playing={playing}
+                onEra={setYearFromUser}
+                onWatch={() => {
+                  if (playing) {
+                    setPlaying(false);
+                    return;
+                  }
+                  setYear(MIN_YEAR);
+                  setPlaying(true);
+                }}
+              />
+            )}
 
             <div className="flex flex-wrap items-stretch gap-4">
               {storyActive ? null : (
@@ -296,6 +316,7 @@ function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [] 
                 <SpainMap
                   dataset={dataset}
                   regions={regions}
+                  assets={assetsById}
                   year={year}
                   selectedId={selectedId}
                   highlight={highlight}
@@ -336,6 +357,7 @@ function ExplorerInner({ dataset, sources, regions, stories, contextEvents = [] 
                   <BankDetails
                     dataset={dataset}
                     sources={sources}
+                    assets={assetsById}
                     stories={stories}
                     entity={selected}
                     year={year}

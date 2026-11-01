@@ -1,19 +1,19 @@
 import { geoMercator, geoPath, select, zoom, zoomIdentity, type ZoomTransform } from "d3";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-  currentGroupOf,
-  groupColor,
-  markerPresence,
-  type MarkerPresence,
-} from "../lib/bankGraph";
+import { interpolate } from "../i18n";
+import { currentGroupOf, familiesAtYear, groupColor, markerPresence, type MarkerPresence } from "../lib/bankGraph";
+import { withBase } from "../lib/baseUrl";
+import { formatEuroBn } from "../lib/format";
 import { projectHq, shiftCanaries, type RegionCollection } from "../lib/geo";
-import { dashFor, type BankDataset, type Entity, type Event } from "../lib/types";
+import { dashFor, type AssetRecord, type BankDataset, type Entity, type Event } from "../lib/types";
 import { MapMarkerTooltip, type MapTooltipPayload } from "./MapMarkerTooltip";
 import { useLocale } from "./LocaleContext";
 
 interface Props {
   dataset: BankDataset;
   regions: RegionCollection;
+  /** Latest total assets per entity, used to size family bubbles. */
+  assets: Map<string, AssetRecord>;
   year: number;
   selectedId: string | null;
   highlight: string[];
@@ -66,9 +66,16 @@ interface StackMenu {
   entities: Entity[];
 }
 
+/** Bubble area follows total assets; without a figure, size follows the number of institutions. */
+function bubbleRadius(assetsBn: number | null, institutions: number): number {
+  if (assetsBn != null) return 4 + Math.sqrt(assetsBn) * 0.95;
+  return 4.5 + Math.sqrt(institutions) * 1.4;
+}
+
 export function SpainMap({
   dataset,
   regions,
+  assets,
   year,
   selectedId,
   highlight,
@@ -83,6 +90,8 @@ export function SpainMap({
   const svgRef = useRef<SVGSVGElement>(null);
   const zoomLayerRef = useRef<SVGGElement>(null);
   const zoomRef = useRef<ReturnType<typeof zoom<SVGSVGElement>> | null>(null);
+  // Geography is zoomed by transform; markers are drawn unzoomed at transformed positions so they keep their size.
+  const [zoomT, setZoomT] = useState<ZoomTransform>(zoomIdentity);
   const [tooltip, setTooltip] = useState<MapTooltipPayload | null>(null);
   const [stackMenu, setStackMenu] = useState<StackMenu | null>(null);
   const hoverTimer = useRef<number | null>(null);
@@ -124,26 +133,23 @@ export function SpainMap({
     return markerPresence(dataset, entity, year);
   };
 
-  const markers = dataset.entities.filter((entity): entity is Entity & { hq: [number, number] } => {
-    if (!entity.hq) return false;
-    if (markerPresence(dataset, entity, year) === "hidden") return false;
-    if (groupFilter && currentGroupOf(dataset, entity.id, year) !== groupFilter) return false;
-    return true;
-  });
-
-  const stacks = useMemo(() => {
-    const map = new Map<string, Entity[]>();
-    for (const entity of markers) {
-      const key = hqKey(entity);
-      const list = map.get(key) ?? [];
-      list.push(entity);
-      map.set(key, list);
-    }
-    for (const list of map.values()) {
-      list.sort((a, b) => a.name.localeCompare(b.name));
+  const families = useMemo(() => familiesAtYear(dataset, year), [dataset, year]);
+  const headOf = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const family of families) {
+      map.set(family.headId, family.headId);
+      for (const id of family.memberIds) map.set(id, family.headId);
     }
     return map;
-  }, [markers]);
+  }, [families]);
+
+  // A family opens when it is filtered from the bank list or when one of its banks is selected.
+  const selectedHead = selectedId ? (headOf.get(selectedId) ?? null) : null;
+  const openHead =
+    groupFilter ??
+    (selectedHead && families.some((family) => family.headId === selectedHead && family.memberIds.length > 0)
+      ? selectedHead
+      : null);
 
   const activeIds = new Set(yearEvents.flatMap((event) => [event.from, event.to]));
   const pathIds = new Set(highlight);
@@ -152,6 +158,11 @@ export function SpainMap({
     const entity = byId.get(id);
     if (!entity?.hq) return null;
     return projection(projectHq(entity.hq, entity.region));
+  };
+
+  const screenOf = (id: string): [number, number] | null => {
+    const point = pointOf(id);
+    return point ? (zoomT.apply(point) as [number, number]) : null;
   };
 
   const labelOf = (id: string) => {
@@ -168,6 +179,73 @@ export function SpainMap({
     if (entity.status === "historical_nonbank") return t.statusHistorical;
     return entity.status;
   };
+
+  // Sizes from a year's accounts apply from that year on; earlier years fall back to institution counts.
+  const assetsFor = (id: string): AssetRecord | null => {
+    const record = assets.get(id);
+    return record && year >= record.year ? record : null;
+  };
+
+  const bubbles = families
+    .map((family) => {
+      const point = screenOf(family.headId);
+      if (!point) return null;
+      const record = assetsFor(family.headId);
+      const ids = [family.headId, ...family.memberIds];
+      const active = ids.some((id) => activeIds.has(id));
+      const open = openHead === family.headId;
+      const faded = openHead ? !open : yearEvents.length > 0 && !active && selectedHead !== family.headId;
+      return {
+        ...family,
+        point,
+        record,
+        r: bubbleRadius(record?.total_assets_eur_bn ?? null, ids.length),
+        color: groupColor(currentGroupOf(dataset, family.headId, year)),
+        active,
+        open,
+        faded,
+      };
+    })
+    .filter((bubble): bubble is NonNullable<typeof bubble> => bubble !== null)
+    .sort((a, b) => b.r - a.r);
+
+  const openBubble = bubbles.find((bubble) => bubble.open) ?? null;
+
+  // Name the big bubbles, largest first: below the bubble, else above, else not at all if both overlap.
+  const bubbleLabels = (() => {
+    const placed: { x0: number; x1: number; y0: number; y1: number }[] = [];
+    const overlaps = (box: (typeof placed)[number]) =>
+      placed.some((other) => box.x0 < other.x1 && box.x1 > other.x0 && box.y0 < other.y1 && box.y1 > other.y0);
+    const labels = new Map<string, number>();
+    for (const bubble of bubbles) {
+      if (bubble.r < 14 || bubble.faded || bubble.headId === selectedId) continue;
+      const width = labelOf(bubble.headId).length * 6.2;
+      for (const dy of [bubble.r + 13, -(bubble.r + 5)]) {
+        const y = bubble.point[1] + dy;
+        const box = { x0: bubble.point[0] - width / 2, x1: bubble.point[0] + width / 2, y0: y - 11, y1: y + 2 };
+        if (overlaps(box)) continue;
+        placed.push(box);
+        labels.set(bubble.headId, dy);
+        break;
+      }
+    }
+    return labels;
+  })();
+
+  // Predecessors of the open family, stacked where several share a headquarters.
+  const memberStacks = useMemo(() => {
+    if (!openHead) return [];
+    const family = families.find((item) => item.headId === openHead);
+    if (!family) return [];
+    const stacks = new Map<string, Entity[]>();
+    for (const id of family.memberIds) {
+      const entity = byId.get(id);
+      if (!entity?.hq) continue;
+      const key = hqKey(entity);
+      stacks.set(key, [...(stacks.get(key) ?? []), entity]);
+    }
+    return [...stacks.values()].map((list) => list.sort((a, b) => a.name.localeCompare(b.name)));
+  }, [openHead, families, byId]);
 
   const drawableEvents: Event[] = [];
   const calloutEvents: Event[] = [];
@@ -211,8 +289,8 @@ export function SpainMap({
     return { event, from, to, ...geom, emphasized, faded, stroke };
   });
 
-  const renderedStacks = [...stacks.entries()];
-  const selectedPoint = selectedId ? pointOf(selectedId) : null;
+  const selectedPoint = selectedId ? screenOf(selectedId) : null;
+  const selectedBubble = bubbles.find((bubble) => bubble.headId === selectedId) ?? null;
 
   useEffect(() => {
     const svg = svgRef.current;
@@ -227,6 +305,7 @@ export function SpainMap({
       ])
       .on("zoom", (event) => {
         select(layer).attr("transform", event.transform.toString());
+        setZoomT(event.transform);
       });
 
     zoomRef.current = behavior;
@@ -269,27 +348,36 @@ export function SpainMap({
     applyTransform(zoomIdentity.translate(tx, ty).scale(k));
   }, [selectedId, byId, projection]);
 
-  const showTooltip = (clientX: number, clientY: number, entities: Entity[]) => {
-    setTooltip({
-      x: clientX,
-      y: clientY,
-      lines: entities.map((entity) => ({
-        name: labelOf(entity.id),
-        group: labelOf(currentGroupOf(dataset, entity.id, year)),
-        status: statusOf(entity),
-      })),
-    });
+  const showTooltip = (clientX: number, clientY: number, lines: MapTooltipPayload["lines"]) => {
+    setTooltip({ x: clientX, y: clientY, lines });
   };
 
-  const scheduleTooltip = (clientX: number, clientY: number, entities: Entity[]) => {
+  const scheduleTooltip = (clientX: number, clientY: number, lines: MapTooltipPayload["lines"]) => {
     if (hoverTimer.current) window.clearTimeout(hoverTimer.current);
-    hoverTimer.current = window.setTimeout(() => showTooltip(clientX, clientY, entities), 200);
+    hoverTimer.current = window.setTimeout(() => showTooltip(clientX, clientY, lines), 200);
   };
 
   const clearTooltip = () => {
     if (hoverTimer.current) window.clearTimeout(hoverTimer.current);
     setTooltip(null);
   };
+
+  const entityLines = (entities: Entity[]) =>
+    entities.map((entity) => ({
+      name: labelOf(entity.id),
+      group: labelOf(currentGroupOf(dataset, entity.id, year)),
+      status: statusOf(entity),
+    }));
+
+  const bubbleLines = (bubble: (typeof bubbles)[number]) => [
+    {
+      name: labelOf(bubble.headId),
+      group: bubble.record
+        ? `${formatEuroBn(bubble.record.total_assets_eur_bn, locale)} · ${interpolate(t.assetsLabel, { year: bubble.record.year })}`
+        : t.mapLegendNoSize,
+      status: interpolate(t.mapFamilyCount, { count: bubble.memberIds.length + 1 }),
+    },
+  ];
 
   const openStackMenu = (entities: Entity[], evt: React.MouseEvent) => {
     const rect = svgRef.current?.getBoundingClientRect();
@@ -305,10 +393,17 @@ export function SpainMap({
     <div className="relative flex min-h-[320px] flex-1 flex-col">
       <h2 className="sr-only">{t.mapTitle}</h2>
       <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-        <ul className="flex flex-wrap gap-4 text-xs text-muted" aria-label={t.legendTitle}>
+        <ul className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted" aria-label={t.legendTitle}>
           <li className="flex items-center gap-1.5">
-            <span aria-hidden="true" className="h-2.5 w-2.5 rounded-full bg-accent" />
-            {t.mapLegendActive}
+            <span aria-hidden="true" className="flex items-end gap-1">
+              <span className="h-2.5 w-2.5 rounded-full bg-accent/70" />
+              <span className="h-4 w-4 rounded-full bg-accent/70" />
+            </span>
+            {t.mapLegendSize}
+          </li>
+          <li className="flex items-center gap-1.5">
+            <span aria-hidden="true" className="h-3 w-3 rounded-full border-[1.5px] border-dashed border-muted" />
+            {t.mapLegendNoSize}
           </li>
           <li className="flex items-center gap-1.5">
             <span aria-hidden="true" className="h-2 w-2 rounded-full border-[1.5px] border-accent bg-panel" />
@@ -340,6 +435,12 @@ export function SpainMap({
           </button>
         </div>
       </div>
+      <p className="mb-3 rounded-lg border border-[var(--deal)]/40 bg-[var(--deal)]/10 px-3 py-2 text-xs leading-relaxed text-fog">
+        <strong className="text-heading">{t.mapSizeDisclaimer}</strong>{" "}
+        <a href={withBase("/about/#sizes")} className="font-semibold text-accent hover:underline">
+          {t.mapSizeWhy}
+        </a>
+      </p>
       <div className="relative min-h-[280px] flex-1">
         <svg
           ref={svgRef}
@@ -357,6 +458,7 @@ export function SpainMap({
                 fillOpacity="0.9"
                 stroke="var(--map-stroke)"
                 strokeWidth={0.8}
+                vectorEffect="non-scaling-stroke"
                 className="cursor-pointer"
                 onClick={onClear}
               />
@@ -372,6 +474,7 @@ export function SpainMap({
                   fill="none"
                   stroke="var(--map-stroke)"
                   strokeDasharray="3 3"
+                  vectorEffect="non-scaling-stroke"
                 />
                 <text
                   x={canaryInset.x + 6}
@@ -398,6 +501,7 @@ export function SpainMap({
                     strokeWidth={emphasized ? 2 : 1.5}
                     strokeDasharray={dashFor(event.mechanism)}
                     strokeLinecap="round"
+                    vectorEffect="non-scaling-stroke"
                   />
                   <path
                     d={`M ${tip[0] - 4} ${tip[1]} L ${tip[0]} ${tip[1]} L ${tip[0] - 4} ${tip[1] + 4}`}
@@ -407,80 +511,144 @@ export function SpainMap({
                     strokeWidth={1.8}
                     strokeLinecap="round"
                     strokeLinejoin="round"
+                    vectorEffect="non-scaling-stroke"
                   />
                 </g>
               );
             })}
-            {renderedStacks.map(([key, entities]) => {
-              const sample = entities[0];
-              const point = projection(projectHq(sample.hq, sample.region));
-              if (!point) return null;
-              const count = entities.length;
-              const primary =
-                entities.find((e) => e.id === selectedId) ??
-                entities.find((e) => highlight.includes(e.id)) ??
-                entities.find((e) => activeIds.has(e.id)) ??
-                sample;
-              const group = currentGroupOf(dataset, primary.id, year);
-              const presence = markerPresence(dataset, primary, year);
-              const onPath = entities.some((e) => highlight.includes(e.id));
-              const selected = entities.some((e) => e.id === selectedId);
-              const active = entities.some((e) => activeIds.has(e.id));
-              const faded = yearEvents.length > 0 && !active && !selected && !onPath;
-              const historical = presence === "historical";
-              const r = selected ? 8 : onPath || active ? 6.5 : historical ? 4.5 : 5.5;
+          </g>
+
+          <g>
+            {openBubble
+              ? memberStacks.map((entities) => {
+                  const point = screenOf(entities[0].id);
+                  if (!point) return null;
+                  return (
+                    <line
+                      key={`spoke-${entities[0].id}`}
+                      x1={openBubble.point[0]}
+                      y1={openBubble.point[1]}
+                      x2={point[0]}
+                      y2={point[1]}
+                      stroke={openBubble.color}
+                      strokeOpacity={0.45}
+                      strokeWidth={1}
+                      className="pointer-events-none"
+                    />
+                  );
+                })
+              : null}
+
+            {bubbles.map((bubble) => {
+              const selected = bubble.headId === selectedId;
+              const showCount = bubble.memberIds.length > 0 && bubble.r >= 11;
               return (
                 <g
-                  key={key}
-                  transform={`translate(${point[0]}, ${point[1]})`}
-                  opacity={faded ? 0.4 : historical ? 0.65 : 1}
+                  key={bubble.headId}
+                  transform={`translate(${bubble.point[0]}, ${bubble.point[1]})`}
+                  opacity={bubble.faded ? 0.25 : 1}
                   className="map-marker-group"
                 >
-                  {active && !historical && <circle r="11" fill="var(--accent)" className="hq-pulse" />}
-                  <g className="map-dot-inner">
-                    <circle r={r + 1.5} fill="none" stroke="var(--dot-halo)" strokeWidth={2} />
-                    <circle
-                      r={r}
-                      fill={historical ? "var(--panel)" : groupColor(group)}
-                      stroke={
-                        historical ? groupColor(group) : selected || onPath ? "var(--heading)" : "var(--dot-stroke)"
-                      }
-                      strokeWidth={selected ? 2.2 : historical ? 1.6 : 1.2}
-                      className="map-dot cursor-pointer"
-                      onClick={(click) => {
-                        click.stopPropagation();
-                        if (count > 1) {
-                          openStackMenu(entities, click);
-                          return;
-                        }
-                        onSelect(primary.id);
-                      }}
-                      onMouseEnter={(e) => scheduleTooltip(e.clientX, e.clientY, entities)}
-                      onMouseMove={(e) => {
-                        if (tooltip) showTooltip(e.clientX, e.clientY, entities);
-                      }}
-                      onMouseLeave={clearTooltip}
-                    />
-                  </g>
-                  {count > 1 && (
+                  {bubble.active && !bubble.faded ? (
+                    <circle r={bubble.r + 6} fill="var(--accent)" className="hq-pulse" />
+                  ) : null}
+                  <circle
+                    r={bubble.r}
+                    fill={bubble.color}
+                    fillOpacity={0.85}
+                    stroke={selected ? "var(--heading)" : "var(--dot-stroke)"}
+                    strokeWidth={selected ? 2.5 : 1.5}
+                    strokeDasharray={bubble.record ? undefined : "3 2"}
+                    className="map-dot cursor-pointer"
+                    onClick={(click) => {
+                      click.stopPropagation();
+                      onSelect(bubble.headId);
+                    }}
+                    onMouseEnter={(e) => scheduleTooltip(e.clientX, e.clientY, bubbleLines(bubble))}
+                    onMouseMove={(e) => {
+                      if (tooltip) showTooltip(e.clientX, e.clientY, bubbleLines(bubble));
+                    }}
+                    onMouseLeave={clearTooltip}
+                  />
+                  {showCount ? (
                     <text
                       y={4}
                       textAnchor="middle"
-                      fontSize="9"
+                      fontSize="11"
+                      fontWeight={700}
+                      fill="#ffffff"
+                      className="pointer-events-none"
+                    >
+                      +{bubble.memberIds.length}
+                    </text>
+                  ) : null}
+                  {bubbleLabels.has(bubble.headId) ? (
+                    <text
+                      y={bubbleLabels.get(bubble.headId)}
+                      textAnchor="middle"
+                      fontSize="11"
+                      fontWeight={600}
+                      fill="var(--heading)"
+                      stroke="var(--panel)"
+                      strokeWidth={3}
+                      paintOrder="stroke"
+                      className="pointer-events-none"
+                    >
+                      {labelOf(bubble.headId)}
+                    </text>
+                  ) : null}
+                </g>
+              );
+            })}
+
+            {memberStacks.map((entities) => {
+              const point = screenOf(entities[0].id);
+              if (!point) return null;
+              const count = entities.length;
+              const selected = entities.some((entity) => entity.id === selectedId);
+              const active = entities.some((entity) => activeIds.has(entity.id));
+              return (
+                <g key={`member-${entities[0].id}`} transform={`translate(${point[0]}, ${point[1]})`}>
+                  <circle
+                    r={selected ? 6.5 : count > 1 ? 6 : 4.5}
+                    fill="var(--panel)"
+                    stroke={selected ? "var(--heading)" : (openBubble?.color ?? "var(--accent)")}
+                    strokeWidth={selected ? 2.4 : active ? 2.2 : 1.6}
+                    className="map-dot cursor-pointer"
+                    onClick={(click) => {
+                      click.stopPropagation();
+                      if (count > 1) {
+                        openStackMenu(entities, click);
+                        return;
+                      }
+                      onSelect(entities[0].id);
+                    }}
+                    onMouseEnter={(e) => scheduleTooltip(e.clientX, e.clientY, entityLines(entities))}
+                    onMouseMove={(e) => {
+                      if (tooltip) showTooltip(e.clientX, e.clientY, entityLines(entities));
+                    }}
+                    onMouseLeave={clearTooltip}
+                  />
+                  {count > 1 ? (
+                    <text
+                      y={3}
+                      textAnchor="middle"
+                      fontSize="8"
                       fontFamily="IBM Plex Mono, monospace"
                       fill="var(--heading)"
                       className="pointer-events-none"
                     >
                       {count}
                     </text>
-                  )}
+                  ) : null}
                 </g>
               );
             })}
+
             {selectedPoint && selectedId ? (
               <text
                 x={selectedPoint[0]}
-                y={selectedPoint[1] - 14}
+                y={selectedPoint[1] - (selectedBubble ? selectedBubble.r + 6 : 12)}
                 textAnchor="middle"
                 fontSize="12"
                 fontWeight={600}

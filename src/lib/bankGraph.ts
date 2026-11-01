@@ -165,6 +165,38 @@ export function markerPresence(dataset: BankDataset, entity: Entity, year: numbe
   return "alive";
 }
 
+/** An entity whose every recorded event failed, such as a SIP that was approved and then unwound. */
+export function isUnrealised(dataset: BankDataset, entityId: string): boolean {
+  const events = dataset.events.filter((event) => event.from === entityId || event.to === entityId);
+  return events.length > 0 && events.every((event) => event.outcome !== "completed");
+}
+
+export interface Family {
+  headId: string;
+  /** Institutions whose banking business had ended up in the head by that year. */
+  memberIds: string[];
+}
+
+/**
+ * Groups every institution on the map in a year under the bank its business had reached by then.
+ * Asset vehicles (SAREB) and vehicles that never came to exist are left out.
+ */
+export function familiesAtYear(dataset: BankDataset, year: number): Family[] {
+  const byId = entityMap(dataset);
+  const families = new Map<string, string[]>();
+  for (const entity of dataset.entities) {
+    if (markerPresence(dataset, entity, year) === "hidden") continue;
+    if (entity.group_role === "asset_vehicle" || isUnrealised(dataset, entity.id)) continue;
+    const headId = currentGroupOf(dataset, entity.id, year);
+    const head = byId.get(headId);
+    if (!head?.hq || head.group_role === "asset_vehicle") continue;
+    const members = families.get(headId) ?? [];
+    if (entity.id !== headId) members.push(entity.id);
+    families.set(headId, members);
+  }
+  return [...families.entries()].map(([headId, memberIds]) => ({ headId, memberIds }));
+}
+
 export function lineageParentAtYear(
   dataset: BankDataset,
   entityId: string,

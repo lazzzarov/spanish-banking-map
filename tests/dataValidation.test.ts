@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { validateDataset } from "../src/lib/dataValidation";
-import type { BankDataset, SourceRecord } from "../src/lib/types";
+import { validateAssets, validateDataset } from "../src/lib/dataValidation";
+import type { AssetRecord, BankDataset, SourceRecord } from "../src/lib/types";
 
 const dataset = { meta: {}, entities: [], events: [] } as unknown as BankDataset;
 
@@ -22,5 +22,27 @@ describe("source url validation", () => {
     expect(validateDataset(dataset, [source("javascript:alert(1)")]).errors).toHaveLength(1);
     expect(validateDataset(dataset, [source("http://example.com")]).errors).toHaveLength(1);
     expect(validateDataset(dataset, [source("not a url")]).errors).toHaveLength(1);
+  });
+});
+
+describe("asset validation", () => {
+  const withBank = { meta: {}, entities: [{ id: "bank" }], events: [] } as unknown as BankDataset;
+  const asset = (over: Partial<AssetRecord>): AssetRecord => ({
+    entityId: "bank",
+    year: 2025,
+    total_assets_eur_bn: 10,
+    basis: "entity",
+    src: "s1",
+    ...over,
+  });
+
+  it("accepts a known entity, source and positive value", () => {
+    expect(validateAssets([asset({})], withBank, [source(null)])).toEqual([]);
+  });
+
+  it("rejects unknown entities, unknown sources and non-positive values", () => {
+    expect(validateAssets([asset({ entityId: "nope" })], withBank, [source(null)])).toHaveLength(1);
+    expect(validateAssets([asset({ src: "nope" })], withBank, [source(null)])).toHaveLength(1);
+    expect(validateAssets([asset({ total_assets_eur_bn: 0 })], withBank, [source(null)])).toHaveLength(1);
   });
 });

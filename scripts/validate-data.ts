@@ -2,14 +2,17 @@ import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { currentGroupOf, pathToGroup } from "../src/lib/bankGraph.ts";
-import { validateDataset } from "../src/lib/dataValidation.ts";
-import type { BankDataset, SourceRecord } from "../src/lib/types.ts";
+import { validateAssets, validateDataset } from "../src/lib/dataValidation.ts";
+import type { AssetRecord, BankDataset, SourceRecord } from "../src/lib/types.ts";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const dataset = JSON.parse(readFileSync(resolve(root, "data/banks.json"), "utf8")) as BankDataset;
 const sources = JSON.parse(readFileSync(resolve(root, "data/sources.json"), "utf8")) as SourceRecord[];
 
+const assets = JSON.parse(readFileSync(resolve(root, "data/assets.json"), "utf8")) as AssetRecord[];
+
 const { errors, warnings, entityCount, eventCount } = validateDataset(dataset, sources);
+errors.push(...validateAssets(assets, dataset, sources));
 
 if (currentGroupOf(dataset, "sabadell") !== "sabadell") {
   errors.push("Sabadell must remain its own featured group");
